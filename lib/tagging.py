@@ -1,4 +1,4 @@
-from thing_tagger.models import db, Tag, Thing, FileTag, ThingTag, FileThing
+from tagger.models import db, Tag, Thing, FileTag, ThingTag, FileThing
 from flask import flash
 
 def index_by_attribute(items, attribute):

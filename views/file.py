@@ -2,9 +2,9 @@ import os
 import hashlib
 from flask import *
 from werkzeug import secure_filename
-from thing_tagger.models import db, File, Tag, Thing, FileTag, FileThing, ThingTag
+from tagger.models import db, File, Tag, Thing, FileTag, FileThing, ThingTag
 from sqlalchemy.exc import IntegrityError
-from thing_tagger.lib.iterators import firsts
+from tagger.lib.iterators import firsts
 
 blueprint = Blueprint('file',__name__)
 

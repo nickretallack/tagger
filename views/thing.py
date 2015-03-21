@@ -1,5 +1,5 @@
 from flask import *
-from thing_tagger.models import Thing, db
+from tagger.models import Thing, db
 from sqlalchemy.exc import IntegrityError
 
 blueprint = Blueprint('thing',__name__)

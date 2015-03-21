@@ -1,4 +1,4 @@
-from thing_tagger.models import db
+from tagger.models import db
 
 __all__ = ['Tag','ThingTag','FileThingTag','FileTag']
 

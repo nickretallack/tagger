@@ -1,5 +1,5 @@
-from thing_tagger.models import Thing, Tag, db
-from thing_tagger.lib.iterators import firsts
+from tagger.models import Thing, Tag, db
+from tagger.lib.iterators import firsts
 
 def context_processor():
 	return dict(

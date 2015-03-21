@@ -1,6 +1,6 @@
 from flask import *
-from thing_tagger.models import db, File, Thing
-from thing_tagger.lib import tagging
+from tagger.models import db, File, Thing
+from tagger.lib import tagging
 
 blueprint = Blueprint('tag',__name__)
 
