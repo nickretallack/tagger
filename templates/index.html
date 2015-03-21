@@ -7,8 +7,8 @@
 <button>Upload</button>
 </form>
 
-<form action="/file">
-<input type="text" name="search" class="tag-field">
+<form action="{{url_for('file.list')}}">
+<input type="text" name="tags" class="tag-field">
 <button>Search</button>
 </form>
 

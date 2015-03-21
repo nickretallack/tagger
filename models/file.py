@@ -12,3 +12,7 @@ class File(db.Model):
 	@property
 	def filename(self):
 		return "{}{}".format(self.sha256, self.ext)
+
+	@property
+	def tag_names(self):
+		return ",".join([item.tag.name for item in self.tag_relationships])

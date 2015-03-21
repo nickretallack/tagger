@@ -13,6 +13,6 @@ class FileCharacter(db.Model):
 	__tablename__ = 'file_character'
 	file_id = db.Column('file_id', db.ForeignKey('file.id', ondelete='cascade'), primary_key=True)
 	character_id = db.Column('character_id', db.ForeignKey('character.id', ondelete='cascade'), primary_key=True)
-	file = db.relationship('File')
-	character = db.relationship('Character')
+	file = db.relationship('File', backref='character_relationships')
+	character = db.relationship('Character', backref='file_relationships')
 

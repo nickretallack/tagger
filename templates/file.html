@@ -7,4 +7,9 @@ class="file view"
 style="background-image: url('{{url_for('static',filename='files/'+file.filename)}}')"
 ></div>
 
+<form action="{{url_for('tag.file', file_id=file.id)}}" method="POST">
+<input type="text" name="tags" class="tag-field" value="{{file.tag_names}}">
+<button>Tag</button>
+</form>
+
 % endblock
