@@ -2,7 +2,7 @@ import os
 import hashlib
 from flask import *
 from werkzeug import secure_filename
-from character_tagger.models import db, File
+from character_tagger.models import db, File, Tag, Character, FileTag, FileCharacter
 from sqlalchemy.exc import IntegrityError
 
 blueprint = Blueprint('file',__name__)
@@ -21,8 +21,31 @@ def hash_file(file):
 @blueprint.route('/')
 @blueprint.route('/file', endpoint='list')
 def index():
-	files = db.session.query(File).all()
-	return render_template('index.html', files=files)
+	search = request.values.get('search','').strip()
+	if search:
+		terms = set(search.split(','))
+
+		tags = db.session.query(Tag).filter(
+			Tag.name.in_(terms)
+		).all()
+
+		characters = db.session.query(Character).filter(
+			Character.name.in_(terms)
+		).all()
+
+		files = db.session.query(File)\
+		.outerjoin(File.tag_relationships).outerjoin(FileTag.tag)\
+		.outerjoin(File.character_relationships).outerjoin(FileCharacter.character)\
+		.filter(
+			db.or_(
+				Character.name.in_(terms),
+				Tag.name.in_(terms),
+			)
+		).all()
+
+	else:
+		files = db.session.query(File).all()
+	return render_template('index.html', files=files, search=search)
 
 @blueprint.route('/file', methods=['POST'], endpoint='post')
 def post_file():

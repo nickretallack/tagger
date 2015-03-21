@@ -15,28 +15,44 @@
     return _results;
   };
 
-  $('.tag-field').selectize({
-    delimiter: ',',
-    persist: false,
-    create: function(input) {
-      return {
-        value: input,
-        text: input
-      };
-    },
-    options: to_selectize_options(TAG_NAMES)
-  });
-
-  $('.character-field').selectize({
-    delimiter: ',',
-    persist: false,
-    create: function(input) {
-      return {
-        value: input,
-        text: input
-      };
-    },
-    options: to_selectize_options(CHARACTER_NAMES)
+  $(function() {
+    var character_options, combo_options, tag_options;
+    tag_options = to_selectize_options(TAG_NAMES);
+    $('.tag-field').selectize({
+      delimiter: ',',
+      persist: false,
+      create: function(input) {
+        return {
+          value: input,
+          text: input
+        };
+      },
+      options: tag_options
+    });
+    character_options = to_selectize_options(CHARACTER_NAMES);
+    $('.character-field').selectize({
+      delimiter: ',',
+      persist: false,
+      create: function(input) {
+        return {
+          value: input,
+          text: input
+        };
+      },
+      options: character_options
+    });
+    combo_options = tag_options.concat(character_options);
+    return $('.tag-character-field').selectize({
+      delimiter: ',',
+      persist: false,
+      create: function(input) {
+        return {
+          value: input,
+          text: input
+        };
+      },
+      options: combo_options
+    });
   });
 
 }).call(this);

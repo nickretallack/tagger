@@ -3,19 +3,30 @@ to_selectize_options = (items) ->
 		text: item
 		value: item
 
+$ ->
+	tag_options = to_selectize_options TAG_NAMES
+	$('.tag-field').selectize
+		delimiter: ','
+		persist: false
+		create: (input) ->
+			value: input
+			text: input
+		options: tag_options
 
-$('.tag-field').selectize
-	delimiter: ','
-	persist: false
-	create: (input) ->
-		value: input
-		text: input
-	options: to_selectize_options TAG_NAMES
+	character_options = to_selectize_options CHARACTER_NAMES
+	$('.character-field').selectize
+		delimiter: ','
+		persist: false
+		create: (input) ->
+			value: input
+			text: input
+		options: character_options
 
-$('.character-field').selectize
-	delimiter: ','
-	persist: false
-	create: (input) ->
-		value: input
-		text: input
-	options: to_selectize_options CHARACTER_NAMES
+	combo_options = tag_options.concat(character_options)
+	$('.tag-character-field').selectize
+		delimiter: ','
+		persist: false
+		create: (input) ->
+			value: input
+			text: input
+		options: combo_options
