@@ -1,7 +1,5 @@
 from thing_tagger.models import Thing, Tag, db
-
-def firsts(items):
-	return [item[0] for item in items]
+from thing_tagger.lib.iterators import firsts
 
 def context_processor():
 	return dict(

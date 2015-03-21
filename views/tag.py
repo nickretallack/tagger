@@ -16,10 +16,14 @@ def tag_file(file_id):
 	.options(db.subqueryload('tag_relationships').joinedload('tag'))\
 	.one()
 
-	wanted_tag_names = parse_tags(request.form['tags'])
-	wanted_thing_names = parse_tags(request.form['things'])
-	tagging.file_apply_tags(file, wanted_tag_names)
-	tagging.file_apply_things(file, wanted_thing_names)
+	if 'tags' in request.form:
+		wanted_tag_names = parse_tags(request.form['tags'])
+		tagging.file_apply_tags(file, wanted_tag_names)
+
+	if 'things' in request.form:
+		wanted_thing_names = parse_tags(request.form['things'])
+		tagging.file_apply_things(file, wanted_thing_names)
+
 	db.session.commit()
 
 	return redirect(url_for('file.show', file_id=file_id))

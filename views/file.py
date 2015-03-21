@@ -4,6 +4,7 @@ from flask import *
 from werkzeug import secure_filename
 from thing_tagger.models import db, File, Tag, Thing, FileTag, FileThing, ThingTag
 from sqlalchemy.exc import IntegrityError
+from thing_tagger.lib.iterators import firsts
 
 blueprint = Blueprint('file',__name__)
 
@@ -22,34 +23,38 @@ def hash_file(file):
 @blueprint.route('/file', endpoint='list')
 def index():
 	search = request.values.get('search','').strip()
-	# if search:
-	# 	terms = set(search.split(','))
+	if search:
+		terms = set(search.split(','))
 
-	# 	TagAlias = db.aliased(Tag)
-	# 	query = db.session.query(File)
+		# Find all things that match the query
+		thing_ids = firsts(db.session.execute("""
+			select tagged_thing.id
+			from
+			(
+				select 
+				thing.id,
+				count(*) as tag_count
 
-	# 	ANDs = []
-	# 	for term in terms:
-	# 		ANDs.append(
-	# 			query.outerjoin(Thing.tag_relationships).outerjoin(TagAlias, ThingTag.tag)\
-	# 			.outerjoin(File.tag_relationships).outerjoin(FileTag.tag)\
-	# 			.outerjoin(File.thing_relationships).outerjoin(FileThing.thing)\
-	# 			.filter(
-	# 			db.or_(
-	# 				Thing.name == term,
-	# 				Tag.name == term,
-	# 				TagAlias.name == term,
-	# 			)
-	# 		)
+				from thing
+				join thing_tag on thing_tag.thing_id = thing.id
+				join tag on tag.id = thing_tag.tag_id
+				where tag.name in :tags
+				group by thing.id
+			) as tagged_thing
+			where tagged_thing.tag_count = :tag_count
+		""", dict(
+				tag_count=len(terms),
+				tags=tuple(terms),
+			)
+		))
 
-		# files = db.session.query(File)\
-		# .outerjoin(Thing.tag_relationships).outerjoin(TagAlias, ThingTag.tag)\
-		# .outerjoin(File.tag_relationships).outerjoin(FileTag.tag)\
-		# .outerjoin(File.thing_relationships).outerjoin(FileThing.thing)\
-		# .filter(*ANDs).all()
-
-	# else:
-	files = db.session.query(File).all()
+		# Find all files that have at least one of those things
+		files = db.session.query(File).join(FileThing).filter(
+			FileThing.thing_id.in_(thing_ids)
+		).all()
+	else:
+		files = db.session.query(File).all()
+		
 	return render_template('index.html', files=files, search=search)
 
 @blueprint.route('/file', methods=['POST'], endpoint='post')
