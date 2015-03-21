@@ -6,10 +6,8 @@
 	<div class="col-sm-4 col-md-3 col-lg-2">
 		<form action="{{url_for('tag.file', file_id=file.id)}}" method="POST">
 
-{#
 		<label for="tags">Tags</label>
 		<input type="text" name="tags" id="tags" class="tag-field" value="{{file.tag_names}}">
-#}
 
 		<label for="things">Things</label>
 		<input type="text" name="things" id="things" class="thing-field" value="{{file.thing_names}}">
