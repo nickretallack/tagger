@@ -11,6 +11,11 @@ class Character(db.Model):
 	def files(self):
 		return [item.file for item in self.file_relationships]
 
+	@property
+	def tag_names(self):
+		return ",".join([item.tag.name for item in self.tag_relationships])
+
+
 # relationships
 
 class FileCharacter(db.Model):

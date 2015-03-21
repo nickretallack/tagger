@@ -2,14 +2,20 @@
 
 % block content
 
+<form action="{{url_for('tag.file', file_id=file.id)}}" method="POST">
+
+<label for="tags">Tags</label>
+<input type="text" name="tags" id="tags" class="tag-field" value="{{file.tag_names}}">
+
+<label for="characters">Characters</label>
+<input type="text" name="characters" id="characters" class="character-field" value="{{file.character_names}}">
+
+<button>Tag</button>
+</form>
+
 <div
 class="file view"
 style="background-image: url('{{url_for('static',filename='files/'+file.filename)}}')"
 ></div>
-
-<form action="{{url_for('tag.file', file_id=file.id)}}" method="POST">
-<input type="text" name="tags" class="tag-field" value="{{file.tag_names}}">
-<button>Tag</button>
-</form>
 
 % endblock

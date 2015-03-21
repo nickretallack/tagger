@@ -16,3 +16,7 @@ class File(db.Model):
 	@property
 	def tag_names(self):
 		return ",".join([item.tag.name for item in self.tag_relationships])
+
+	@property
+	def character_names(self):
+		return ",".join([item.character.name for item in self.character_relationships])

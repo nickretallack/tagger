@@ -33,4 +33,4 @@ def list_characters():
 @blueprint.route('/character/<int:character_id>', endpoint="show")
 def show_character(character_id):
 	character = db.session.query(Character).filter_by(id=character_id).one()
-	return render_template('character_list.html', character=character)
+	return render_template('character.html', character=character)
