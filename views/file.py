@@ -6,6 +6,7 @@ from tagger.models import db, File, Tag, Thing, FileTag, FileThing, ThingTag
 from sqlalchemy.exc import IntegrityError
 from tagger.lib.iterators import firsts
 import requests
+from tagger.lib import tagging
 
 blueprint = Blueprint('file',__name__)
 
@@ -101,6 +102,8 @@ def post_file():
 		db.session.rollback()
 		flash("We already have that file.")
 		return redirect(url_for('.list'))
+
+	tagging.request_tag_file(record)
 
 	path = os.path.join(current_app.config['FILE_FOLDER'], record.filename)
 	if file:
