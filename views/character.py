@@ -18,12 +18,13 @@ def create_character():
 	try:
 		db.session.commit()
 	except IntegrityError:
+		db.session.rollback()
 		character = db.session.query(Character).filter_by(
 			name=name
 		).one()
 		flash("A character by that name alredy exists.")
 
-	return redirect(url_for('character.show', character.id))
+	return redirect(url_for('character.show', character_id=character.id))
 
 @blueprint.route('/character', endpoint='list')
 def list_characters():

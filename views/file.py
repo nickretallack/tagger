@@ -2,7 +2,7 @@ import os
 import hashlib
 from flask import *
 from werkzeug import secure_filename
-from character_tagger.models import db, File, Tag, Character, FileTag, FileCharacter
+from character_tagger.models import db, File, Tag, Character, FileTag, FileCharacter, CharacterTag
 from sqlalchemy.exc import IntegrityError
 
 blueprint = Blueprint('file',__name__)
@@ -33,13 +33,17 @@ def index():
 			Character.name.in_(terms)
 		).all()
 
+		TagAlias = db.aliased(Tag)
+
 		files = db.session.query(File)\
 		.outerjoin(File.tag_relationships).outerjoin(FileTag.tag)\
 		.outerjoin(File.character_relationships).outerjoin(FileCharacter.character)\
+		.outerjoin(Character.tag_relationships).outerjoin(TagAlias, CharacterTag.tag)\
 		.filter(
 			db.or_(
 				Character.name.in_(terms),
 				Tag.name.in_(terms),
+				TagAlias.name.in_(terms),
 			)
 		).all()
 
@@ -63,6 +67,7 @@ def post_file():
 	try:
 		db.session.flush()
 	except IntegrityError:
+		db.session.rollback()
 		flash("We already have that file.")
 		return redirect(url_for('.list'))
 
