@@ -3,7 +3,7 @@
 % block content
 
 <div class="row">
-	<div class="col-sm-4">
+	<div class="col-sm-4 col-md-3 col-lg-2">
 		<form action="{{url_for('tag.file', file_id=file.id)}}" method="POST">
 
 		<label for="tags">Tags</label>
@@ -15,11 +15,8 @@
 		<button class="btn btn-default">Tag</button>
 		</form>
 	</div>
-	<div class="col-sm-8">
-		<div
-		class="file view"
-		style="background-image: url('{{url_for('static',filename='files/'+file.filename)}}')"
-		></div>
+	<div class="col-sm-8 col-md-9 col-lg-10">
+		<img src="{{url_for('static',filename='files/'+file.filename)}}" class="file view">
 	</div>
 </div>
 
