@@ -4,16 +4,6 @@
 
 <h1>Things</h1>
 
-<form
-class="form-inline"
-action="{{url_for('thing.create')}}"
-method="POST">
-<div class="form-group">
-<input type="text" name="name" class="form-control">
-<button class="btn btn-default">Create</button>
-</div>
-</form>
-
 <ul class="things list-unstyled">
 % for thing in things
 <li><a href="{{url_for('thing.show', thing_id=thing.id)}}">{{thing.name}}</a></li>

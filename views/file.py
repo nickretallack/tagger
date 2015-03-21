@@ -98,6 +98,7 @@ def post_file():
 
 	try:
 		db.session.flush()
+		flash("Uploaded a file.")
 	except IntegrityError:
 		db.session.rollback()
 		flash("We already have that file.")
