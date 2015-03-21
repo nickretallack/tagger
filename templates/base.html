@@ -2,13 +2,18 @@
 <html>
 <head>
 <title>Character Tagger</title>
+<link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
 % block head_end
 % endblock
 </head>
 <body>
-% block body
+% include 'partial/messages.html'
 
+<a href="/">Home</a>
+
+% block content
 % endblock
+
 % block body_end
 % endblock
 </body>

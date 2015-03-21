@@ -8,3 +8,7 @@ class File(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	sha256 = db.Column(db.String, nullable=False, unique=True)
 	ext = db.Column(db.String, nullable=False)
+
+	@property
+	def filename(self):
+		return "{}{}".format(self.sha256, self.ext)

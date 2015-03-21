@@ -1,5 +1,10 @@
 % extends 'base.html'
 
-% block body
-Some file...
+% block content
+
+<div
+class="file view"
+style="background-image: url('{{url_for('static',filename='files/'+file.filename)}}')"
+></div>
+
 % endblock

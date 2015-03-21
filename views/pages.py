@@ -1,7 +1,7 @@
-from flask import *
+# from flask import *
 
-blueprint = Blueprint('pages',__name__)
+# blueprint = Blueprint('pages',__name__)
 
-@blueprint.route('/')
-def index():
-	return render_template('index.html', files=[])
+# @blueprint.route('/')
+# def index():
+# 	return render_template('index.html', files=[])
