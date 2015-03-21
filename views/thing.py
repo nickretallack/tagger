@@ -1,6 +1,7 @@
 from flask import *
 from tagger.models import Thing, db
 from sqlalchemy.exc import IntegrityError
+from tagger.lib import tagging
 
 blueprint = Blueprint('thing',__name__)
 
@@ -15,8 +16,11 @@ def create_thing():
 	)
 	db.session.add(thing)
 
+	tagging.request_tag_thing(thing)
+
 	try:
 		db.session.commit()
+		flash("Created a thing: {}".format(name))
 	except IntegrityError:
 		db.session.rollback()
 		thing = db.session.query(Thing).filter_by(
@@ -29,9 +33,13 @@ def create_thing():
 @blueprint.route('/thing', endpoint='list')
 def list_things():
 	things = db.session.query(Thing).all()
-	return render_template('thing_list.html', things=things)
+	return render_template('thing/list.html', things=things)
 
 @blueprint.route('/thing/<int:thing_id>', endpoint="show")
 def show_thing(thing_id):
 	thing = db.session.query(Thing).filter_by(id=thing_id).one()
-	return render_template('thing.html', thing=thing)
+	return render_template('thing/show.html', thing=thing)
+
+@blueprint.route('/thing/new', endpoint='new')
+def new_thing():
+	return render_template('thing/new.html')

@@ -1,0 +1,22 @@
+% extends 'base.html'
+
+% block content
+
+<h1>New Thing</h1>
+<form
+action="{{url_for('thing.create')}}"
+method="POST">
+	<div class="form-group">
+		<label for="name">Name</label>
+		<input type="text" name="name" id="name" class="form-control">
+	</div>
+
+	<div class="form-group">
+		<label for="tags">Tags</label>
+		<input type="text" name="tags" id="tags" class="tag-field">
+		<p class="help-block">Describe this character or object.  These tags will apply to every appearance it makes in an image.</p>
+	</div>
+	<button class="btn btn-default">Create</button>
+</form>
+
+% endblock

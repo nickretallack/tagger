@@ -5,13 +5,19 @@ from werkzeug import secure_filename
 from tagger.models import db, File, Tag, Thing, FileTag, FileThing, ThingTag
 from sqlalchemy.exc import IntegrityError
 from tagger.lib.iterators import firsts
+import requests
+from tagger.lib import tagging
 
 blueprint = Blueprint('file',__name__)
+
+def write_file(content, path):
+	with open(path,'wb') as file:
+		file.write(content)
 
 def hash_file(file):
 	hash = hashlib.sha256()
 	while True:
-		block = file.stream.read(current_app.config['READ_BLOCK_SIZE'])
+		block = file.read(current_app.config['READ_BLOCK_SIZE'])
 		if not block:
 			break
 		hash.update(block)
@@ -49,20 +55,40 @@ def index():
 		))
 
 		# Find all files that have at least one of those things
-		files = db.session.query(File).join(FileThing).filter(
-			FileThing.thing_id.in_(thing_ids)
-		).all()
+		if len(thing_ids):
+			files = db.session.query(File).join(FileThing).filter(
+				FileThing.thing_id.in_(thing_ids)
+			).all()
+		else:
+			files = []
 	else:
 		files = db.session.query(File).all()
 		
 	return render_template('index.html', files=files, search=search)
 
+@blueprint.route('/file/new', methods=['GET'], endpoint='new')
+def new_file():
+	return render_template('file/new.html')	
+
 @blueprint.route('/file', methods=['POST'], endpoint='post')
 def post_file():
-	file = request.files['file']
-	filename = secure_filename(file.filename)
-	original_name, ext = os.path.splitext(filename)
-	hex_digest = hash_file(file).hexdigest()
+	file = request.files.get('file')
+
+	if file:
+		file = request.files['file']
+		filename = secure_filename(file.filename)
+		_, ext = os.path.splitext(filename)
+		hex_digest = hash_file(file).hexdigest()
+
+	else:
+		url = request.form.get('url')
+		if not url:
+			abort(400)
+
+		_, ext = os.path.splitext(url)
+		response = requests.get(url, stream=True)
+		hex_digest = hashlib.sha256(response.content).hexdigest()
+		# hex_digest = hash_file(response.raw)
 
 	record = File(
 		ext=ext,
@@ -72,12 +98,20 @@ def post_file():
 
 	try:
 		db.session.flush()
+		flash("Uploaded a file.")
 	except IntegrityError:
 		db.session.rollback()
 		flash("We already have that file.")
 		return redirect(url_for('.list'))
 
-	file.save(os.path.join(current_app.config['FILE_FOLDER'], record.filename))
+	tagging.request_tag_file(record)
+
+	path = os.path.join(current_app.config['FILE_FOLDER'], record.filename)
+	if file:
+		file.save(path)
+	else:
+		write_file(response.content, path)
+
 	db.session.commit()
 	return redirect(url_for('.show', file_id=record.id))
 
@@ -89,4 +123,4 @@ def post_file():
 def show_file(file_id):
 	record = db.session.query(File).filter_by(id=file_id).one()
 
-	return render_template('file.html', file=record)
+	return render_template('file/show.html', file=record)

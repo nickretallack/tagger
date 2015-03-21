@@ -17,21 +17,11 @@
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
 				<li class="{{macros.active_blueprint_class('file')}}"><a href="{{url_for('file.list')}}">Files</a></li>
+				<li><a href="{{url_for('file.new')}}">&gt; Upload</a></li>
 				<li class="{{macros.active_blueprint_class('thing')}}"><a href="{{url_for('thing.list')}}">Things</a></li>
+				<li><a href="{{url_for('thing.new')}}">&gt; New</a></li>
+				<li class="{{macros.active_blueprint_class('tag')}}"><a href="{{url_for('tag.list')}}">Tags</a></li>
 			</ul>
-			<form
-				class="navbar-form navbar-right"
-				action="/file"
-				method="POST"
-				enctype="multipart/form-data">
-
-				<div class="form-group">
-					<input
-					type="file" name="file" class="form-control">
-				</div>
-				<button class="btn btn-default">Upload</button>
-			</form>
-
 		</div><!-- /.navbar-collapse -->
 	</div><!-- /.container-fluid -->
 </nav>

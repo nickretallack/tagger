@@ -1,0 +1,12 @@
+% extends 'base.html'
+
+% block content
+
+<h1>Things</h1>
+
+<ul class="things list-unstyled">
+% for tag in tags
+<li><a href="{{url_for('file.list', search=tag.name)}}">{{tag.name}}</a></li>
+% endfor
+</ul>
+% endblock

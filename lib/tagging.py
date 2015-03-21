@@ -1,5 +1,25 @@
 from tagger.models import db, Tag, Thing, FileTag, ThingTag, FileThing
-from flask import flash
+from flask import flash, request
+
+def parse_tags(string):
+	if not string:
+		return set()
+	else:
+		return set(string.split(','))
+
+def request_tag_file(file):
+	if 'things' in request.form:
+		wanted_thing_names = parse_tags(request.form['things'])
+		file_apply_things(file, wanted_thing_names)
+
+	if 'tags' in request.form:
+		wanted_tag_names = parse_tags(request.form['tags'])
+		file_apply_tags(file, wanted_tag_names)
+
+def request_tag_thing(thing):
+	if 'tags' in request.form:
+		wanted_tag_names = parse_tags(request.form['tags'])
+		thing_apply_tags(thing, wanted_tag_names)
 
 def index_by_attribute(items, attribute):
 	result = {}
