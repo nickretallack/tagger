@@ -49,9 +49,12 @@ def index():
 		))
 
 		# Find all files that have at least one of those things
-		files = db.session.query(File).join(FileThing).filter(
-			FileThing.thing_id.in_(thing_ids)
-		).all()
+		if len(thing_ids):
+			files = db.session.query(File).join(FileThing).filter(
+				FileThing.thing_id.in_(thing_ids)
+			).all()
+		else:
+			files = []
 	else:
 		files = db.session.query(File).all()
 		
