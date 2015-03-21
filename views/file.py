@@ -22,33 +22,34 @@ def hash_file(file):
 @blueprint.route('/file', endpoint='list')
 def index():
 	search = request.values.get('search','').strip()
-	if search:
-		terms = set(search.split(','))
+	# if search:
+	# 	terms = set(search.split(','))
 
-		tags = db.session.query(Tag).filter(
-			Tag.name.in_(terms)
-		).all()
+	# 	TagAlias = db.aliased(Tag)
+	# 	query = db.session.query(File)
 
-		characters = db.session.query(Character).filter(
-			Character.name.in_(terms)
-		).all()
+	# 	ANDs = []
+	# 	for term in terms:
+	# 		ANDs.append(
+	# 			query.outerjoin(Character.tag_relationships).outerjoin(TagAlias, CharacterTag.tag)\
+	# 			.outerjoin(File.tag_relationships).outerjoin(FileTag.tag)\
+	# 			.outerjoin(File.character_relationships).outerjoin(FileCharacter.character)\
+	# 			.filter(
+	# 			db.or_(
+	# 				Character.name == term,
+	# 				Tag.name == term,
+	# 				TagAlias.name == term,
+	# 			)
+	# 		)
 
-		TagAlias = db.aliased(Tag)
+		# files = db.session.query(File)\
+		# .outerjoin(Character.tag_relationships).outerjoin(TagAlias, CharacterTag.tag)\
+		# .outerjoin(File.tag_relationships).outerjoin(FileTag.tag)\
+		# .outerjoin(File.character_relationships).outerjoin(FileCharacter.character)\
+		# .filter(*ANDs).all()
 
-		files = db.session.query(File)\
-		.outerjoin(File.tag_relationships).outerjoin(FileTag.tag)\
-		.outerjoin(File.character_relationships).outerjoin(FileCharacter.character)\
-		.outerjoin(Character.tag_relationships).outerjoin(TagAlias, CharacterTag.tag)\
-		.filter(
-			db.or_(
-				Character.name.in_(terms),
-				Tag.name.in_(terms),
-				TagAlias.name.in_(terms),
-			)
-		).all()
-
-	else:
-		files = db.session.query(File).all()
+	# else:
+	files = db.session.query(File).all()
 	return render_template('index.html', files=files, search=search)
 
 @blueprint.route('/file', methods=['POST'], endpoint='post')
