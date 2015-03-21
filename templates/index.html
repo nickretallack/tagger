@@ -1,0 +1,16 @@
+% extends 'base.html'
+
+% block body
+
+<form action="/file" method="post" enctype="multipart/form-data">
+<input type="file" name="file"><button>Upload</button>
+</form>
+
+<div class="files">
+% for file in files
+<a class="file" style="background-image: url({{file.thumbnail_url}})">{{file.url}}</a>
+% endfor
+</div>
+
+
+% endblock
