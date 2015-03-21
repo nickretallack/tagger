@@ -2,6 +2,7 @@
 <html>
 <head>
 <title>Character Tagger</title>
+<link rel="stylesheet" href="{{url_for('static', filename='bower_components/selectize/dist/css/selectize.css')}}">
 <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
 % block head_end
 % endblock
@@ -13,6 +14,13 @@
 
 % block content
 % endblock
+
+
+<script src="{{url_for('static', filename='bower_components/jquery/dist/jquery.min.js')}}"></script>
+<script src="{{url_for('static', filename='bower_components/microplugin/src/microplugin.js')}}"></script>
+<script src="{{url_for('static', filename='bower_components/sifter/sifter.js')}}"></script>
+<script src="{{url_for('static', filename='bower_components/selectize/dist/js/selectize.js')}}"></script>
+<script src="{{url_for('static', filename='scripts/selectize.js')}}"></script>
 
 % block body_end
 % endblock
