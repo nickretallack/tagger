@@ -68,7 +68,7 @@ def index():
 
 @blueprint.route('/file/new', methods=['GET'], endpoint='new')
 def new_file():
-	return render_template('upload.html')	
+	return render_template('file/new.html')	
 
 @blueprint.route('/file', methods=['POST'], endpoint='post')
 def post_file():
@@ -123,4 +123,4 @@ def post_file():
 def show_file(file_id):
 	record = db.session.query(File).filter_by(id=file_id).one()
 
-	return render_template('file.html', file=record)
+	return render_template('file/show.html', file=record)

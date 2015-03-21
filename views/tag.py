@@ -1,5 +1,5 @@
 from flask import *
-from tagger.models import db, File, Thing
+from tagger.models import db, File, Thing, Tag
 from tagger.lib import tagging
 
 blueprint = Blueprint('tag',__name__)
@@ -25,3 +25,8 @@ def tag_thing(thing_id):
 	db.session.commit()
 
 	return redirect(url_for('thing.show', thing_id=thing_id))
+
+@blueprint.route('/tag', methods=['GET'], endpoint='list')
+def list_tags():
+	tags = db.session.query(Tag).all()
+	return render_template("tag/list.html", tags=tags)

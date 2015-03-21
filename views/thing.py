@@ -33,13 +33,13 @@ def create_thing():
 @blueprint.route('/thing', endpoint='list')
 def list_things():
 	things = db.session.query(Thing).all()
-	return render_template('thing_list.html', things=things)
+	return render_template('thing/list.html', things=things)
 
 @blueprint.route('/thing/<int:thing_id>', endpoint="show")
 def show_thing(thing_id):
 	thing = db.session.query(Thing).filter_by(id=thing_id).one()
-	return render_template('thing.html', thing=thing)
+	return render_template('thing/show.html', thing=thing)
 
 @blueprint.route('/thing/new', endpoint='new')
 def new_thing():
-	return render_template('new_thing.html')
+	return render_template('thing/new.html')
