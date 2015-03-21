@@ -1,0 +1,13 @@
+% extends 'base.html'
+
+% block content
+
+<form action="{{url_for('character.create')}}" method="POST">
+<input type="text" name="name">
+<button>Create</button>
+</form>
+
+% for character in characters
+<a href="{{url_for('character.show', character_id=character.id)}}">{{character.name}}</a>
+% endfor
+% endblock

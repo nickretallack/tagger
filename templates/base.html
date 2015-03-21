@@ -10,10 +10,16 @@
 <body>
 % include 'partial/messages.html'
 
-<a href="/">Home</a>
+<a href="{{url_for('file.list')}}">Files</a>
+<a href="{{url_for('character.list')}}">Characters</a>
 
 % block content
 % endblock
+
+<script>
+TAG_NAMES = {{TAG_NAMES|tojson|safe}};
+CHARACTER_NAMES = {{CHARACTER_NAMES|tojson|safe}};
+</script>
 
 <script src="{{url_for('static', filename='bower_components/jquery/dist/jquery.min.js')}}"></script>
 <script src="{{url_for('static', filename='bower_components/microplugin/src/microplugin.js')}}"></script>

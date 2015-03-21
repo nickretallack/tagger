@@ -7,6 +7,10 @@ class Character(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	name = db.Column(db.String, unique=True)
 
+	@property
+	def files(self):
+		return [item.file for item in self.file_relationships]
+
 # relationships
 
 class FileCharacter(db.Model):
