@@ -1,6 +1,6 @@
 from flask import *
-from character_tagger.models import db, File, Character
-from character_tagger.lib import tagging
+from thing_tagger.models import db, File, Thing
+from thing_tagger.lib import tagging
 
 blueprint = Blueprint('tag',__name__)
 
@@ -17,21 +17,21 @@ def tag_file(file_id):
 	.one()
 
 	wanted_tag_names = parse_tags(request.form['tags'])
-	wanted_character_names = parse_tags(request.form['characters'])
+	wanted_thing_names = parse_tags(request.form['things'])
 	tagging.file_apply_tags(file, wanted_tag_names)
-	tagging.file_apply_characters(file, wanted_character_names)
+	tagging.file_apply_things(file, wanted_thing_names)
 	db.session.commit()
 
 	return redirect(url_for('file.show', file_id=file_id))
 
-@blueprint.route('/character/<int:character_id>/tag', methods=['POST'], endpoint='character')
-def tag_character(character_id):
-	character = db.session.query(Character).filter_by(id=character_id)\
+@blueprint.route('/thing/<int:thing_id>/tag', methods=['POST'], endpoint='thing')
+def tag_thing(thing_id):
+	thing = db.session.query(Thing).filter_by(id=thing_id)\
 	.options(db.subqueryload('tag_relationships').joinedload('tag'))\
 	.one()
 
 	wanted_tag_names = parse_tags(request.form['tags'])
-	tagging.character_apply_tags(character, wanted_tag_names)
+	tagging.thing_apply_tags(thing, wanted_tag_names)
 	db.session.commit()
 
-	return redirect(url_for('character.show', character_id=character_id))
+	return redirect(url_for('thing.show', thing_id=thing_id))

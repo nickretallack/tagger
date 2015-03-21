@@ -2,7 +2,7 @@ import os
 import hashlib
 from flask import *
 from werkzeug import secure_filename
-from character_tagger.models import db, File, Tag, Character, FileTag, FileCharacter, CharacterTag
+from thing_tagger.models import db, File, Tag, Thing, FileTag, FileThing, ThingTag
 from sqlalchemy.exc import IntegrityError
 
 blueprint = Blueprint('file',__name__)
@@ -31,21 +31,21 @@ def index():
 	# 	ANDs = []
 	# 	for term in terms:
 	# 		ANDs.append(
-	# 			query.outerjoin(Character.tag_relationships).outerjoin(TagAlias, CharacterTag.tag)\
+	# 			query.outerjoin(Thing.tag_relationships).outerjoin(TagAlias, ThingTag.tag)\
 	# 			.outerjoin(File.tag_relationships).outerjoin(FileTag.tag)\
-	# 			.outerjoin(File.character_relationships).outerjoin(FileCharacter.character)\
+	# 			.outerjoin(File.thing_relationships).outerjoin(FileThing.thing)\
 	# 			.filter(
 	# 			db.or_(
-	# 				Character.name == term,
+	# 				Thing.name == term,
 	# 				Tag.name == term,
 	# 				TagAlias.name == term,
 	# 			)
 	# 		)
 
 		# files = db.session.query(File)\
-		# .outerjoin(Character.tag_relationships).outerjoin(TagAlias, CharacterTag.tag)\
+		# .outerjoin(Thing.tag_relationships).outerjoin(TagAlias, ThingTag.tag)\
 		# .outerjoin(File.tag_relationships).outerjoin(FileTag.tag)\
-		# .outerjoin(File.character_relationships).outerjoin(FileCharacter.character)\
+		# .outerjoin(File.thing_relationships).outerjoin(FileThing.thing)\
 		# .filter(*ANDs).all()
 
 	# else:

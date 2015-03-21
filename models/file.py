@@ -1,4 +1,4 @@
-from character_tagger.models import db
+from thing_tagger.models import db
 
 __all__ = ['File']
 
@@ -18,5 +18,5 @@ class File(db.Model):
 		return ",".join([item.tag.name for item in self.tag_relationships])
 
 	@property
-	def character_names(self):
-		return ",".join([item.character.name for item in self.character_relationships])
+	def thing_names(self):
+		return ",".join([item.thing.name for item in self.thing_relationships])

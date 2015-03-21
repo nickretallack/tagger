@@ -1,8 +1,12 @@
-from character_tagger.models import Character, Tag, db
+from thing_tagger.models import Thing, Tag, db
+
+def firsts(items):
+	return [item[0] for item in items]
+
 def context_processor():
 	return dict(
-		CHARACTER_NAMES=zip(*db.session.query(Character.name))[0],
-		TAG_NAMES=zip(*db.session.query(Tag.name))[0],
+		THING_NAMES=firsts(db.session.query(Thing.name)),
+		TAG_NAMES=firsts(db.session.query(Tag.name)),
 	)
 
 def register(app):

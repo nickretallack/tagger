@@ -16,7 +16,7 @@
   };
 
   $(function() {
-    var character_options, combo_options, tag_options;
+    var combo_options, tag_options, thing_options;
     tag_options = to_selectize_options(TAG_NAMES);
     $('.tag-field').selectize({
       delimiter: ',',
@@ -29,8 +29,8 @@
       },
       options: tag_options
     });
-    character_options = to_selectize_options(CHARACTER_NAMES);
-    $('.character-field').selectize({
+    thing_options = to_selectize_options(THING_NAMES);
+    $('.thing-field').selectize({
       delimiter: ',',
       persist: false,
       create: function(input) {
@@ -39,10 +39,10 @@
           text: input
         };
       },
-      options: character_options
+      options: thing_options
     });
-    combo_options = tag_options.concat(character_options);
-    return $('.tag-character-field').selectize({
+    combo_options = tag_options.concat(thing_options);
+    return $('.tag-thing-field').selectize({
       delimiter: ',',
       persist: false,
       create: function(input) {

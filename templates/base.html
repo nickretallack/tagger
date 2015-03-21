@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-<title>Character Tagger</title>
+<title>Thing Tagger</title>
 <link rel="stylesheet" href="{{url_for('static', filename='bower_components/selectize/dist/css/selectize.css')}}">
 <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
 % block head_end
@@ -11,7 +11,7 @@
 % include 'partial/messages.html'
 
 <a href="{{url_for('file.list')}}">Files</a>
-<a href="{{url_for('character.list')}}">Characters</a>
+<a href="{{url_for('thing.list')}}">Things</a>
 
 <form action="/file" method="post" enctype="multipart/form-data">
 <input type="file" name="file">
@@ -19,7 +19,7 @@
 </form>
 
 <form action="{{url_for('file.list')}}">
-<input type="text" name="search" class="tag-character-field" value="{{search}}">
+<input type="text" name="search" class="tag-thing-field" value="{{search}}">
 <button>Search</button>
 </form>
 
@@ -28,7 +28,7 @@
 
 <script>
 TAG_NAMES = {{TAG_NAMES|tojson|safe}};
-CHARACTER_NAMES = {{CHARACTER_NAMES|tojson|safe}};
+THING_NAMES = {{THING_NAMES|tojson|safe}};
 </script>
 
 <script src="{{url_for('static', filename='bower_components/jquery/dist/jquery.min.js')}}"></script>

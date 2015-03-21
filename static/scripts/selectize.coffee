@@ -13,17 +13,17 @@ $ ->
 			text: input
 		options: tag_options
 
-	character_options = to_selectize_options CHARACTER_NAMES
-	$('.character-field').selectize
+	thing_options = to_selectize_options THING_NAMES
+	$('.thing-field').selectize
 		delimiter: ','
 		persist: false
 		create: (input) ->
 			value: input
 			text: input
-		options: character_options
+		options: thing_options
 
-	combo_options = tag_options.concat(character_options)
-	$('.tag-character-field').selectize
+	combo_options = tag_options.concat(thing_options)
+	$('.tag-thing-field').selectize
 		delimiter: ','
 		persist: false
 		create: (input) ->

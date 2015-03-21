@@ -1,0 +1,13 @@
+% extends 'base.html'
+
+% block content
+
+<form action="{{url_for('thing.create')}}" method="POST">
+<input type="text" name="name">
+<button>Create</button>
+</form>
+
+% for thing in things
+<a href="{{url_for('thing.show', thing_id=thing.id)}}">{{thing.name}}</a>
+% endfor
+% endblock

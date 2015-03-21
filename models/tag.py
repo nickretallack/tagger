@@ -1,6 +1,6 @@
-from character_tagger.models import db
+from thing_tagger.models import db
 
-__all__ = ['Tag','CharacterTag','FileCharacterTag','FileTag']
+__all__ = ['Tag','ThingTag','FileThingTag','FileTag']
 
 class Tag(db.Model):
 	__tablename__ = 'tag'
@@ -9,24 +9,24 @@ class Tag(db.Model):
 
 # relationships
 
-class CharacterTag(db.Model):
-	__tablename__ = 'character_tag'
+class ThingTag(db.Model):
+	__tablename__ = 'thing_tag'
 	tag_id = db.Column('tag_id', db.ForeignKey('tag.id', ondelete='cascade'), primary_key=True)
-	tag = db.relationship('Tag', backref='character_relationships')
+	tag = db.relationship('Tag', backref='thing_relationships')
 
-	character_id = db.Column('character_id', db.ForeignKey('character.id', ondelete='cascade'), primary_key=True)
-	character = db.relationship('Character', backref='tag_relationships')
+	thing_id = db.Column('thing_id', db.ForeignKey('thing.id', ondelete='cascade'), primary_key=True)
+	thing = db.relationship('Thing', backref='tag_relationships')
 
-class FileCharacterTag(db.Model):
-	__tablename__ = 'file_character_tag'
+class FileThingTag(db.Model):
+	__tablename__ = 'file_thing_tag'
 	file_id = db.Column('file_id', db.ForeignKey('file.id', ondelete='cascade'), primary_key=True)
-	file = db.relationship('File', backref="character_tag_relationships")
+	file = db.relationship('File', backref="thing_tag_relationships")
 
 	tag_id = db.Column('tag_id', db.ForeignKey('tag.id', ondelete='cascade'), primary_key=True)
-	tag = db.relationship('Tag', backref="file_character_relationships")
+	tag = db.relationship('Tag', backref="file_thing_relationships")
 
-	character_id = db.Column('character_id', db.ForeignKey('character.id', ondelete='cascade'), primary_key=True)
-	character = db.relationship('Character', backref="file_tag_relationships")
+	thing_id = db.Column('thing_id', db.ForeignKey('thing.id', ondelete='cascade'), primary_key=True)
+	thing = db.relationship('Thing', backref="file_tag_relationships")
 
 class FileTag(db.Model):
 	__tablename__ = 'file_tag'
