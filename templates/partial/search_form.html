@@ -1,0 +1,22 @@
+<form 
+	class="inline-form"
+	role="search"
+	action="{{url_for('file.list')}}"
+	method="GET"
+	>
+
+	<div class="form-group">
+		<div class="input-group">
+			<input
+			class="tag-thing-field"
+			placeholder="Search"
+			type="text"
+			name="search"
+			value="{{search}}">
+
+			<span class="input-group-btn">
+				<button class="btn btn-default">Search</button>
+			</span>
+		</div>
+	</div>
+</form>

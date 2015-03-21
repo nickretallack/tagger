@@ -15,6 +15,7 @@
 }
 
 .file.view {
+	background-position: top center;
 	width: 800px;
 	height: 800px;
 }

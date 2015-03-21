@@ -9,11 +9,17 @@
 % endblock
 </head>
 <body>
-% include 'partial/messages.html'
 % include 'partial/top_nav.html'
 
-% block content
-% endblock
+<div class="container-fluid">
+	% include 'partial/search_form.html'
+	
+	% include 'partial/messages.html'
+	
+	% block content
+	% endblock
+</div>
+
 
 <script>
 TAG_NAMES = {{TAG_NAMES|tojson|safe}};
