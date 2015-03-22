@@ -6,7 +6,7 @@ def parse_tags(string):
 	if not string:
 		return set()
 	else:
-		return set(string.split(','))
+		return set([item.lower() for item in string.split(',')])
 
 def ensure_tags(wanted_tag_names):
 	existing_tags = db.session.query(Tag).filter(
