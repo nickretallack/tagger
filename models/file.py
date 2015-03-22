@@ -2,8 +2,12 @@ from tagger.models import db
 
 __all__ = ['File']
 
-# This is the primary resource.  Everything else attaches to it.
 class File(db.Model):
+	"""
+	Usually an image, but could be anything.
+	The purpose of this application is to tag the appearances of things in files,
+	so this is the primary model.
+	"""
 	__tablename__ = 'file'
 	id = db.Column(db.Integer, primary_key=True)
 	sha256 = db.Column(db.String, nullable=False, unique=True)

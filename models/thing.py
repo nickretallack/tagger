@@ -1,8 +1,13 @@
 from tagger.models import db
 
-__all__ = ['Thing', 'FileThing']
+__all__ = ['Thing']
 
 class Thing(db.Model):
+	"""
+	Could be a person, character, or object.
+	It's like a tag that can have its own tags attached to it.
+	You associate it with a file using an Appearance.
+	"""
 	__tablename__ = 'thing'
 	id = db.Column(db.Integer, primary_key=True)
 	name = db.Column(db.String, unique=True)
@@ -22,15 +27,3 @@ class Thing(db.Model):
 	@property
 	def tag_names(self):
 		return ",".join(self.tag_name_list)
-
-
-# relationships
-
-class FileThing(db.Model):
-	__tablename__ = 'file_thing'
-	file_id = db.Column('file_id', db.ForeignKey('file.id', ondelete='cascade'), primary_key=True)
-	file = db.relationship('File', backref=db.backref('thing_relationships', passive_deletes='all'))
-
-	thing_id = db.Column('thing_id', db.ForeignKey('thing.id', ondelete='cascade'), primary_key=True)
-	thing = db.relationship('Thing', backref=db.backref('file_relationships', passive_deletes='all'))
-

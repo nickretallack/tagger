@@ -2,7 +2,7 @@ from flask import Flask
 from tagger.models import db
 
 # views
-from views import file, tag, thing
+# from views import file, tag, thing
 
 from tagger.lib import error_handlers
 from tagger.lib import template_context_processor
@@ -15,9 +15,9 @@ def create_app():
 	app.jinja_env.line_statement_prefix = '%'
 	db.init_app(app)
 
-	app.register_blueprint(file.blueprint)
-	app.register_blueprint(tag.blueprint)
-	app.register_blueprint(thing.blueprint)
+	# app.register_blueprint(file.blueprint)
+	# app.register_blueprint(tag.blueprint)
+	# app.register_blueprint(thing.blueprint)
 
 	error_handlers.register(app)
 	template_context_processor.register(app)
