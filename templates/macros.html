@@ -3,3 +3,9 @@
 		active
 	% endif
 % endmacro
+
+% macro active_endpoint_class(endpoint)
+	% if request.endpoint == endpoint
+		active
+	% endif
+% endmacro
