@@ -43,3 +43,11 @@ def show_thing(thing_id):
 @blueprint.route('/thing/new', endpoint='new')
 def new_thing():
 	return render_template('thing/new.html')
+
+@blueprint.route('/thing/<int:thing_id>/delete', methods=['POST'], endpoint='delete')
+def delete_thing(thing_id):
+	record = db.session.query(Thing).filter_by(id=thing_id).one()
+	db.session.delete(record)
+	db.session.commit()
+	flash("Deleted a thing")
+	return redirect(url_for('thing.list'))

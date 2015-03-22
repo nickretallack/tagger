@@ -21,7 +21,8 @@ class Thing(db.Model):
 class FileThing(db.Model):
 	__tablename__ = 'file_thing'
 	file_id = db.Column('file_id', db.ForeignKey('file.id', ondelete='cascade'), primary_key=True)
+	file = db.relationship('File', backref=db.backref('thing_relationships', passive_deletes='all'))
+
 	thing_id = db.Column('thing_id', db.ForeignKey('thing.id', ondelete='cascade'), primary_key=True)
-	file = db.relationship('File', backref='thing_relationships')
-	thing = db.relationship('Thing', backref='file_relationships')
+	thing = db.relationship('Thing', backref=db.backref('file_relationships', passive_deletes='all'))
 

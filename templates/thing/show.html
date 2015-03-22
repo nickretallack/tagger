@@ -31,4 +31,11 @@
 		% endfor
 	</div>
 </div>
+
+<form method="post" action="{{url_for('thing.delete', thing_id=thing.id)}}" style="float:right; margin-top:15px">
+	<div class="form-group">
+		<button class="btn btn-danger">Delete Thing</button>
+	</div>
+</form>
+
 % endblock

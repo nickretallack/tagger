@@ -5,25 +5,30 @@
 <div class="row">
 	<div class="col-sm-4 col-md-3 col-lg-2">
 		<form action="{{url_for('tag.file', file_id=file.id)}}" method="POST">
+			<div class="form-group">
+				<label for="things">Thing Tags</label>
+				<input type="text" name="things" id="things" class="thing-field" value="{{file.thing_names}}">
+				<p class="help-block">What characters and objects are in this picture?  Don't describe them here.  Tag them first, then describe them globally.</p>
+			</div>
 
-		<div class="form-group">
-			<label for="things">Thing Tags</label>
-			<input type="text" name="things" id="things" class="thing-field" value="{{file.thing_names}}">
-			<p class="help-block">What characters and objects are in this picture?  Don't describe them here.  Tag them first, then describe them globally.</p>
-		</div>
+			<div class="form-group">
+				<label for="tags">Scene Tags</label>
+				<input type="text" name="tags" id="tags" class="tag-field" value="{{file.tag_names}}">
+				<p class="help-block">What is happening in this picture?</p>
+			</div>
 
-		<div class="form-group">
-			<label for="tags">Scene Tags</label>
-			<input type="text" name="tags" id="tags" class="tag-field" value="{{file.tag_names}}">
-			<p class="help-block">What is happening in this picture?</p>
-		</div>
-
-		<button class="btn btn-default">Tag</button>
+			<button class="btn btn-default">Tag</button>
 		</form>
 	</div>
 	<div class="col-sm-8 col-md-9 col-lg-10">
 		<img src="{{url_for('static',filename='files/'+file.filename)}}" class="file view">
 	</div>
 </div>
+
+<form method="post" action="{{url_for('file.delete', file_id=file.id)}}" style="float:right; margin-top:15px">
+	<div class="form-group">
+		<button class="btn btn-danger">Delete File</button>
+	</div>
+</form>
 
 % endblock

@@ -124,3 +124,13 @@ def show_file(file_id):
 	record = db.session.query(File).filter_by(id=file_id).one()
 
 	return render_template('file/show.html', file=record)
+
+@blueprint.route('/file/<int:file_id>/delete', methods=['POST'], endpoint='delete')
+def delete_file(file_id):
+	record = db.session.query(File).filter_by(id=file_id).one()
+	db.session.delete(record)
+	db.session.commit()
+	flash("Deleted a file")
+	return redirect(url_for('file.list'))
+
+
