@@ -2,11 +2,11 @@ import os
 import hashlib
 from flask import *
 from werkzeug import secure_filename
-from tagger.models import db, File, Tag, Thing, FileTag, FileThing, ThingTag, FileThingTag
+from tagger.models import db, File, Thing, Appearance
 from sqlalchemy.exc import IntegrityError
 from tagger.lib.iterators import firsts
 import requests
-from tagger.lib import tagging
+# from tagger.lib import tagging
 
 blueprint = Blueprint('file',__name__)
 
@@ -29,40 +29,40 @@ def hash_file(file):
 @blueprint.route('/file', endpoint='list')
 def index():
 	search = request.values.get('search','').strip()
-	if search:
-		terms = set(search.split(','))
+	# if search:
+	# 	terms = set(search.split(','))
 
-		# Find all things that match the query
-		thing_ids = firsts(db.session.execute("""
-			select tagged_thing.id
-			from
-			(
-				select 
-				thing.id,
-				count(*) as tag_count
+	# 	# Find all things that match the query
+	# 	thing_ids = firsts(db.session.execute("""
+	# 		select tagged_thing.id
+	# 		from
+	# 		(
+	# 			select 
+	# 			thing.id,
+	# 			count(*) as tag_count
 
-				from thing
-				join thing_tag on thing_tag.thing_id = thing.id
-				join tag on tag.id = thing_tag.tag_id
-				where tag.name in :tags
-				group by thing.id
-			) as tagged_thing
-			where tagged_thing.tag_count = :tag_count
-		""", dict(
-				tag_count=len(terms),
-				tags=tuple(terms),
-			)
-		))
+	# 			from thing
+	# 			join thing_tag on thing_tag.thing_id = thing.id
+	# 			join tag on tag.id = thing_tag.tag_id
+	# 			where tag.name in :tags
+	# 			group by thing.id
+	# 		) as tagged_thing
+	# 		where tagged_thing.tag_count = :tag_count
+	# 	""", dict(
+	# 			tag_count=len(terms),
+	# 			tags=tuple(terms),
+	# 		)
+	# 	))
 
-		# Find all files that have at least one of those things
-		if len(thing_ids):
-			files = db.session.query(File).join(FileThing).filter(
-				FileThing.thing_id.in_(thing_ids)
-			).all()
-		else:
-			files = []
-	else:
-		files = db.session.query(File).all()
+	# 	# Find all files that have at least one of those things
+	# 	if len(thing_ids):
+	# 		files = db.session.query(File).join(Appearance).filter(
+	# 			FileThing.thing_id.in_(thing_ids)
+	# 		).all()
+	# 	else:
+	# 		files = []
+	# else:
+	files = db.session.query(File).all()
 		
 	return render_template('file/list.html', files=files, search=search)
 
@@ -104,7 +104,7 @@ def post_file():
 		flash("We already have that file.")
 		return redirect(url_for('.list'))
 
-	tagging.request_tag_file(record)
+	# tagging.request_tag_file(record)
 
 	path = os.path.join(current_app.config['FILE_FOLDER'], record.filename)
 	if file:
@@ -119,7 +119,7 @@ def post_file():
 def show_file(file_id):
 	record = db.session.query(File).filter_by(id=file_id).one()
 
-	return render_template('file/show.html', file=record, delta_tags=tagging.get_delta_tags)
+	return render_template('file/show.html', file=record) #, delta_tags=tagging.get_delta_tags)
 
 @blueprint.route('/file/<int:file_id>/delete', methods=['POST'], endpoint='delete')
 def delete_file(file_id):

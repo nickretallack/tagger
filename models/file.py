@@ -2,6 +2,7 @@ from tagger.models import db
 
 __all__ = ['File']
 
+
 class File(db.Model):
 	"""
 	Usually an image, but could be anything.

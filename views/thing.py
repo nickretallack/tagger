@@ -1,7 +1,7 @@
 from flask import *
 from tagger.models import Thing, db
 from sqlalchemy.exc import IntegrityError
-from tagger.lib import tagging
+# from tagger.lib import tagging
 
 blueprint = Blueprint('thing',__name__)
 
@@ -16,7 +16,7 @@ def create_thing():
 	)
 	db.session.add(thing)
 
-	tagging.request_tag_thing(thing)
+	# tagging.request_tag_thing(thing)
 
 	try:
 		db.session.commit()
