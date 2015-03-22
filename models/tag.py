@@ -43,6 +43,8 @@ class FileThingTag(db.Model):
 	thing_id = db.Column('thing_id', db.ForeignKey('thing.id', ondelete='cascade'), primary_key=True)
 	thing = db.relationship('Thing', backref=db.backref("file_tag_relationships", passive_deletes='all'))
 
+	is_anti_tag = db.Column(db.Boolean, nullable=False, server_default='f')
+
 class FileTag(db.Model):
 	__tablename__ = 'file_tag'
 	file_id = db.Column('file_id', db.ForeignKey('file.id', ondelete='cascade'), primary_key=True)

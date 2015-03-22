@@ -2,7 +2,7 @@ import os
 import hashlib
 from flask import *
 from werkzeug import secure_filename
-from tagger.models import db, File, Tag, Thing, FileTag, FileThing, ThingTag
+from tagger.models import db, File, Tag, Thing, FileTag, FileThing, ThingTag, FileThingTag
 from sqlalchemy.exc import IntegrityError
 from tagger.lib.iterators import firsts
 import requests
@@ -115,15 +115,11 @@ def post_file():
 	db.session.commit()
 	return redirect(url_for('.show', file_id=record.id))
 
-	# file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
-	# return redirect(url_for('uploaded_file',
-	# 						filename=filename))	
-
 @blueprint.route('/file/<int:file_id>', methods=['GET'], endpoint='show')
 def show_file(file_id):
 	record = db.session.query(File).filter_by(id=file_id).one()
 
-	return render_template('file/show.html', file=record)
+	return render_template('file/show.html', file=record, delta_tags=tagging.get_delta_tags)
 
 @blueprint.route('/file/<int:file_id>/delete', methods=['POST'], endpoint='delete')
 def delete_file(file_id):

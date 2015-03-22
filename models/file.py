@@ -14,9 +14,21 @@ class File(db.Model):
 		return "{}{}".format(self.sha256, self.ext)
 
 	@property
+	def things(self):
+		return [item.thing for item in self.thing_relationships]
+
+	@property
+	def tags(self):
+		return [item.tag for item in self.tag_relationships]
+
+	@property
+	def tag_name_list(self):
+		return [item.name for item in self.tags]
+
+	@property
 	def tag_names(self):
-		return ",".join([item.tag.name for item in self.tag_relationships])
+		return ",".join(self.tag_name_list)
 
 	@property
 	def thing_names(self):
-		return ",".join([item.thing.name for item in self.thing_relationships])
+		return ",".join([item.name for item in self.things])

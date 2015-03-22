@@ -17,6 +17,19 @@
 				<p class="help-block">What is happening in this picture?</p>
 			</div>
 
+			<h2>Things</h2>
+			<p class="help-block">Does this thing appear differently in this picture from how it usually does?  Edit the tags for this particular appearance here.</p>
+			% for thing in file.things
+				<div>
+					<h3><a href="{{url_for('thing.show', thing_id=thing.id)}}">{{thing.name}}</a></h3>
+
+					<div class="form-group">
+						<label for="tags">Tags</label>
+						<input type="text" name="thing-{{thing.id}}-tags" id="tags" class="tag-field" value="{{delta_tags(file,thing)}}">
+					</div>
+				</div>
+			% endfor
+			
 			<button class="btn btn-default">Tag</button>
 		</form>
 	</div>

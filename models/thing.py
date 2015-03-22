@@ -12,8 +12,16 @@ class Thing(db.Model):
 		return [item.file for item in self.file_relationships]
 
 	@property
+	def tags(self):
+		return [item.tag for item in self.tag_relationships]
+
+	@property
+	def tag_name_list(self):
+		return [item.name for item in self.tags]
+
+	@property
 	def tag_names(self):
-		return ",".join([item.tag.name for item in self.tag_relationships])
+		return ",".join(self.tag_name_list)
 
 
 # relationships
