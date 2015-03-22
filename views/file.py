@@ -64,7 +64,7 @@ def index():
 	else:
 		files = db.session.query(File).all()
 		
-	return render_template('index.html', files=files, search=search)
+	return render_template('file/list.html', files=files, search=search)
 
 @blueprint.route('/file/new', methods=['GET'], endpoint='new')
 def new_file():
