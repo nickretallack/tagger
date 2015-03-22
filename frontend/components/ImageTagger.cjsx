@@ -1,8 +1,5 @@
 V = require '../lib/vector'
 
-random_integer = (min, max) ->
-	Math.floor(Math.random() * (max - min)) + min
-
 vector_prop_shape =
 	x: React.PropTypes.number
 	y: React.PropTypes.number
@@ -37,9 +34,8 @@ module.exports = React.createClass
 		mouse_position = V offsetX, offsetY
 		size = V 150, 150
 		position = mouse_position.subtract size.scale 0.5
-		id = random_integer 0, Math.pow(2,31)
-		appearance = {size, position, id}
-		@props.createAppearance appearance
+		location = {size, position}
+		@props.createAppearance location
 
 	render: ->
 		appearances = for id,appearance of @props.appearances
