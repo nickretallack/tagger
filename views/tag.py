@@ -30,3 +30,16 @@ def tag_thing(thing_id):
 def list_tags():
 	tags = db.session.query(Tag).all()
 	return render_template("tag/list.html", tags=tags)
+
+@blueprint.route('/tag/<int:tag_id>', methods=['GET'], endpoint='show')
+def show_tag(tag_id):
+	tag = db.session.query(Tag).filter_by(id=tag_id).one()
+	return render_template("tag/show.html", tag=tag)
+
+@blueprint.route('/tag/<int:tag_id>/delete', methods=['POST'], endpoint='delete')
+def delete_tag(tag_id):
+	record = db.session.query(Tag).filter_by(id=tag_id).one()
+	db.session.delete(record)
+	db.session.commit()
+	flash("Deleted a tag")
+	return redirect(url_for('tag.list'))

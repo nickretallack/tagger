@@ -7,6 +7,21 @@ class Tag(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	name = db.Column(db.String, unique=True)
 
+	@property
+	def things(self):
+		return [item.thing for item in self.thing_relationships]
+
+	@property
+	def files(self):
+		return [item.file for item in self.file_relationships]
+
+	@property
+	def thing_files(self):
+		from tagger.models import File, FileThing, Thing, ThingTag
+		return db.session.query(File).join(FileThing).join(Thing).join(ThingTag).filter(
+			ThingTag.tag == self
+		).all()
+
 # relationships
 
 class ThingTag(db.Model):

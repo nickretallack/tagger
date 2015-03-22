@@ -6,7 +6,7 @@
 
 <ul class="things list-unstyled">
 % for tag in tags
-<li><a href="{{url_for('file.list', search=tag.name)}}">{{tag.name}}</a></li>
+<li><a href="{{url_for('tag.show', tag_id=tag.id)}}">{{tag.name}}</a></li>
 % endfor
 </ul>
 % endblock
