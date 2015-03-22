@@ -1,9 +1,14 @@
+AutocompleteTagger = require './AutocompleteTagger'
+
 module.exports = React.createClass
 	render: ->
 		<div>
-			<p>Choose a thing</p>
-			
+			<label>Recurring character or object?</label>
+			<p>(TODO)</p>
 
-			<p>Apply tags too</p>
-
+			<label>Edit this appearance</label>
+			<AutocompleteTagger
+				tags={[]}
+				possible_tags={TAG_NAMES}
+			/>
 		</div>

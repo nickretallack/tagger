@@ -30,17 +30,6 @@ AppearanceOverlay = React.createClass
 
 module.exports = React.createClass
 	getInitialState: ->
-		overlays: [
-			{
-				position:
-					x: 50
-					y: 50
-				size:
-					x: 150
-					y: 150
-				id: 1
-			}
-		]
 		creating_overlay: null
 
 	onClickImage: (event) ->
@@ -49,13 +38,12 @@ module.exports = React.createClass
 		size = V 150, 150
 		position = mouse_position.subtract size.scale 0.5
 		id = random_integer 0, Math.pow(2,31)
-		overlay = {size, position, id}
-		@setState
-			overlays: @state.overlays.concat [overlay]
+		appearance = {size, position, id}
+		@props.createAppearance appearance
 
 	render: ->
-		overlays = for overlay in @state.overlays
-			<AppearanceOverlay key={overlay.id} selectAppearance={@props.selectAppearance} {...overlay}/>
+		appearances = for id,appearance of @props.appearances
+			<AppearanceOverlay key={appearance.id} selectAppearance={@props.selectAppearance} {...appearance}/>
 
 		<div style={{position:'relative'}}>
 			<img
@@ -64,6 +52,6 @@ module.exports = React.createClass
 			onClick={@onClickImage}
 			/>
 			<div style={{position:'absolute', zIndex: 2}}>
-				{overlays}
+				{appearances}
 			</div>
 		</div>
