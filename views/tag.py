@@ -1,5 +1,6 @@
 from flask import *
 from tagger.models import db, File, Thing, Tag
+from tagger.lib.tag.thing import request_tag_thing
 # from tagger.lib import tagging
 
 blueprint = Blueprint('tag',__name__)
@@ -21,7 +22,7 @@ def tag_thing(thing_id):
 	.options(db.subqueryload('tag_relationships').joinedload('tag'))\
 	.one()
 
-	# tagging.request_tag_thing(thing)
+	request_tag_thing(thing)
 	db.session.commit()
 
 	return redirect(url_for('thing.show', thing_id=thing_id))
