@@ -2,6 +2,58 @@
 
 % block content
 
+<div id="react-image-tagger"></div>
+<script>
+IMAGE_URL = {{url_for('static',filename='files/'+file.filename)|tojson|safe}};
+</script>
+
+{#
+<script type="text/jsx">
+React.render(
+	<ReactTagsInput
+	tags={['cute','cartoon']}
+	possible_tags={['cute','cartoon','squirrel','bunny']}
+	/>,
+	document.getElementById("react-image-tagger")
+)
+</script>
+#}
+
+<script type="text/jsx">
+React.render(
+	<AutoCompleteTagger
+	tags={['cute','cartoon']}
+	possible_tags={['cute','cartoon','squirrel','bunny']}
+	/>,
+	document.getElementById("react-image-tagger")
+)
+</script>
+
+
+{#
+<script type="text/jsx">
+React.render(
+	<TagDelta
+	tags={['cute','cartoon']}
+	/>,
+	document.getElementById("react-image-tagger")
+)
+</script>
+
+<script type="text/jsx">
+React.render(
+	<TaggingActivity
+
+
+	image_url={IMAGE_URL}
+	/>,
+	document.getElementById("react-image-tagger")
+)
+</script>
+#}
+
+
+{#
 <div class="row">
 	<div class="col-sm-4 col-md-3 col-lg-2">
 		<form action="{{url_for('tag.file', file_id=file.id)}}" method="POST">
@@ -17,7 +69,6 @@
 				<p class="help-block">What is happening in this picture?</p>
 			</div>
 
-			{#
 			<h2>Things</h2>
 			<p class="help-block">Does this thing appear differently in this picture from how it usually does?  Edit the tags for this particular appearance here.</p>
 			% for thing in file.things
@@ -30,7 +81,6 @@
 					</div>
 				</div>
 			% endfor
-			#}
 
 			<button class="btn btn-default">Tag</button>
 		</form>
@@ -39,6 +89,7 @@
 		<img src="{{url_for('static',filename='files/'+file.filename)}}" class="file view">
 	</div>
 </div>
+#}
 
 <form method="post" action="{{url_for('file.delete', file_id=file.id)}}" style="float:right; margin-top:15px">
 	<div class="form-group">

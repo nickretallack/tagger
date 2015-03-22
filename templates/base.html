@@ -4,7 +4,26 @@
 <title>Thing Tagger</title>
 <link rel="stylesheet" href="{{url_for('static', filename='bower_components/selectize/dist/css/selectize.css')}}">
 <link rel="stylesheet" href="{{url_for('static', filename='bower_components/bootstrap/dist/css/bootstrap.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='non_bower_components/react-tagsinput/react-tagsinput.css')}}">
 <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+
+<script>
+TAG_NAMES = {{TAG_NAMES|tojson|safe}};
+THING_NAMES = {{THING_NAMES|tojson|safe}};
+</script>
+
+<script src="{{url_for('static', filename='bower_components/jquery/dist/jquery.min.js')}}"></script>
+<script src="{{url_for('static', filename='bower_components/underscore/underscore-min.js')}}"></script>
+<script src="{{url_for('static', filename='bower_components/bootstrap/dist/js/bootstrap.js')}}"></script>
+<script src="{{url_for('static', filename='bower_components/microplugin/src/microplugin.js')}}"></script>
+<script src="{{url_for('static', filename='bower_components/sifter/sifter.js')}}"></script>
+<script src="{{url_for('static', filename='bower_components/selectize/dist/js/selectize.js')}}"></script>
+<script src="{{url_for('static', filename='bower_components/react/react.js')}}"></script>
+<script src="{{url_for('static', filename='bower_components/react/JSXTransformer.js')}}"></script>
+<script src="{{url_for('static', filename='non_bower_components/react-tagsinput/react-tagsinput.js')}}"></script>
+<script src="{{url_for('static', filename='scripts/selectize.js')}}"></script>
+<script src="{{url_for('static', filename='bundle.js')}}"></script>
+
 % block head_end
 % endblock
 </head>
@@ -21,17 +40,6 @@
 </div>
 
 
-<script>
-TAG_NAMES = {{TAG_NAMES|tojson|safe}};
-THING_NAMES = {{THING_NAMES|tojson|safe}};
-</script>
-
-<script src="{{url_for('static', filename='bower_components/jquery/dist/jquery.min.js')}}"></script>
-<script src="{{url_for('static', filename='bower_components/bootstrap/dist/js/bootstrap.js')}}"></script>
-<script src="{{url_for('static', filename='bower_components/microplugin/src/microplugin.js')}}"></script>
-<script src="{{url_for('static', filename='bower_components/sifter/sifter.js')}}"></script>
-<script src="{{url_for('static', filename='bower_components/selectize/dist/js/selectize.js')}}"></script>
-<script src="{{url_for('static', filename='scripts/selectize.js')}}"></script>
 
 % block body_end
 % endblock
