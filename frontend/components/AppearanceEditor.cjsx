@@ -1,6 +1,9 @@
 Tagger = require './AutocompleteTagger'
+{Navigation} = ReactRouter
 
 module.exports = React.createClass
+	mixins: [Navigation]
+
 	removeAppearance: ->
 		@props.cortex.appearances[@props.id.val()].remove()
 		@context.router.transitionTo 'file details'

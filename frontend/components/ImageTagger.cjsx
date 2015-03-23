@@ -1,5 +1,8 @@
 V = require '../lib/vector'
-{Link} = ReactRouter
+{Link, Navigation} = ReactRouter
+
+random_integer = (min, max) ->
+	Math.floor(Math.random() * (max - min)) + min
 
 vector_prop_shape =
 	x: React.PropTypes.number
@@ -24,6 +27,8 @@ AppearanceOverlay = React.createClass
 		/>
 
 module.exports = React.createClass
+	mixins: [Navigation]
+
 	getInitialState: ->
 		creating_overlay: null
 
@@ -32,11 +37,15 @@ module.exports = React.createClass
 		mouse_position = V offsetX, offsetY
 		size = V 150, 150
 		position = mouse_position.subtract size.scale 0.5
-		location = {size, position}
-		@props.createAppearance location
+
+		id = "new-#{random_integer 0, Math.pow(2,31)}"
+		appearance = {id, size, position, tags:[], negative_tags:[], thing_name:null}
+		@props.appearances.add appearance.id, appearance
+		@context.router.transitionTo 'appearance',
+				appearance_id: id
 
 	render: ->
-		appearances = for id,appearance of @props.appearances
+		appearances = for id,appearance of @props.appearances.val()
 			<AppearanceOverlay key={appearance.id} {...appearance}/>
 
 		<div style={{position:'relative'}}>
