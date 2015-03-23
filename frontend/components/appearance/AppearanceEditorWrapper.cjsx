@@ -1,10 +1,12 @@
-{Link, State, Navigation} = ReactRouter
+{Link} = ReactRouter
 AppearanceEditor = require './AppearanceEditor'
 FileDetailEditor = require '../FileDetailEditor'
 module.exports = React.createClass
-	mixins: [State, Navigation]
+	contextTypes:
+		router: React.PropTypes.func.isRequired
+
 	currentAppearance: ->
-		result = @props.cortex.appearances[@getParams().appearance_id]
+		result = @props.cortex.appearances[@context.router.getCurrentParams().appearance_id]
 
 	render: ->
 		current_appearance = @currentAppearance()

@@ -6,7 +6,8 @@ random_integer = (min, max) ->
 	Math.floor(Math.random() * (max - min)) + min
 
 module.exports = React.createClass
-	mixins: [Navigation]
+	contextTypes:
+		router: React.PropTypes.func.isRequired
 
 	getInitialState: ->
 		creating_overlay: null

@@ -2,7 +2,9 @@ AppearanceOverlayManager = require './appearance/AppearanceOverlayManager'
 {RouteHandler, Navigation} = ReactRouter
 
 module.exports = React.createClass
-	mixins: [Navigation]
+	contextTypes:
+		router: React.PropTypes.func.isRequired
+
 	render: ->
 		<div className="row">
 			<div className="col-sm-4 col-md-3 col-lg-2">

@@ -1,8 +1,8 @@
 Tagger = require '../tag_input/Tagger'
-{Navigation} = ReactRouter
 
 module.exports = React.createClass
-	mixins: [Navigation]
+	contextTypes:
+		router: React.PropTypes.func.isRequired
 
 	removeAppearance: ->
 		@props.cortex.appearances[@props.id.val()].remove()

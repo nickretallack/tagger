@@ -94,7 +94,9 @@
 	RouteHandler = ReactRouter.RouteHandler, Navigation = ReactRouter.Navigation;
 
 	module.exports = React.createClass({
-	  mixins: [Navigation],
+	  contextTypes: {
+	    router: React.PropTypes.func.isRequired
+	  },
 	  render: function() {
 	    return React.createElement("div", {
 	      "className": "row"
@@ -130,19 +132,21 @@
 /* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var AppearanceEditor, FileDetailEditor, Link, Navigation, State;
+	var AppearanceEditor, FileDetailEditor, Link;
 
-	Link = ReactRouter.Link, State = ReactRouter.State, Navigation = ReactRouter.Navigation;
+	Link = ReactRouter.Link;
 
 	AppearanceEditor = __webpack_require__(5);
 
 	FileDetailEditor = __webpack_require__(2);
 
 	module.exports = React.createClass({
-	  mixins: [State, Navigation],
+	  contextTypes: {
+	    router: React.PropTypes.func.isRequired
+	  },
 	  currentAppearance: function() {
 	    var result;
-	    return result = this.props.cortex.appearances[this.getParams().appearance_id];
+	    return result = this.props.cortex.appearances[this.context.router.getCurrentParams().appearance_id];
 	  },
 	  render: function() {
 	    var current_appearance;
@@ -178,7 +182,9 @@
 	};
 
 	module.exports = React.createClass({
-	  mixins: [Navigation],
+	  contextTypes: {
+	    router: React.PropTypes.func.isRequired
+	  },
 	  getInitialState: function() {
 	    return {
 	      creating_overlay: null
@@ -243,15 +249,15 @@
 /* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Navigation, Tagger,
+	var Tagger,
 	  __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 	Tagger = __webpack_require__(8);
 
-	Navigation = ReactRouter.Navigation;
-
 	module.exports = React.createClass({
-	  mixins: [Navigation],
+	  contextTypes: {
+	    router: React.PropTypes.func.isRequired
+	  },
 	  removeAppearance: function() {
 	    this.props.cortex.appearances[this.props.id.val()].remove();
 	    return this.context.router.transitionTo('file details');
