@@ -6,48 +6,56 @@ random_integer = (min, max) ->
 	Math.floor(Math.random() * (max - min)) + min
 
 module.exports = React.createClass
-	getInitialState: ->
-		appearances: {}
-#			1:
-#				id: 1
-#				position:
-#					x: 50
-#					y: 50
-#				size:
-#					x: 150
-#					y: 150
-#				thing: 'test'
-		selected_appearance: null
+#	getInitialState: ->
+#		new Cortex
+#
+#			appearances: {}
+##				1:
+##					id: 1
+##					position:
+##						x: 50
+##						y: 50
+##					size:
+##						x: 150
+##						y: 150
+##					thing: 'test'
+#			selected_appearance: null
 
 	unSelectAppearance: ->
 		@setState selected_appearance: null
 
 	selectAppearance: (id) ->
-		@setState selected_appearance: id
+		@props.cortex.selected_appearance.set id
 
 	removeAppearance: (id) ->
-		delete @state.appearances[id]
-		@setState appearances: @state.appearances
+		delete @props.cortex.appearances[id]
+		@setState appearances: @props.cortex.appearances
 
-
+	selectedAppearance: ->
+		selected_appearance_id = @props.cortex.selected_appearance.getValue()
+		if selected_appearance_id
+			@props.cortex.appearances[selected_appearance_id]
 
 	createAppearance: (location) ->
 		appearance = location
 		appearance.tags = []
-
+		appearance.negative_tags = []
+		appearance.thing_name = null
 		id = random_integer 0, Math.pow(2,31)
 		appearance.id = "new-#{id}"
 
-		@state.appearances[appearance.id] = appearance
-		@setState
-			appearances: @state.appearances
-			selected_appearance: appearance.id
+		#@props.cortex.appearances[appearance.id] = appearance
+		@props.cortex.appearances.add appearance.id, appearance
+		@props.cortex.selected_appearance.set appearance.id
+		#@setState
+		#	appearances: @props.cortex.appearances
+		#	selected_appearance: appearance.id
 
 	render: ->
 		<div className="row">
 			<div className="col-sm-4 col-md-3 col-lg-2">
 				<FileTagDetails
-				selected_appearance={@state.appearances[@state.selected_appearance]}
+				selected_appearance={@selectedAppearance()}
 				unSelectAppearance={@unSelectAppearance}
 				removeAppearance={@removeappearance}
 				selectThing={@selectThing}
@@ -59,7 +67,7 @@ module.exports = React.createClass
 				src={IMAGE_URL}
 				selectAppearance={@selectAppearance}
 				createAppearance={@createAppearance}
-				appearances={@state.appearances}
+				appearances={@props.cortex.appearances.getValue()}
 				/>
 			</div>
 		</div>

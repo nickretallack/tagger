@@ -47,6 +47,7 @@ module.exports = React.createClass(
 			tags: @props.tags
 			onChangeInput: @complete
 			onTagAdd: @add
+			onTagRemove: @props.onTagRemove
 			onBeforeTagAdd: @beforeAdd
 			addOnBlur: false
 			placeholder: ''

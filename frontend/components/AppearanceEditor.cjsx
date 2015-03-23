@@ -10,10 +10,40 @@ module.exports = React.createClass
 	selectThing: (name) ->
 		$.get "/api/thing/#{name}/tag", (response) =>
 			@setState thing_tags: response.items
-		@props.selectThing name
+		@props.thing_name.set name
 
 	mixedTags: ->
-		_.union(@state.thing_tags, @props.tags)
+		_.difference(_.union(@state.thing_tags, @props.tags.getValue()), @props.negative_tags.getValue())
+
+	thingNameTags: ->
+		name = @props.thing_name.getValue()
+		if name
+			[name]
+		else
+			[]
+
+	addTag: (name) ->
+		index = @props.negative_tags.findIndex()
+
+		# remove negative tag
+		if index isnt -1
+			@props.tags.removeAt index
+
+		# create positive tag
+		else if name not in @state.thing_tags
+			@props.tags.push name
+
+
+	removeTag: (name) ->
+		index = @props.tags.findIndex()
+
+		# remove positive tag
+		if index isnt -1
+			@props.tags.removeAt index
+
+		# create negative tag
+		else if name in @state.thing_tags
+			@props.negative_tags.push name
 
 	render: ->
 	
@@ -22,7 +52,7 @@ module.exports = React.createClass
 			<div className="form-group">
 				<label>Recurring character or object?</label>
 				<Tagger
-					tags={@props.tags}
+					tags={@thingNameTags()}
 					possible_tags={THING_NAMES}
 					onTagAdd={@selectThing}
 				/>
@@ -33,6 +63,8 @@ module.exports = React.createClass
 				<Tagger
 					tags={@mixedTags()}
 					possible_tags={TAG_NAMES}
+					onTagAdd={@addTag}
+					onTagRemove={@removeTag}
 				/>
 				<p className="help-block">Does this thing appear differently in this picture from how it usually does?  Edit the tags for this particular appearance here.</p>
 			</div>

@@ -62,39 +62,37 @@
 	};
 
 	module.exports = React.createClass({
-	  getInitialState: function() {
-	    return {
-	      appearances: {},
-	      selected_appearance: null
-	    };
-	  },
 	  unSelectAppearance: function() {
 	    return this.setState({
 	      selected_appearance: null
 	    });
 	  },
 	  selectAppearance: function(id) {
-	    return this.setState({
-	      selected_appearance: id
-	    });
+	    return this.props.cortex.selected_appearance.set(id);
 	  },
 	  removeAppearance: function(id) {
-	    delete this.state.appearances[id];
+	    delete this.props.cortex.appearances[id];
 	    return this.setState({
-	      appearances: this.state.appearances
+	      appearances: this.props.cortex.appearances
 	    });
+	  },
+	  selectedAppearance: function() {
+	    var selected_appearance_id;
+	    selected_appearance_id = this.props.cortex.selected_appearance.getValue();
+	    if (selected_appearance_id) {
+	      return this.props.cortex.appearances[selected_appearance_id];
+	    }
 	  },
 	  createAppearance: function(location) {
 	    var appearance, id;
 	    appearance = location;
 	    appearance.tags = [];
+	    appearance.negative_tags = [];
+	    appearance.thing_name = null;
 	    id = random_integer(0, Math.pow(2, 31));
 	    appearance.id = "new-" + id;
-	    this.state.appearances[appearance.id] = appearance;
-	    return this.setState({
-	      appearances: this.state.appearances,
-	      selected_appearance: appearance.id
-	    });
+	    this.props.cortex.appearances.add(appearance.id, appearance);
+	    return this.props.cortex.selected_appearance.set(appearance.id);
 	  },
 	  render: function() {
 	    return React.createElement("div", {
@@ -102,7 +100,7 @@
 	    }, React.createElement("div", {
 	      "className": "col-sm-4 col-md-3 col-lg-2"
 	    }, React.createElement(FileTagDetails, {
-	      "selected_appearance": this.state.appearances[this.state.selected_appearance],
+	      "selected_appearance": this.selectedAppearance(),
 	      "unSelectAppearance": this.unSelectAppearance,
 	      "removeAppearance": this.removeappearance,
 	      "selectThing": this.selectThing
@@ -112,7 +110,7 @@
 	      "src": IMAGE_URL,
 	      "selectAppearance": this.selectAppearance,
 	      "createAppearance": this.createAppearance,
-	      "appearances": this.state.appearances
+	      "appearances": this.props.cortex.appearances.getValue()
 	    })));
 	  }
 	});
@@ -124,7 +122,7 @@
 
 	var AppearanceOverlay, V, vector_prop_shape;
 
-	V = __webpack_require__(4);
+	V = __webpack_require__(6);
 
 	vector_prop_shape = {
 	  x: React.PropTypes.number,
@@ -214,9 +212,9 @@
 
 	var AppearanceEditor, AutocompleteTagger;
 
-	AutocompleteTagger = __webpack_require__(5);
+	AutocompleteTagger = __webpack_require__(4);
 
-	AppearanceEditor = __webpack_require__(6);
+	AppearanceEditor = __webpack_require__(5);
 
 	module.exports = React.createClass({
 	  render: function() {
@@ -231,6 +229,176 @@
 
 /***/ },
 /* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var ReactTagsInput;
+
+	ReactTagsInput = __webpack_require__(7);
+
+	module.exports = React.createClass({
+	  displayName: 'AutoCompleteTagger',
+	  propTypes: {
+	    tags: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
+	    possible_tags: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
+	    allow_new_tags: React.PropTypes.bool.isRequired
+	  },
+	  getDefaultProps: function() {
+	    return {
+	      tags: [],
+	      possible_tags: [],
+	      allow_new_tags: true
+	    };
+	  },
+	  getInitialState: function() {
+	    return {
+	      completions: []
+	    };
+	  },
+	  complete: function(value) {
+	    if (value === '') {
+	      return this.setState({
+	        completions: []
+	      });
+	    }
+	    this.setState({
+	      completions: this.props.possible_tags.filter((function(comp) {
+	        return comp.substr(0, value.length) === value && this.refs.tags.getTags().indexOf(comp) === -1;
+	      }).bind(this))
+	    });
+	  },
+	  beforeAdd: function(tag) {
+	    if (this.props.possible_tags.indexOf(tag) !== -1) {
+	      return true;
+	    }
+	    if (this.state.completions.length === 1) {
+	      return this.state.completions[0];
+	    }
+	    return this.props.allow_new_tags;
+	  },
+	  add: function(tag) {
+	    var _base;
+	    this.setState({
+	      completions: []
+	    });
+	    if (typeof (_base = this.props).onTagAdd === "function") {
+	      _base.onTagAdd(tag);
+	    }
+	  },
+	  render: function() {
+	    var completionNodes, tagsInputProps;
+	    completionNodes = this.state.completions.map((function(comp) {
+	      var add;
+	      add = (function(e) {
+	        this.refs.tags.addTag(comp);
+	      }).bind(this);
+	      return React.createElement('span', {}, React.createElement('a', {
+	        className: '',
+	        onClick: add
+	      }, comp), ' ');
+	    }).bind(this));
+	    tagsInputProps = {
+	      ref: 'tags',
+	      tags: this.props.tags,
+	      onChangeInput: this.complete,
+	      onTagAdd: this.add,
+	      onTagRemove: this.props.onTagRemove,
+	      onBeforeTagAdd: this.beforeAdd,
+	      addOnBlur: false,
+	      placeholder: ''
+	    };
+	    return React.createElement('div', null, React.createElement(ReactTagsInput, tagsInputProps), React.createElement('div', {
+	      style: {
+	        marginTop: '10px'
+	      }
+	    }, completionNodes));
+	  }
+	});
+
+
+/***/ },
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Tagger,
+	  __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+
+	Tagger = __webpack_require__(4);
+
+	module.exports = React.createClass({
+	  getInitialState: function() {
+	    return {
+	      thing_tags: []
+	    };
+	  },
+	  removeAppearance: function() {
+	    return this.props.removeAppearance(this.props.id);
+	  },
+	  selectThing: function(name) {
+	    $.get("/api/thing/" + name + "/tag", (function(_this) {
+	      return function(response) {
+	        return _this.setState({
+	          thing_tags: response.items
+	        });
+	      };
+	    })(this));
+	    return this.props.thing_name.set(name);
+	  },
+	  mixedTags: function() {
+	    return _.difference(_.union(this.state.thing_tags, this.props.tags.getValue()), this.props.negative_tags.getValue());
+	  },
+	  thingNameTags: function() {
+	    var name;
+	    name = this.props.thing_name.getValue();
+	    if (name) {
+	      return [name];
+	    } else {
+	      return [];
+	    }
+	  },
+	  addTag: function(name) {
+	    var index;
+	    index = this.props.negative_tags.findIndex();
+	    if (index !== -1) {
+	      return this.props.tags.removeAt(index);
+	    } else if (__indexOf.call(this.state.thing_tags, name) < 0) {
+	      return this.props.tags.push(name);
+	    }
+	  },
+	  removeTag: function(name) {
+	    var index;
+	    index = this.props.tags.findIndex();
+	    if (index !== -1) {
+	      return this.props.tags.removeAt(index);
+	    } else if (__indexOf.call(this.state.thing_tags, name) >= 0) {
+	      return this.props.negative_tags.push(name);
+	    }
+	  },
+	  render: function() {
+	    return React.createElement("div", null, React.createElement("h3", null, "Tag This Appearance"), React.createElement("div", {
+	      "className": "form-group"
+	    }, React.createElement("label", null, "Recurring character or object?"), React.createElement(Tagger, {
+	      "tags": this.thingNameTags(),
+	      "possible_tags": THING_NAMES,
+	      "onTagAdd": this.selectThing
+	    })), React.createElement("div", {
+	      "className": "form-group"
+	    }, React.createElement("label", null, "Edit this appearance"), React.createElement(Tagger, {
+	      "tags": this.mixedTags(),
+	      "possible_tags": TAG_NAMES,
+	      "onTagAdd": this.addTag,
+	      "onTagRemove": this.removeTag
+	    }), React.createElement("p", {
+	      "className": "help-block"
+	    }, "Does this thing appear differently in this picture from how it usually does?  Edit the tags for this particular appearance here.")), React.createElement("p", null, "\t\t\tdebug:", this.props.id, this.props.tags), React.createElement("button", {
+	      "className": "btn btn-danger",
+	      "onClick": this.removeAppearance
+	    }, "Remove Appearance"));
+	  }
+	});
+
+
+/***/ },
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Vector, css_properties;
@@ -344,145 +512,6 @@
 	    return Object(result) === result ? result : child;
 	  })(Vector, arguments, function(){});
 	};
-
-
-/***/ },
-/* 5 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var ReactTagsInput;
-
-	ReactTagsInput = __webpack_require__(7);
-
-	module.exports = React.createClass({
-	  displayName: 'AutoCompleteTagger',
-	  propTypes: {
-	    tags: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-	    possible_tags: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-	    allow_new_tags: React.PropTypes.bool.isRequired
-	  },
-	  getDefaultProps: function() {
-	    return {
-	      tags: [],
-	      possible_tags: [],
-	      allow_new_tags: true
-	    };
-	  },
-	  getInitialState: function() {
-	    return {
-	      completions: []
-	    };
-	  },
-	  complete: function(value) {
-	    if (value === '') {
-	      return this.setState({
-	        completions: []
-	      });
-	    }
-	    this.setState({
-	      completions: this.props.possible_tags.filter((function(comp) {
-	        return comp.substr(0, value.length) === value && this.refs.tags.getTags().indexOf(comp) === -1;
-	      }).bind(this))
-	    });
-	  },
-	  beforeAdd: function(tag) {
-	    if (this.props.possible_tags.indexOf(tag) !== -1) {
-	      return true;
-	    }
-	    if (this.state.completions.length === 1) {
-	      return this.state.completions[0];
-	    }
-	    return this.props.allow_new_tags;
-	  },
-	  add: function(tag) {
-	    var _base;
-	    this.setState({
-	      completions: []
-	    });
-	    if (typeof (_base = this.props).onTagAdd === "function") {
-	      _base.onTagAdd(tag);
-	    }
-	  },
-	  render: function() {
-	    var completionNodes, tagsInputProps;
-	    completionNodes = this.state.completions.map((function(comp) {
-	      var add;
-	      add = (function(e) {
-	        this.refs.tags.addTag(comp);
-	      }).bind(this);
-	      return React.createElement('span', {}, React.createElement('a', {
-	        className: '',
-	        onClick: add
-	      }, comp), ' ');
-	    }).bind(this));
-	    tagsInputProps = {
-	      ref: 'tags',
-	      tags: this.props.tags,
-	      onChangeInput: this.complete,
-	      onTagAdd: this.add,
-	      onBeforeTagAdd: this.beforeAdd,
-	      addOnBlur: false,
-	      placeholder: ''
-	    };
-	    return React.createElement('div', null, React.createElement(ReactTagsInput, tagsInputProps), React.createElement('div', {
-	      style: {
-	        marginTop: '10px'
-	      }
-	    }, completionNodes));
-	  }
-	});
-
-
-/***/ },
-/* 6 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Tagger;
-
-	Tagger = __webpack_require__(5);
-
-	module.exports = React.createClass({
-	  getInitialState: function() {
-	    return {
-	      thing_tags: []
-	    };
-	  },
-	  removeAppearance: function() {
-	    return this.props.removeAppearance(this.props.id);
-	  },
-	  selectThing: function(name) {
-	    $.get("/api/thing/" + name + "/tag", (function(_this) {
-	      return function(response) {
-	        return _this.setState({
-	          thing_tags: response.items
-	        });
-	      };
-	    })(this));
-	    return this.props.selectThing(name);
-	  },
-	  mixedTags: function() {
-	    return _.union(this.state.thing_tags, this.props.tags);
-	  },
-	  render: function() {
-	    return React.createElement("div", null, React.createElement("h3", null, "Tag This Appearance"), React.createElement("div", {
-	      "className": "form-group"
-	    }, React.createElement("label", null, "Recurring character or object?"), React.createElement(Tagger, {
-	      "tags": this.props.tags,
-	      "possible_tags": THING_NAMES,
-	      "onTagAdd": this.selectThing
-	    })), React.createElement("div", {
-	      "className": "form-group"
-	    }, React.createElement("label", null, "Edit this appearance"), React.createElement(Tagger, {
-	      "tags": this.mixedTags(),
-	      "possible_tags": TAG_NAMES
-	    }), React.createElement("p", {
-	      "className": "help-block"
-	    }, "Does this thing appear differently in this picture from how it usually does?  Edit the tags for this particular appearance here.")), React.createElement("p", null, "\t\t\tdebug:", this.props.id, this.props.tags), React.createElement("button", {
-	      "className": "btn btn-danger",
-	      "onClick": this.removeAppearance
-	    }, "Remove Appearance"));
-	  }
-	});
 
 
 /***/ },
