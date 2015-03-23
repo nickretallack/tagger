@@ -44,22 +44,39 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var component, cortex, element;
+	var DefaultRoute, Route, container, cortex, current_component, routes;
 
 	window.TaggingActivity = __webpack_require__(1);
 
 	if ((typeof ENTRY_POINT !== "undefined" && ENTRY_POINT !== null) && ENTRY_POINT === 'tag-file') {
 	  cortex = new Cortex({
 	    appearances: {},
-	    selected_appearance: null
+	    selected_appearance: null,
+	    thing_tags: {}
 	  });
-	  element = React.createElement(TaggingActivity, {
-	    "image_url": IMAGE_URL,
-	    "cortex": cortex
+	  Route = ReactRouter.Route, DefaultRoute = ReactRouter.DefaultRoute;
+	  routes = React.createElement(Route, {
+	    "handler": TaggingActivity
+	  }, React.createElement(DefaultRoute, {
+	    "name": "file details",
+	    "handler": __webpack_require__(8)
+	  }), React.createElement(Route, {
+	    "name": "appearance",
+	    "path": "appearance/:appearance_id",
+	    "handler": __webpack_require__(9)
+	  }));
+	  container = document.getElementById("react-image-tagger");
+	  current_component = null;
+	  ReactRouter.run(routes, function(Handler) {
+	    var element;
+	    element = React.createElement(Handler, {
+	      "image_url": IMAGE_URL,
+	      "cortex": cortex
+	    });
+	    return current_component = React.render(element, container);
 	  });
-	  component = React.render(element, document.getElementById("react-image-tagger"));
 	  cortex.on("update", function(data) {
-	    return component.setProps({
+	    return current_component.setProps({
 	      cortex: data
 	    });
 	  });
@@ -70,24 +87,29 @@
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var FileTagDetails, ImageTagger, random_integer;
+	var FileTagDetails, ImageTagger, Navigation, RouteHandler, random_integer;
 
 	ImageTagger = __webpack_require__(2);
 
 	FileTagDetails = __webpack_require__(3);
+
+	RouteHandler = ReactRouter.RouteHandler, Navigation = ReactRouter.Navigation;
 
 	random_integer = function(min, max) {
 	  return Math.floor(Math.random() * (max - min)) + min;
 	};
 
 	module.exports = React.createClass({
+	  mixins: [Navigation],
 	  unSelectAppearance: function() {
 	    return this.setState({
 	      selected_appearance: null
 	    });
 	  },
 	  selectAppearance: function(id) {
-	    return this.props.cortex.selected_appearance.set(id);
+	    return this.transitionTo('appearance', {
+	      appearance_id: id
+	    });
 	  },
 	  removeAppearance: function(id) {
 	    delete this.props.cortex.appearances[id];
@@ -111,18 +133,15 @@
 	    id = random_integer(0, Math.pow(2, 31));
 	    appearance.id = "new-" + id;
 	    this.props.cortex.appearances.add(appearance.id, appearance);
-	    return this.props.cortex.selected_appearance.set(appearance.id);
+	    return this.selectAppearance(appearance.id);
 	  },
 	  render: function() {
 	    return React.createElement("div", {
 	      "className": "row"
 	    }, React.createElement("div", {
 	      "className": "col-sm-4 col-md-3 col-lg-2"
-	    }, React.createElement(FileTagDetails, {
-	      "selected_appearance": this.selectedAppearance(),
-	      "unSelectAppearance": this.unSelectAppearance,
-	      "removeAppearance": this.removeappearance,
-	      "selectThing": this.selectThing
+	    }, React.createElement(RouteHandler, {
+	      "cortex": this.props.cortex
 	    })), React.createElement("div", {
 	      "className": "col-sm-8 col-md-9 col-lg-10"
 	    }, React.createElement(ImageTagger, {
@@ -461,26 +480,31 @@
 	Tagger = __webpack_require__(5);
 
 	module.exports = React.createClass({
-	  getInitialState: function() {
-	    return {
-	      thing_tags: []
-	    };
-	  },
 	  removeAppearance: function() {
 	    return this.props.removeAppearance(this.props.id);
 	  },
 	  selectThing: function(name) {
-	    $.get("/api/thing/" + name + "/tag", (function(_this) {
-	      return function(response) {
-	        return _this.setState({
-	          thing_tags: response.items
-	        });
-	      };
-	    })(this));
-	    return this.props.thing_name.set(name);
+	    this.props.thing_name.set(name);
+	    if (!this.props.cortex.thing_tags.hasKey(name)) {
+	      return $.get("/api/thing/" + name + "/tag", (function(_this) {
+	        return function(response) {
+	          return _this.props.cortex.thing_tags.add(name, response.items);
+	        };
+	      })(this));
+	    }
+	  },
+	  thingTags: function() {
+	    var collection, key;
+	    collection = this.props.cortex.thing_tags;
+	    key = this.props.thing_name.val();
+	    if (collection.hasKey(key)) {
+	      return collection[key].val();
+	    } else {
+	      return [];
+	    }
 	  },
 	  mixedTags: function() {
-	    return _.difference(_.union(this.state.thing_tags, this.props.tags.getValue()), this.props.negative_tags.getValue());
+	    return _.difference(_.union(this.thingTags(), this.props.tags.getValue()), this.props.negative_tags.getValue());
 	  },
 	  thingNameTags: function() {
 	    var name;
@@ -498,7 +522,7 @@
 	    });
 	    if (index !== -1) {
 	      return this.props.tags.removeAt(index);
-	    } else if (__indexOf.call(this.state.thing_tags, name) < 0) {
+	    } else if (__indexOf.call(this.thingTags(), name) < 0) {
 	      return this.props.tags.push(name);
 	    }
 	  },
@@ -509,7 +533,7 @@
 	    });
 	    if (index !== -1) {
 	      return this.props.tags.removeAt(index);
-	    } else if (__indexOf.call(this.state.thing_tags, name) >= 0) {
+	    } else if (__indexOf.call(this.thingTags(), name) >= 0) {
 	      return this.props.negative_tags.push(name);
 	    }
 	  },
@@ -519,7 +543,8 @@
 	    }, React.createElement("label", null, "Recurring character or object?"), React.createElement(Tagger, {
 	      "tags": this.thingNameTags(),
 	      "possible_tags": THING_NAMES,
-	      "onTagAdd": this.selectThing
+	      "onTagAdd": this.selectThing,
+	      "onTagRemove": this
 	    })), React.createElement("div", {
 	      "className": "form-group"
 	    }, React.createElement("label", null, "Edit this appearance"), React.createElement(Tagger, {
@@ -699,6 +724,47 @@
 	      "onChange": this.onChange,
 	      "onBlur": this.onBlur
 	    }));
+	  }
+	});
+
+
+/***/ },
+/* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = React.createClass({
+	  render: function() {
+	    return React.createElement("div", null, "Details");
+	  }
+	});
+
+
+/***/ },
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppearanceEditor, Navigation, State;
+
+	State = ReactRouter.State, Navigation = ReactRouter.Navigation;
+
+	AppearanceEditor = __webpack_require__(6);
+
+	module.exports = React.createClass({
+	  mixins: [State, Navigation],
+	  currentAppearance: function() {
+	    var result;
+	    return result = this.props.cortex.appearances[this.getParams().appearance_id];
+	  },
+	  render: function() {
+	    var current_appearance;
+	    current_appearance = this.currentAppearance();
+	    if (current_appearance) {
+	      return React.createElement(AppearanceEditor, React.__spread({}, current_appearance, {
+	        "cortex": this.props.cortex
+	      }));
+	    } else {
+	      return React.createElement("div", null, "oops");
+	    }
 	  }
 	});
 

@@ -1,11 +1,12 @@
 ImageTagger = require './ImageTagger'
 FileTagDetails = require './FileTagDetails'
-
+{RouteHandler, Navigation} = ReactRouter
 
 random_integer = (min, max) ->
 	Math.floor(Math.random() * (max - min)) + min
 
 module.exports = React.createClass
+	mixins: [Navigation]
 #	getInitialState: ->
 #		new Cortex
 #
@@ -25,7 +26,9 @@ module.exports = React.createClass
 		@setState selected_appearance: null
 
 	selectAppearance: (id) ->
-		@props.cortex.selected_appearance.set id
+		@transitionTo 'appearance',
+			appearance_id: id
+		#@props.cortex.selected_appearance.set id
 
 	removeAppearance: (id) ->
 		delete @props.cortex.appearances[id]
@@ -46,7 +49,10 @@ module.exports = React.createClass
 
 		#@props.cortex.appearances[appearance.id] = appearance
 		@props.cortex.appearances.add appearance.id, appearance
-		@props.cortex.selected_appearance.set appearance.id
+		@selectAppearance appearance.id
+		#setTimeout =>
+		#, 1000
+		#@props.cortex.selected_appearance.set appearance.id
 		#@setState
 		#	appearances: @props.cortex.appearances
 		#	selected_appearance: appearance.id
@@ -54,12 +60,7 @@ module.exports = React.createClass
 	render: ->
 		<div className="row">
 			<div className="col-sm-4 col-md-3 col-lg-2">
-				<FileTagDetails
-				selected_appearance={@selectedAppearance()}
-				unSelectAppearance={@unSelectAppearance}
-				removeAppearance={@removeappearance}
-				selectThing={@selectThing}
-				/>
+				<RouteHandler cortex={@props.cortex}/>
 			</div>
 
 			<div className="col-sm-8 col-md-9 col-lg-10">
@@ -71,3 +72,4 @@ module.exports = React.createClass
 				/>
 			</div>
 		</div>
+

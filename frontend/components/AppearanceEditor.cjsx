@@ -1,19 +1,25 @@
 Tagger = require './AutocompleteTagger'
 
 module.exports = React.createClass
-	getInitialState: ->
-		thing_tags: []
-
 	removeAppearance: ->
 		@props.removeAppearance @props.id
 
 	selectThing: (name) ->
-		$.get "/api/thing/#{name}/tag", (response) =>
-			@setState thing_tags: response.items
 		@props.thing_name.set name
+		if not @props.cortex.thing_tags.hasKey name
+			$.get "/api/thing/#{name}/tag", (response) =>
+				@props.cortex.thing_tags.add name, response.items
+
+	thingTags: ->
+		collection = @props.cortex.thing_tags
+		key = @props.thing_name.val()
+		if collection.hasKey key
+			collection[key].val()
+		else
+			[]
 
 	mixedTags: ->
-		_.difference(_.union(@state.thing_tags, @props.tags.getValue()), @props.negative_tags.getValue())
+		_.difference(_.union(@thingTags(), @props.tags.getValue()), @props.negative_tags.getValue())
 
 	thingNameTags: ->
 		name = @props.thing_name.getValue()
@@ -30,7 +36,7 @@ module.exports = React.createClass
 			@props.tags.removeAt index
 
 		# create positive tag
-		else if name not in @state.thing_tags
+		else if name not in @thingTags()
 			@props.tags.push name
 
 
@@ -42,7 +48,7 @@ module.exports = React.createClass
 			@props.tags.removeAt index
 
 		# create negative tag
-		else if name in @state.thing_tags
+		else if name in @thingTags()
 			@props.negative_tags.push name
 
 	render: ->
@@ -55,6 +61,7 @@ module.exports = React.createClass
 					tags={@thingNameTags()}
 					possible_tags={THING_NAMES}
 					onTagAdd={@selectThing}
+					onTagRemove={@}
 				/>
 			</div>
 
