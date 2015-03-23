@@ -1,17 +1,19 @@
 'use strict'
-Input = React.createClass(render: ->
-	ns = @props.ns
-	inputClass = ns + 'tagsinput-input ' + (if @props.invalid then ns + 'tagsinput-invalid' else '')
-	React.createElement 'input', React.__spread({}, @props,
-		type: 'text'
-		className: inputClass
-		placeholder: @props.placeholder)
-)
-Tag = React.createClass(render: ->
-	React.createElement 'span', { className: @props.ns + 'tagsinput-tag' }, @props.tag + ' ', React.createElement('a',
-		onClick: @props.remove
-		className: @props.ns + 'tagsinput-remove')
-)
+Input = React.createClass
+	render: ->
+		ns = @props.ns
+		inputClass = ns + 'tagsinput-input ' + (if @props.invalid then ns + 'tagsinput-invalid' else '')
+		React.createElement 'input', React.__spread({}, @props,
+			type: 'text'
+			className: inputClass
+			placeholder: @props.placeholder)
+
+Tag = React.createClass
+	render: ->
+		React.createElement 'span', { className: @props.ns + 'tagsinput-tag' }, @props.tag + ' ', React.createElement('a',
+			onClick: @props.remove
+			className: @props.ns + 'tagsinput-remove')
+
 module.exports = React.createClass
 	getDefaultProps: ->
 		{
@@ -119,12 +121,17 @@ module.exports = React.createClass
 				tag: tag
 				remove: @removeTag.bind(null, tag)
 		).bind(this))
-		React.createElement 'div', { className: ns + 'tagsinput' }, tagNodes, React.createElement(Input,
-			ref: 'input'
-			ns: ns
-			placeholder: @props.placeholder
-			value: @state.tag
-			invalid: @state.invalid
-			onKeyDown: @onKeyDown
-			onChange: @onChange
-			onBlur: @onBlur)
+
+		<div className={"#{ns}tagsinput"}>
+			{tagNodes}
+			<Input
+			ref="input"
+			ns={ns}
+			placeholder={@props.placeholder}
+			value={@state.tag}
+			invalid={@state.invalid}
+			onKeyDown={@onKeyDown}
+			onChange={@onChange}
+			onBlur={@onBlur}
+			/>
+		</div>
