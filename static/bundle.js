@@ -753,9 +753,9 @@
 /* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var AppearanceEditor, FileDetailEditor, Navigation, State;
+	var AppearanceEditor, FileDetailEditor, Link, Navigation, State;
 
-	State = ReactRouter.State, Navigation = ReactRouter.Navigation;
+	Link = ReactRouter.Link, State = ReactRouter.State, Navigation = ReactRouter.Navigation;
 
 	AppearanceEditor = __webpack_require__(6);
 
@@ -771,9 +771,11 @@
 	    var current_appearance;
 	    current_appearance = this.currentAppearance();
 	    if (current_appearance) {
-	      return React.createElement(AppearanceEditor, React.__spread({}, current_appearance, {
+	      return React.createElement("div", null, React.createElement(Link, {
+	        "to": "file details"
+	      }, "Back"), React.createElement(AppearanceEditor, React.__spread({}, current_appearance, {
 	        "cortex": this.props.cortex
-	      }));
+	      })));
 	    } else {
 	      return React.createElement(FileDetailEditor, null);
 	    }

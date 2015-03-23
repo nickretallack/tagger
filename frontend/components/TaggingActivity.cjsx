@@ -7,20 +7,6 @@ random_integer = (min, max) ->
 
 module.exports = React.createClass
 	mixins: [Navigation]
-#	getInitialState: ->
-#		new Cortex
-#
-#			appearances: {}
-##				1:
-##					id: 1
-##					position:
-##						x: 50
-##						y: 50
-##					size:
-##						x: 150
-##						y: 150
-##					thing: 'test'
-#			selected_appearance: null
 
 	unSelectAppearance: ->
 		@setState selected_appearance: null

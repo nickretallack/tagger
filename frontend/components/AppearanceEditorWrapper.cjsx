@@ -1,4 +1,4 @@
-{State, Navigation} = ReactRouter
+{Link, State, Navigation} = ReactRouter
 AppearanceEditor = require './AppearanceEditor'
 FileDetailEditor = require './FileDetailEditor'
 module.exports = React.createClass
@@ -9,6 +9,9 @@ module.exports = React.createClass
 	render: ->
 		current_appearance = @currentAppearance()
 		if current_appearance
-			<AppearanceEditor {...current_appearance} cortex={@props.cortex}/>
+			<div>
+				<Link to="file details">Back</Link>
+				<AppearanceEditor {...current_appearance} cortex={@props.cortex}/>
+			</div>
 		else
 			<FileDetailEditor/>
