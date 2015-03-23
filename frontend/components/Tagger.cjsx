@@ -3,7 +3,7 @@ Input = React.createClass
 	render: ->
 		ns = @props.ns
 		inputClass = ns + 'tagsinput-input ' + (if @props.invalid then ns + 'tagsinput-invalid' else '')
-		<input {...@props} type="text" className={inputClass} placeholder={@props.placeholder}/>
+		<input ref="input" {...@props} type="text" className={inputClass} placeholder={@props.placeholder}/>
 
 Tag = React.createClass
 	render: ->
@@ -37,13 +37,12 @@ module.exports = React.createClass
 		}
 	getInitialState: ->
 		{
-#			tags: []
 			tag: ''
 			invalid: false
 		}
-#	componentWillMount: ->
-#		@setState tags: @props.tags.slice(0)
-#		return
+	clearInput: ->
+		@setState tag: ''
+
 	getTags: ->
 		@props.tags
 	addTag: (tag, cb) ->
@@ -53,12 +52,10 @@ module.exports = React.createClass
 		if @props.tags.indexOf(tag) != -1 or !valid
 			return @setState(invalid: true)
 		@setState {
-#			tags: @props.tags.concat([ tag ])
 			tag: ''
 			invalid: false
 		}, ->
 			@props.onTagAdd tag
-			#@props.onChange @state.tags
 			@inputFocus()
 			if cb
 				return cb()
@@ -76,7 +73,6 @@ module.exports = React.createClass
 			invalid: false
 		}, ->
 			@props.onTagRemove tag
-			@props.onChange @state.tags
 			return
 		return
 	onKeyDown: (e) ->
@@ -85,8 +81,8 @@ module.exports = React.createClass
 		if add
 			e.preventDefault()
 			@addTag @state.tag.trim()
-		if remove and @state.tags.length > 0 and @state.tag == ''
-			@removeTag @state.tags[@state.tags.length - 1]
+		if remove and @props.tags.length > 0 and @state.tag == ''
+			@removeTag @props.tags[@props.tags.length - 1]
 		return
 	onChange: (e) ->
 		@props.onChangeInput e.target.value
@@ -95,16 +91,15 @@ module.exports = React.createClass
 			invalid: false
 		return
 	onBlur: (e) ->
-		_this = this
 		if !@props.addOnBlur
-			@props.onBlur @state.tags
+			@props.onBlur @props.tags
 			return
 		if @state.tag != '' and !@state.invalid
-			return @addTag(@state.tag.trim(), ->
-				_this.props.onBlur _this.state.tags
+			return @addTag(@state.tag.trim(), =>
+				@props.onBlur @props.tags
 				return
 			)
-		_this.props.onBlur _this.state.tags
+		@props.onBlur @props.tags
 		return
 	inputFocus: ->
 		@refs.input.getDOMNode().focus()

@@ -62,6 +62,7 @@ module.exports = React.createClass
 			<div className="form-group">
 				<label>Recurring character or object?</label>
 				<Tagger
+					ref="thing"
 					tags={@thingNameTags()}
 					possible_tags={THING_NAMES}
 					onTagAdd={@selectThing}
@@ -72,6 +73,7 @@ module.exports = React.createClass
 			<div className="form-group">
 				<label>Edit this appearance</label>
 				<Tagger
+					ref="tags"
 					tags={@mixedTags()}
 					possible_tags={TAG_NAMES}
 					onTagAdd={@addTag}

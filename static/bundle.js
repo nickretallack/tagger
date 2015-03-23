@@ -141,7 +141,8 @@
 	    }, React.createElement("div", {
 	      "className": "col-sm-4 col-md-3 col-lg-2"
 	    }, React.createElement(RouteHandler, {
-	      "cortex": this.props.cortex
+	      "cortex": this.props.cortex,
+	      "key": (this.context.router.getCurrentParams().appearance_id)
 	    })), React.createElement("div", {
 	      "className": "col-sm-8 col-md-9 col-lg-10"
 	    }, React.createElement(ImageTagger, {
@@ -551,6 +552,7 @@
 	    return React.createElement("div", null, React.createElement("h3", null, "Tag This Appearance"), React.createElement("div", {
 	      "className": "form-group"
 	    }, React.createElement("label", null, "Recurring character or object?"), React.createElement(Tagger, {
+	      "ref": "thing",
 	      "tags": this.thingNameTags(),
 	      "possible_tags": THING_NAMES,
 	      "onTagAdd": this.selectThing,
@@ -558,6 +560,7 @@
 	    })), React.createElement("div", {
 	      "className": "form-group"
 	    }, React.createElement("label", null, "Edit this appearance"), React.createElement(Tagger, {
+	      "ref": "tags",
 	      "tags": this.mixedTags(),
 	      "possible_tags": TAG_NAMES,
 	      "onTagAdd": this.addTag,
@@ -584,7 +587,9 @@
 	    var inputClass, ns;
 	    ns = this.props.ns;
 	    inputClass = ns + 'tagsinput-input ' + (this.props.invalid ? ns + 'tagsinput-invalid' : '');
-	    return React.createElement("input", React.__spread({}, this.props, {
+	    return React.createElement("input", React.__spread({
+	      "ref": "input"
+	    }, this.props, {
 	      "type": "text",
 	      "className": inputClass,
 	      "placeholder": this.props.placeholder
@@ -634,6 +639,11 @@
 	      invalid: false
 	    };
 	  },
+	  clearInput: function() {
+	    return this.setState({
+	      tag: ''
+	    });
+	  },
 	  getTags: function() {
 	    return this.props.tags;
 	  },
@@ -672,7 +682,6 @@
 	      invalid: false
 	    }, function() {
 	      this.props.onTagRemove(tag);
-	      this.props.onChange(this.state.tags);
 	    });
 	  },
 	  onKeyDown: function(e) {
@@ -683,8 +692,8 @@
 	      e.preventDefault();
 	      this.addTag(this.state.tag.trim());
 	    }
-	    if (remove && this.state.tags.length > 0 && this.state.tag === '') {
-	      this.removeTag(this.state.tags[this.state.tags.length - 1]);
+	    if (remove && this.props.tags.length > 0 && this.state.tag === '') {
+	      this.removeTag(this.props.tags[this.props.tags.length - 1]);
 	    }
 	  },
 	  onChange: function(e) {
@@ -695,18 +704,18 @@
 	    });
 	  },
 	  onBlur: function(e) {
-	    var _this;
-	    _this = this;
 	    if (!this.props.addOnBlur) {
-	      this.props.onBlur(this.state.tags);
+	      this.props.onBlur(this.props.tags);
 	      return;
 	    }
 	    if (this.state.tag !== '' && !this.state.invalid) {
-	      return this.addTag(this.state.tag.trim(), function() {
-	        _this.props.onBlur(_this.state.tags);
-	      });
+	      return this.addTag(this.state.tag.trim(), (function(_this) {
+	        return function() {
+	          _this.props.onBlur(_this.props.tags);
+	        };
+	      })(this));
 	    }
-	    _this.props.onBlur(_this.state.tags);
+	    this.props.onBlur(this.props.tags);
 	  },
 	  inputFocus: function() {
 	    this.refs.input.getDOMNode().focus();
@@ -774,7 +783,8 @@
 	      return React.createElement("div", null, React.createElement(Link, {
 	        "to": "file details"
 	      }, "Back"), React.createElement(AppearanceEditor, React.__spread({}, current_appearance, {
-	        "cortex": this.props.cortex
+	        "cortex": this.props.cortex,
+	        "ref": "editor"
 	      })));
 	    } else {
 	      return React.createElement(FileDetailEditor, null);

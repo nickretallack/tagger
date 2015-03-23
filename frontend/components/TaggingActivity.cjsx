@@ -46,7 +46,7 @@ module.exports = React.createClass
 	render: ->
 		<div className="row">
 			<div className="col-sm-4 col-md-3 col-lg-2">
-				<RouteHandler cortex={@props.cortex}/>
+				<RouteHandler cortex={@props.cortex} key={@context.router.getCurrentParams().appearance_id}/>
 			</div>
 
 			<div className="col-sm-8 col-md-9 col-lg-10">
