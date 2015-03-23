@@ -101,28 +101,14 @@
 
 	module.exports = React.createClass({
 	  mixins: [Navigation],
-	  unSelectAppearance: function() {
-	    return this.setState({
-	      selected_appearance: null
-	    });
-	  },
 	  selectAppearance: function(id) {
 	    return this.transitionTo('appearance', {
 	      appearance_id: id
 	    });
 	  },
 	  removeAppearance: function(id) {
-	    delete this.props.cortex.appearances[id];
-	    return this.setState({
-	      appearances: this.props.cortex.appearances
-	    });
-	  },
-	  selectedAppearance: function() {
-	    var selected_appearance_id;
-	    selected_appearance_id = this.props.cortex.selected_appearance.getValue();
-	    if (selected_appearance_id) {
-	      return this.props.cortex.appearances[selected_appearance_id];
-	    }
+	    delete this.props.cortex.appearances.destroy(id);
+	    return this.context.router.transitionTo('file details');
 	  },
 	  createAppearance: function(location) {
 	    var appearance, id;
@@ -142,12 +128,12 @@
 	      "className": "col-sm-4 col-md-3 col-lg-2"
 	    }, React.createElement(RouteHandler, {
 	      "cortex": this.props.cortex,
-	      "key": (this.context.router.getCurrentParams().appearance_id)
+	      "key": (this.context.router.getCurrentParams().appearance_id),
+	      "removeAppearance": this.removeAppearance
 	    })), React.createElement("div", {
 	      "className": "col-sm-8 col-md-9 col-lg-10"
 	    }, React.createElement(ImageTagger, {
 	      "src": IMAGE_URL,
-	      "selectAppearance": this.selectAppearance,
 	      "createAppearance": this.createAppearance,
 	      "appearances": this.props.cortex.appearances.getValue()
 	    })));
@@ -221,9 +207,6 @@
 	    position: React.PropTypes.shape(vector_prop_shape),
 	    size: React.PropTypes.shape(vector_prop_shape)
 	  },
-	  onClick: function(event) {
-	    return this.props.selectAppearance(this.props.id);
-	  },
 	  render: function() {
 	    return React.createElement(Link, {
 	      "to": "appearance",
@@ -270,8 +253,7 @@
 	      for (id in _ref) {
 	        appearance = _ref[id];
 	        _results.push(React.createElement(AppearanceOverlay, React.__spread({
-	          "key": appearance.id,
-	          "selectAppearance": this.props.selectAppearance
+	          "key": appearance.id
 	        }, appearance)));
 	      }
 	      return _results;
@@ -329,7 +311,8 @@
 
 	module.exports = React.createClass({
 	  removeAppearance: function() {
-	    return this.props.removeAppearance(this.props.id);
+	    this.props.cortex.appearances[this.props.id.val()].remove();
+	    return this.context.router.transitionTo('file details');
 	  },
 	  selectThing: function(name) {
 	    this.props.thing_name.set(name);

@@ -10,9 +10,6 @@ AppearanceOverlay = React.createClass
 		position:	React.PropTypes.shape vector_prop_shape
 		size:		React.PropTypes.shape vector_prop_shape
 
-	onClick: (event) ->
-		@props.selectAppearance @props.id
-
 	render: ->
 		<Link to="appearance" params={{appearance_id:@props.id}}
 		className="tagger-overlay"
@@ -40,7 +37,7 @@ module.exports = React.createClass
 
 	render: ->
 		appearances = for id,appearance of @props.appearances
-			<AppearanceOverlay key={appearance.id} selectAppearance={@props.selectAppearance} {...appearance}/>
+			<AppearanceOverlay key={appearance.id} {...appearance}/>
 
 		<div style={{position:'relative'}}>
 			<img

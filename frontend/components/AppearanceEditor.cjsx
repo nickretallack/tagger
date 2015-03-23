@@ -2,7 +2,8 @@ Tagger = require './AutocompleteTagger'
 
 module.exports = React.createClass
 	removeAppearance: ->
-		@props.removeAppearance @props.id
+		@props.cortex.appearances[@props.id.val()].remove()
+		@context.router.transitionTo 'file details'
 
 	selectThing: (name) ->
 		@props.thing_name.set name
