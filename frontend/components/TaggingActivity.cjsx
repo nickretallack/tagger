@@ -1,4 +1,4 @@
-ImageTagger = require './ImageTagger'
+AppearanceOverlayManager = require './AppearanceOverlayManager'
 FileTagDetails = require './FileTagDetails'
 {RouteHandler, Navigation} = ReactRouter
 
@@ -15,7 +15,7 @@ module.exports = React.createClass
 			</div>
 
 			<div className="col-sm-8 col-md-9 col-lg-10">
-				<ImageTagger
+				<AppearanceOverlayManager
 				src={IMAGE_URL}
 				createAppearance={@createAppearance}
 				appearances={@props.cortex.appearances}

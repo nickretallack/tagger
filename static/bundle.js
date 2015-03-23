@@ -87,9 +87,9 @@
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var FileTagDetails, ImageTagger, Navigation, RouteHandler;
+	var AppearanceOverlayManager, FileTagDetails, Navigation, RouteHandler;
 
-	ImageTagger = __webpack_require__(4);
+	AppearanceOverlayManager = __webpack_require__(11);
 
 	FileTagDetails = __webpack_require__(5);
 
@@ -108,7 +108,7 @@
 	      "removeAppearance": this.removeAppearance
 	    })), React.createElement("div", {
 	      "className": "col-sm-8 col-md-9 col-lg-10"
-	    }, React.createElement(ImageTagger, {
+	    }, React.createElement(AppearanceOverlayManager, {
 	      "src": IMAGE_URL,
 	      "createAppearance": this.createAppearance,
 	      "appearances": this.props.cortex.appearances
@@ -164,84 +164,7 @@
 
 
 /***/ },
-/* 4 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var AppearanceOverlay, Navigation, V, random_integer;
-
-	V = __webpack_require__(9);
-
-	Navigation = ReactRouter.Navigation;
-
-	AppearanceOverlay = __webpack_require__(10);
-
-	random_integer = function(min, max) {
-	  return Math.floor(Math.random() * (max - min)) + min;
-	};
-
-	module.exports = React.createClass({
-	  mixins: [Navigation],
-	  getInitialState: function() {
-	    return {
-	      creating_overlay: null
-	    };
-	  },
-	  onClickImage: function(event) {
-	    var appearance, id, mouse_position, offsetX, offsetY, position, size, _ref;
-	    _ref = event.nativeEvent, offsetX = _ref.offsetX, offsetY = _ref.offsetY;
-	    mouse_position = V(offsetX, offsetY);
-	    size = V(150, 150);
-	    position = mouse_position.subtract(size.scale(0.5));
-	    id = "new-" + (random_integer(0, Math.pow(2, 31)));
-	    appearance = {
-	      id: id,
-	      size: size,
-	      position: position,
-	      tags: [],
-	      negative_tags: [],
-	      thing_name: null
-	    };
-	    this.props.appearances.add(appearance.id, appearance);
-	    return this.context.router.transitionTo('appearance', {
-	      appearance_id: id
-	    });
-	  },
-	  render: function() {
-	    var appearance, appearances, id;
-	    appearances = (function() {
-	      var _ref, _results;
-	      _ref = this.props.appearances.val();
-	      _results = [];
-	      for (id in _ref) {
-	        appearance = _ref[id];
-	        _results.push(React.createElement(AppearanceOverlay, React.__spread({
-	          "key": appearance.id
-	        }, appearance)));
-	      }
-	      return _results;
-	    }).call(this);
-	    return React.createElement("div", {
-	      "style": {
-	        position: 'relative'
-	      }
-	    }, React.createElement("img", {
-	      "src": this.props.src,
-	      "style": {
-	        position: 'absolute',
-	        zIndex: 1
-	      },
-	      "onClick": this.onClickImage
-	    }), React.createElement("div", {
-	      "style": {
-	        position: 'absolute',
-	        zIndex: 2
-	      }
-	    }, appearances));
-	  }
-	});
-
-
-/***/ },
+/* 4 */,
 /* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -797,6 +720,84 @@
 	        height: this.props.size.y
 	      }
 	    });
+	  }
+	});
+
+
+/***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppearanceOverlay, Navigation, V, random_integer;
+
+	V = __webpack_require__(9);
+
+	Navigation = ReactRouter.Navigation;
+
+	AppearanceOverlay = __webpack_require__(10);
+
+	random_integer = function(min, max) {
+	  return Math.floor(Math.random() * (max - min)) + min;
+	};
+
+	module.exports = React.createClass({
+	  mixins: [Navigation],
+	  getInitialState: function() {
+	    return {
+	      creating_overlay: null
+	    };
+	  },
+	  onClickImage: function(event) {
+	    var appearance, id, mouse_position, offsetX, offsetY, position, size, _ref;
+	    _ref = event.nativeEvent, offsetX = _ref.offsetX, offsetY = _ref.offsetY;
+	    mouse_position = V(offsetX, offsetY);
+	    size = V(150, 150);
+	    position = mouse_position.subtract(size.scale(0.5));
+	    id = "new-" + (random_integer(0, Math.pow(2, 31)));
+	    appearance = {
+	      id: id,
+	      size: size,
+	      position: position,
+	      tags: [],
+	      negative_tags: [],
+	      thing_name: null
+	    };
+	    this.props.appearances.add(appearance.id, appearance);
+	    return this.context.router.transitionTo('appearance', {
+	      appearance_id: id
+	    });
+	  },
+	  render: function() {
+	    var appearance, appearances, id;
+	    appearances = (function() {
+	      var _ref, _results;
+	      _ref = this.props.appearances.val();
+	      _results = [];
+	      for (id in _ref) {
+	        appearance = _ref[id];
+	        _results.push(React.createElement(AppearanceOverlay, React.__spread({
+	          "key": appearance.id
+	        }, appearance)));
+	      }
+	      return _results;
+	    }).call(this);
+	    return React.createElement("div", {
+	      "style": {
+	        position: 'relative'
+	      }
+	    }, React.createElement("img", {
+	      "src": this.props.src,
+	      "style": {
+	        position: 'absolute',
+	        zIndex: 1
+	      },
+	      "onClick": this.onClickImage
+	    }), React.createElement("div", {
+	      "style": {
+	        position: 'absolute',
+	        zIndex: 2
+	      }
+	    }, appearances));
 	  }
 	});
 
