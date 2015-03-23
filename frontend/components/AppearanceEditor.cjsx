@@ -7,20 +7,36 @@ module.exports = React.createClass
 	selectThing: (name) ->
 		@props.thing_name.set name
 		if not @props.cortex.thing_tags.hasKey name
-			$.get "/api/thing/#{name}/tag", (response) =>
-				@props.cortex.thing_tags.add name, response.items
+			$.ajax
+				type: 'get'
+				url: "/api/thing/#{name}/tag"
+				success: (response) =>
+					console.log 'loaded'
+					@props.cortex.thing_tags.add name, response.items
+				error: =>
+					@props.cortex.thing_tags.add name, null
+
+	thingTagsLoading: ->
+		try
+			@thingTags()
+			false
+		catch
+			true
 
 	unSelectThing: ->
 		@props.thing_name.set null
 		@props.negative_tags.set []
 
 	thingTags: ->
-		collection = @props.cortex.thing_tags
 		key = @props.thing_name.val()
-		if collection.hasKey key
-			collection[key].val()
-		else
-			[]
+		if not key
+			return []
+
+		collection = @props.cortex.thing_tags
+		if not collection.hasKey(key)
+			throw 'loading'
+
+		return collection[key].val()
 
 	mixedTags: ->
 		_.difference(_.union(@thingTags(), @props.tags.getValue()), @props.negative_tags.getValue())
@@ -56,6 +72,16 @@ module.exports = React.createClass
 			@props.negative_tags.push name
 
 	render: ->
+		tagger = unless @thingTagsLoading()
+			<Tagger
+			ref="tags"
+			tags={@mixedTags()}
+			possible_tags={TAG_NAMES}
+			onTagAdd={@addTag}
+			onTagRemove={@removeTag}
+			/>
+		else
+			<div>Loading...</div>
 	
 		<div>
 			<h3>Tag This Appearance</h3>
@@ -72,13 +98,7 @@ module.exports = React.createClass
 
 			<div className="form-group">
 				<label>Edit this appearance</label>
-				<Tagger
-					ref="tags"
-					tags={@mixedTags()}
-					possible_tags={TAG_NAMES}
-					onTagAdd={@addTag}
-					onTagRemove={@removeTag}
-				/>
+				{tagger}
 				<p className="help-block">Does this thing appear differently in this picture from how it usually does?  Edit the tags for this particular appearance here.</p>
 			</div>
 
