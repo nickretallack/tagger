@@ -357,7 +357,9 @@
 	  },
 	  addTag: function(name) {
 	    var index;
-	    index = this.props.negative_tags.findIndex();
+	    index = this.props.negative_tags.findIndex(function(item) {
+	      return item === name;
+	    });
 	    if (index !== -1) {
 	      return this.props.tags.removeAt(index);
 	    } else if (__indexOf.call(this.state.thing_tags, name) < 0) {
@@ -366,7 +368,9 @@
 	  },
 	  removeTag: function(name) {
 	    var index;
-	    index = this.props.tags.findIndex();
+	    index = this.props.tags.findIndex(function(item) {
+	      return item === name;
+	    });
 	    if (index !== -1) {
 	      return this.props.tags.removeAt(index);
 	    } else if (__indexOf.call(this.state.thing_tags, name) >= 0) {
@@ -389,7 +393,7 @@
 	      "onTagRemove": this.removeTag
 	    }), React.createElement("p", {
 	      "className": "help-block"
-	    }, "Does this thing appear differently in this picture from how it usually does?  Edit the tags for this particular appearance here.")), React.createElement("p", null, "\t\t\tdebug:", this.props.id, this.props.tags), React.createElement("button", {
+	    }, "Does this thing appear differently in this picture from how it usually does?  Edit the tags for this particular appearance here.")), React.createElement("button", {
 	      "className": "btn btn-danger",
 	      "onClick": this.removeAppearance
 	    }, "Remove Appearance"));

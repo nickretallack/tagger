@@ -23,7 +23,7 @@ module.exports = React.createClass
 			[]
 
 	addTag: (name) ->
-		index = @props.negative_tags.findIndex()
+		index = @props.negative_tags.findIndex (item) -> item is name
 
 		# remove negative tag
 		if index isnt -1
@@ -35,7 +35,7 @@ module.exports = React.createClass
 
 
 	removeTag: (name) ->
-		index = @props.tags.findIndex()
+		index = @props.tags.findIndex (item) -> item is name
 
 		# remove positive tag
 		if index isnt -1
@@ -68,12 +68,6 @@ module.exports = React.createClass
 				/>
 				<p className="help-block">Does this thing appear differently in this picture from how it usually does?  Edit the tags for this particular appearance here.</p>
 			</div>
-
-			<p>
-			debug:
-			{@props.id}
-			{@props.tags}
-			</p>
 
 			<button className="btn btn-danger" onClick={@removeAppearance}>Remove Appearance</button>
 		</div>
