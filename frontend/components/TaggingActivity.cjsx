@@ -1,5 +1,4 @@
-AppearanceOverlayManager = require './AppearanceOverlayManager'
-FileTagDetails = require './FileTagDetails'
+AppearanceOverlayManager = require './appearance/AppearanceOverlayManager'
 {RouteHandler, Navigation} = ReactRouter
 
 module.exports = React.createClass

@@ -1,4 +1,4 @@
-Tagger = require './AutocompleteTagger'
+Tagger = require '../tag_input/Tagger'
 {Navigation} = ReactRouter
 
 module.exports = React.createClass

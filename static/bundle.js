@@ -87,11 +87,9 @@
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var AppearanceOverlayManager, FileTagDetails, Navigation, RouteHandler;
+	var AppearanceOverlayManager, Navigation, RouteHandler;
 
-	AppearanceOverlayManager = __webpack_require__(11);
-
-	FileTagDetails = __webpack_require__(5);
+	AppearanceOverlayManager = __webpack_require__(4);
 
 	RouteHandler = ReactRouter.RouteHandler, Navigation = ReactRouter.Navigation;
 
@@ -136,7 +134,7 @@
 
 	Link = ReactRouter.Link, State = ReactRouter.State, Navigation = ReactRouter.Navigation;
 
-	AppearanceEditor = __webpack_require__(6);
+	AppearanceEditor = __webpack_require__(5);
 
 	FileDetailEditor = __webpack_require__(2);
 
@@ -164,35 +162,91 @@
 
 
 /***/ },
-/* 4 */,
-/* 5 */
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var AppearanceEditor, AutocompleteTagger;
+	var AppearanceOverlay, Navigation, V, random_integer;
 
-	AutocompleteTagger = __webpack_require__(7);
+	V = __webpack_require__(7);
 
-	AppearanceEditor = __webpack_require__(6);
+	Navigation = ReactRouter.Navigation;
+
+	AppearanceOverlay = __webpack_require__(6);
+
+	random_integer = function(min, max) {
+	  return Math.floor(Math.random() * (max - min)) + min;
+	};
 
 	module.exports = React.createClass({
+	  mixins: [Navigation],
+	  getInitialState: function() {
+	    return {
+	      creating_overlay: null
+	    };
+	  },
+	  onClickImage: function(event) {
+	    var appearance, id, mouse_position, offsetX, offsetY, position, size, _ref;
+	    _ref = event.nativeEvent, offsetX = _ref.offsetX, offsetY = _ref.offsetY;
+	    mouse_position = V(offsetX, offsetY);
+	    size = V(150, 150);
+	    position = mouse_position.subtract(size.scale(0.5));
+	    id = "new-" + (random_integer(0, Math.pow(2, 31)));
+	    appearance = {
+	      id: id,
+	      size: size,
+	      position: position,
+	      tags: [],
+	      negative_tags: [],
+	      thing_name: null
+	    };
+	    this.props.appearances.add(appearance.id, appearance);
+	    return this.context.router.transitionTo('appearance', {
+	      appearance_id: id
+	    });
+	  },
 	  render: function() {
-	    var main_content;
-	    main_content = this.props.selected_appearance ? React.createElement("div", null, React.createElement("p", null, React.createElement("a", {
-	      "onClick": this.props.unSelectAppearance
-	    }, "\t\t\t\t\tBack")), React.createElement(AppearanceEditor, React.__spread({}, this.props.selected_appearance))) : React.createElement("div", null, "...");
-	    return React.createElement("div", null, main_content);
+	    var appearance, appearances, id;
+	    appearances = (function() {
+	      var _ref, _results;
+	      _ref = this.props.appearances.val();
+	      _results = [];
+	      for (id in _ref) {
+	        appearance = _ref[id];
+	        _results.push(React.createElement(AppearanceOverlay, React.__spread({
+	          "key": appearance.id
+	        }, appearance)));
+	      }
+	      return _results;
+	    }).call(this);
+	    return React.createElement("div", {
+	      "style": {
+	        position: 'relative'
+	      }
+	    }, React.createElement("img", {
+	      "src": this.props.src,
+	      "style": {
+	        position: 'absolute',
+	        zIndex: 1
+	      },
+	      "onClick": this.onClickImage
+	    }), React.createElement("div", {
+	      "style": {
+	        position: 'absolute',
+	        zIndex: 2
+	      }
+	    }, appearances));
 	  }
 	});
 
 
 /***/ },
-/* 6 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Navigation, Tagger,
 	  __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
-	Tagger = __webpack_require__(7);
+	Tagger = __webpack_require__(8);
 
 	Navigation = ReactRouter.Navigation;
 
@@ -310,12 +364,167 @@
 
 
 /***/ },
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Link, Navigation, vector_prop_shape;
+
+	Link = ReactRouter.Link, Navigation = ReactRouter.Navigation;
+
+	vector_prop_shape = {
+	  x: React.PropTypes.number,
+	  y: React.PropTypes.number
+	};
+
+	module.exports = React.createClass({
+	  propTypes: {
+	    position: React.PropTypes.shape(vector_prop_shape),
+	    size: React.PropTypes.shape(vector_prop_shape)
+	  },
+	  render: function() {
+	    return React.createElement(Link, {
+	      "to": "appearance",
+	      "params": {
+	        appearance_id: this.props.id
+	      },
+	      "className": "tagger-overlay",
+	      "onClick": this.onClick,
+	      "style": {
+	        position: 'absolute',
+	        left: this.props.position.x,
+	        top: this.props.position.y,
+	        width: this.props.size.x,
+	        height: this.props.size.y
+	      }
+	    });
+	  }
+	});
+
+
+/***/ },
 /* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Vector, css_properties;
+
+	css_properties = ['top', 'left'];
+
+	Vector = (function() {
+	  function Vector() {
+	    var object;
+	    if (typeof arguments[0] === 'object') {
+	      object = arguments[0];
+	      if ((object.x != null) && (object.y != null)) {
+	        this.x = object.x, this.y = object.y;
+	      } else if ((object.left != null) && (object.top != null)) {
+	        this.x = object.left, this.y = object.top;
+	      }
+	    } else {
+	      this.x = arguments[0], this.y = arguments[1];
+	    }
+	  }
+
+	  Vector.prototype.components = function() {
+	    return [this.x, this.y];
+	  };
+
+	  Vector.prototype.reduce = function(initial, action) {
+	    return _.reduce(this.components(), action, initial);
+	  };
+
+	  Vector.prototype.fmap = function(action) {
+	    return (function(func, args, ctor) {
+	      ctor.prototype = func.prototype;
+	      var child = new ctor, result = func.apply(child, args);
+	      return Object(result) === result ? result : child;
+	    })(Vector, _.map(this.components(), action), function(){});
+	  };
+
+	  Vector.prototype.vmap = function(vector, action) {
+	    return (function(func, args, ctor) {
+	      ctor.prototype = func.prototype;
+	      var child = new ctor, result = func.apply(child, args);
+	      return Object(result) === result ? result : child;
+	    })(Vector, _.map(_.zip(this.components(), vector.components()), function(components) {
+	      return action.apply(null, components);
+	    }), function(){});
+	  };
+
+	  Vector.prototype.magnitude = function() {
+	    return Math.sqrt(this.reduce(0, function(accumulator, component) {
+	      return accumulator + component * component;
+	    }));
+	  };
+
+	  Vector.prototype.scale = function(factor) {
+	    return this.fmap(function(component) {
+	      return component * factor;
+	    });
+	  };
+
+	  Vector.prototype.invert = function() {
+	    return this.scale(-1);
+	  };
+
+	  Vector.prototype.add = function(vector) {
+	    return this.vmap(vector, function(c1, c2) {
+	      return c1 + c2;
+	    });
+	  };
+
+	  Vector.prototype.subtract = function(vector) {
+	    return this.add(vector.invert());
+	  };
+
+	  Vector.prototype.as_css = function() {
+	    return {
+	      left: this.x,
+	      top: this.y
+	    };
+	  };
+
+	  Vector.prototype.equals = function(vector) {
+	    return _.all(_.zip(this.components(), vector.components()), function(item) {
+	      return item[0] === item[1];
+	    });
+	  };
+
+	  Vector.prototype.distance = function(vector) {
+	    return this.minus(vector).magnitude();
+	  };
+
+	  Vector.prototype.unit = function() {
+	    return this.scale(1 / this.magnitude());
+	  };
+
+	  Vector.prototype.angle = function() {
+	    return Math.atan2(this.y, this.x);
+	  };
+
+	  return Vector;
+
+	})();
+
+	Vector.prototype.plus = Vector.prototype.add;
+
+	Vector.prototype.minus = Vector.prototype.subtract;
+
+	module.exports = function() {
+	  return (function(func, args, ctor) {
+	    ctor.prototype = func.prototype;
+	    var child = new ctor, result = func.apply(child, args);
+	    return Object(result) === result ? result : child;
+	  })(Vector, arguments, function(){});
+	};
+
+
+/***/ },
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var ReactTagsInput;
 
-	ReactTagsInput = __webpack_require__(8);
+	ReactTagsInput = __webpack_require__(9);
 
 	module.exports = React.createClass({
 	  displayName: 'AutoCompleteTagger',
@@ -398,7 +607,7 @@
 
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -565,239 +774,6 @@
 	      "onChange": this.onChange,
 	      "onBlur": this.onBlur
 	    }));
-	  }
-	});
-
-
-/***/ },
-/* 9 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Vector, css_properties;
-
-	css_properties = ['top', 'left'];
-
-	Vector = (function() {
-	  function Vector() {
-	    var object;
-	    if (typeof arguments[0] === 'object') {
-	      object = arguments[0];
-	      if ((object.x != null) && (object.y != null)) {
-	        this.x = object.x, this.y = object.y;
-	      } else if ((object.left != null) && (object.top != null)) {
-	        this.x = object.left, this.y = object.top;
-	      }
-	    } else {
-	      this.x = arguments[0], this.y = arguments[1];
-	    }
-	  }
-
-	  Vector.prototype.components = function() {
-	    return [this.x, this.y];
-	  };
-
-	  Vector.prototype.reduce = function(initial, action) {
-	    return _.reduce(this.components(), action, initial);
-	  };
-
-	  Vector.prototype.fmap = function(action) {
-	    return (function(func, args, ctor) {
-	      ctor.prototype = func.prototype;
-	      var child = new ctor, result = func.apply(child, args);
-	      return Object(result) === result ? result : child;
-	    })(Vector, _.map(this.components(), action), function(){});
-	  };
-
-	  Vector.prototype.vmap = function(vector, action) {
-	    return (function(func, args, ctor) {
-	      ctor.prototype = func.prototype;
-	      var child = new ctor, result = func.apply(child, args);
-	      return Object(result) === result ? result : child;
-	    })(Vector, _.map(_.zip(this.components(), vector.components()), function(components) {
-	      return action.apply(null, components);
-	    }), function(){});
-	  };
-
-	  Vector.prototype.magnitude = function() {
-	    return Math.sqrt(this.reduce(0, function(accumulator, component) {
-	      return accumulator + component * component;
-	    }));
-	  };
-
-	  Vector.prototype.scale = function(factor) {
-	    return this.fmap(function(component) {
-	      return component * factor;
-	    });
-	  };
-
-	  Vector.prototype.invert = function() {
-	    return this.scale(-1);
-	  };
-
-	  Vector.prototype.add = function(vector) {
-	    return this.vmap(vector, function(c1, c2) {
-	      return c1 + c2;
-	    });
-	  };
-
-	  Vector.prototype.subtract = function(vector) {
-	    return this.add(vector.invert());
-	  };
-
-	  Vector.prototype.as_css = function() {
-	    return {
-	      left: this.x,
-	      top: this.y
-	    };
-	  };
-
-	  Vector.prototype.equals = function(vector) {
-	    return _.all(_.zip(this.components(), vector.components()), function(item) {
-	      return item[0] === item[1];
-	    });
-	  };
-
-	  Vector.prototype.distance = function(vector) {
-	    return this.minus(vector).magnitude();
-	  };
-
-	  Vector.prototype.unit = function() {
-	    return this.scale(1 / this.magnitude());
-	  };
-
-	  Vector.prototype.angle = function() {
-	    return Math.atan2(this.y, this.x);
-	  };
-
-	  return Vector;
-
-	})();
-
-	Vector.prototype.plus = Vector.prototype.add;
-
-	Vector.prototype.minus = Vector.prototype.subtract;
-
-	module.exports = function() {
-	  return (function(func, args, ctor) {
-	    ctor.prototype = func.prototype;
-	    var child = new ctor, result = func.apply(child, args);
-	    return Object(result) === result ? result : child;
-	  })(Vector, arguments, function(){});
-	};
-
-
-/***/ },
-/* 10 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Link, Navigation, vector_prop_shape;
-
-	Link = ReactRouter.Link, Navigation = ReactRouter.Navigation;
-
-	vector_prop_shape = {
-	  x: React.PropTypes.number,
-	  y: React.PropTypes.number
-	};
-
-	module.exports = React.createClass({
-	  propTypes: {
-	    position: React.PropTypes.shape(vector_prop_shape),
-	    size: React.PropTypes.shape(vector_prop_shape)
-	  },
-	  render: function() {
-	    return React.createElement(Link, {
-	      "to": "appearance",
-	      "params": {
-	        appearance_id: this.props.id
-	      },
-	      "className": "tagger-overlay",
-	      "onClick": this.onClick,
-	      "style": {
-	        position: 'absolute',
-	        left: this.props.position.x,
-	        top: this.props.position.y,
-	        width: this.props.size.x,
-	        height: this.props.size.y
-	      }
-	    });
-	  }
-	});
-
-
-/***/ },
-/* 11 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var AppearanceOverlay, Navigation, V, random_integer;
-
-	V = __webpack_require__(9);
-
-	Navigation = ReactRouter.Navigation;
-
-	AppearanceOverlay = __webpack_require__(10);
-
-	random_integer = function(min, max) {
-	  return Math.floor(Math.random() * (max - min)) + min;
-	};
-
-	module.exports = React.createClass({
-	  mixins: [Navigation],
-	  getInitialState: function() {
-	    return {
-	      creating_overlay: null
-	    };
-	  },
-	  onClickImage: function(event) {
-	    var appearance, id, mouse_position, offsetX, offsetY, position, size, _ref;
-	    _ref = event.nativeEvent, offsetX = _ref.offsetX, offsetY = _ref.offsetY;
-	    mouse_position = V(offsetX, offsetY);
-	    size = V(150, 150);
-	    position = mouse_position.subtract(size.scale(0.5));
-	    id = "new-" + (random_integer(0, Math.pow(2, 31)));
-	    appearance = {
-	      id: id,
-	      size: size,
-	      position: position,
-	      tags: [],
-	      negative_tags: [],
-	      thing_name: null
-	    };
-	    this.props.appearances.add(appearance.id, appearance);
-	    return this.context.router.transitionTo('appearance', {
-	      appearance_id: id
-	    });
-	  },
-	  render: function() {
-	    var appearance, appearances, id;
-	    appearances = (function() {
-	      var _ref, _results;
-	      _ref = this.props.appearances.val();
-	      _results = [];
-	      for (id in _ref) {
-	        appearance = _ref[id];
-	        _results.push(React.createElement(AppearanceOverlay, React.__spread({
-	          "key": appearance.id
-	        }, appearance)));
-	      }
-	      return _results;
-	    }).call(this);
-	    return React.createElement("div", {
-	      "style": {
-	        position: 'relative'
-	      }
-	    }, React.createElement("img", {
-	      "src": this.props.src,
-	      "style": {
-	        position: 'absolute',
-	        zIndex: 1
-	      },
-	      "onClick": this.onClickImage
-	    }), React.createElement("div", {
-	      "style": {
-	        position: 'absolute',
-	        zIndex: 2
-	      }
-	    }, appearances));
 	  }
 	});
 

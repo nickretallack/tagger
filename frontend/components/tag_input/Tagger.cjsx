@@ -1,4 +1,4 @@
-ReactTagsInput = require './Tagger'
+ReactTagsInput = require './TagInput'
 
 module.exports = React.createClass(
 	displayName: 'AutoCompleteTagger'

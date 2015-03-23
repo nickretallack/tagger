@@ -1,6 +1,6 @@
 {Link, State, Navigation} = ReactRouter
 AppearanceEditor = require './AppearanceEditor'
-FileDetailEditor = require './FileDetailEditor'
+FileDetailEditor = require '../FileDetailEditor'
 module.exports = React.createClass
 	mixins: [State, Navigation]
 	currentAppearance: ->

@@ -14,7 +14,7 @@ if ENTRY_POINT? and ENTRY_POINT is 'tag-file'
 	routes = (
 		<Route handler={TaggingActivity}>
 			<DefaultRoute name="file details" handler={require './components/FileDetailEditor'}/>
-			<Route name="appearance" path="appearance/:appearance_id" handler={require './components/AppearanceEditorWrapper'}/>
+			<Route name="appearance" path="appearance/:appearance_id" handler={require './components/appearance/AppearanceEditorWrapper'}/>
 		</Route>
 	)
 

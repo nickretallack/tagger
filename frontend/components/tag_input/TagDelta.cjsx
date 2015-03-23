@@ -1,4 +1,4 @@
-{to_selectize_options} = require '../lib/selectize'
+{to_selectize_options} = require '../../lib/selectize'
 
 module.exports = React.createClass
 	propTypes:
