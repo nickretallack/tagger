@@ -34,7 +34,7 @@ module.exports = React.createClass
 					tags={@mixedTags()}
 					possible_tags={TAG_NAMES}
 				/>
-				<p class="help-block">Does this thing appear differently in this picture from how it usually does?  Edit the tags for this particular appearance here.</p>
+				<p className="help-block">Does this thing appear differently in this picture from how it usually does?  Edit the tags for this particular appearance here.</p>
 			</div>
 
 			<p>

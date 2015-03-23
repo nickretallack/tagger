@@ -1,6 +1,7 @@
 ImageTagger = require './ImageTagger'
 FileTagDetails = require './FileTagDetails'
 
+
 random_integer = (min, max) ->
 	Math.floor(Math.random() * (max - min)) + min
 
@@ -28,6 +29,8 @@ module.exports = React.createClass
 		delete @state.appearances[id]
 		@setState appearances: @state.appearances
 
+
+
 	createAppearance: (location) ->
 		appearance = location
 		appearance.tags = []
@@ -47,6 +50,7 @@ module.exports = React.createClass
 				selected_appearance={@state.appearances[@state.selected_appearance]}
 				unSelectAppearance={@unSelectAppearance}
 				removeAppearance={@removeappearance}
+				selectThing={@selectThing}
 				/>
 			</div>
 

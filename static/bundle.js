@@ -104,7 +104,8 @@
 	    }, React.createElement(FileTagDetails, {
 	      "selected_appearance": this.state.appearances[this.state.selected_appearance],
 	      "unSelectAppearance": this.unSelectAppearance,
-	      "removeAppearance": this.removeappearance
+	      "removeAppearance": this.removeappearance,
+	      "selectThing": this.selectThing
 	    })), React.createElement("div", {
 	      "className": "col-sm-8 col-md-9 col-lg-10"
 	    }, React.createElement(ImageTagger, {
@@ -475,7 +476,7 @@
 	      "tags": this.mixedTags(),
 	      "possible_tags": TAG_NAMES
 	    }), React.createElement("p", {
-	      "class": "help-block"
+	      "className": "help-block"
 	    }, "Does this thing appear differently in this picture from how it usually does?  Edit the tags for this particular appearance here.")), React.createElement("p", null, "\t\t\tdebug:", this.props.id, this.props.tags), React.createElement("button", {
 	      "className": "btn btn-danger",
 	      "onClick": this.removeAppearance
