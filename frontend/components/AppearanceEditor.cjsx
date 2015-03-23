@@ -1,8 +1,19 @@
 Tagger = require './AutocompleteTagger'
 
 module.exports = React.createClass
+	getInitialState: ->
+		thing_tags: []
+
 	removeAppearance: ->
 		@props.removeAppearance @props.id
+
+	selectThing: (name) ->
+		$.get "/api/thing/#{name}/tag", (response) =>
+			@setState thing_tags: response.items
+		@props.selectThing name
+
+	mixedTags: ->
+		_.union(@state.thing_tags, @props.tags)
 
 	render: ->
 	
@@ -13,13 +24,14 @@ module.exports = React.createClass
 				<Tagger
 					tags={@props.tags}
 					possible_tags={THING_NAMES}
+					onTagAdd={@selectThing}
 				/>
 			</div>
 
 			<div className="form-group">
 				<label>Edit this appearance</label>
 				<Tagger
-					tags={@props.tags}
+					tags={@mixedTags()}
 					possible_tags={TAG_NAMES}
 				/>
 				<p class="help-block">Does this thing appear differently in this picture from how it usually does?  Edit the tags for this particular appearance here.</p>

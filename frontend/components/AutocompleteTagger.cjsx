@@ -1,3 +1,5 @@
+ReactTagsInput = require './Tagger'
+
 module.exports = React.createClass(
 	displayName: 'AutoCompleteTagger'
 	propTypes:
@@ -25,8 +27,9 @@ module.exports = React.createClass(
 		if @state.completions.length == 1
 			return @state.completions[0]
 		@props.allow_new_tags
-	add: ->
+	add: (tag) ->
 		@setState completions: []
+		@props.onTagAdd? tag
 		return
 	render: ->
 		completionNodes = @state.completions.map(((comp) ->

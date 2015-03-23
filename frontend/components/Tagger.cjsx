@@ -3,10 +3,7 @@ Input = React.createClass
 	render: ->
 		ns = @props.ns
 		inputClass = ns + 'tagsinput-input ' + (if @props.invalid then ns + 'tagsinput-invalid' else '')
-		React.createElement 'input', React.__spread({}, @props,
-			type: 'text'
-			className: inputClass
-			placeholder: @props.placeholder)
+		<input {...@props} type="text" className={inputClass} placeholder={@props.placeholder}/>
 
 Tag = React.createClass
 	render: ->
@@ -40,28 +37,28 @@ module.exports = React.createClass
 		}
 	getInitialState: ->
 		{
-			tags: []
+#			tags: []
 			tag: ''
 			invalid: false
 		}
-	componentWillMount: ->
-		@setState tags: @props.tags.slice(0)
-		return
+#	componentWillMount: ->
+#		@setState tags: @props.tags.slice(0)
+#		return
 	getTags: ->
-		@state.tags
+		@props.tags
 	addTag: (tag, cb) ->
 		before = @props.onBeforeTagAdd(tag)
 		valid = ! !before and @props.validate(tag)
 		tag = if typeof before == 'string' then before else tag
-		if @state.tags.indexOf(tag) != -1 or !valid
+		if @props.tags.indexOf(tag) != -1 or !valid
 			return @setState(invalid: true)
 		@setState {
-			tags: @state.tags.concat([ tag ])
+#			tags: @props.tags.concat([ tag ])
 			tag: ''
 			invalid: false
 		}, ->
 			@props.onTagAdd tag
-			@props.onChange @state.tags
+			#@props.onChange @state.tags
 			@inputFocus()
 			if cb
 				return cb()
@@ -71,7 +68,7 @@ module.exports = React.createClass
 		valid = @props.onBeforeTagRemove(tag)
 		if !valid
 			return
-		tags = @state.tags.slice(0)
+		tags = @props.tags.slice(0)
 		i = tags.indexOf(tag)
 		tags.splice i, 1
 		@setState {
@@ -114,7 +111,7 @@ module.exports = React.createClass
 		return
 	render: ->
 		ns = if @props.classNamespace == '' then '' else @props.classNamespace + '-'
-		tagNodes = @state.tags.map(((tag, i) ->
+		tagNodes = @props.tags.map(((tag, i) ->
 			React.createElement Tag,
 				key: i
 				ns: ns
