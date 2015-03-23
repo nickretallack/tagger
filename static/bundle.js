@@ -167,44 +167,17 @@
 /* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var AppearanceOverlay, Link, Navigation, V, random_integer, vector_prop_shape;
+	var AppearanceOverlay, Navigation, V, random_integer;
 
 	V = __webpack_require__(9);
 
-	Link = ReactRouter.Link, Navigation = ReactRouter.Navigation;
+	Navigation = ReactRouter.Navigation;
+
+	AppearanceOverlay = __webpack_require__(10);
 
 	random_integer = function(min, max) {
 	  return Math.floor(Math.random() * (max - min)) + min;
 	};
-
-	vector_prop_shape = {
-	  x: React.PropTypes.number,
-	  y: React.PropTypes.number
-	};
-
-	AppearanceOverlay = React.createClass({
-	  propTypes: {
-	    position: React.PropTypes.shape(vector_prop_shape),
-	    size: React.PropTypes.shape(vector_prop_shape)
-	  },
-	  render: function() {
-	    return React.createElement(Link, {
-	      "to": "appearance",
-	      "params": {
-	        appearance_id: this.props.id
-	      },
-	      "className": "tagger-overlay",
-	      "onClick": this.onClick,
-	      "style": {
-	        position: 'absolute',
-	        left: this.props.position.x,
-	        top: this.props.position.y,
-	        width: this.props.size.x,
-	        height: this.props.size.y
-	      }
-	    });
-	  }
-	});
 
 	module.exports = React.createClass({
 	  mixins: [Navigation],
@@ -788,6 +761,44 @@
 	    return Object(result) === result ? result : child;
 	  })(Vector, arguments, function(){});
 	};
+
+
+/***/ },
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Link, Navigation, vector_prop_shape;
+
+	Link = ReactRouter.Link, Navigation = ReactRouter.Navigation;
+
+	vector_prop_shape = {
+	  x: React.PropTypes.number,
+	  y: React.PropTypes.number
+	};
+
+	module.exports = React.createClass({
+	  propTypes: {
+	    position: React.PropTypes.shape(vector_prop_shape),
+	    size: React.PropTypes.shape(vector_prop_shape)
+	  },
+	  render: function() {
+	    return React.createElement(Link, {
+	      "to": "appearance",
+	      "params": {
+	        appearance_id: this.props.id
+	      },
+	      "className": "tagger-overlay",
+	      "onClick": this.onClick,
+	      "style": {
+	        position: 'absolute',
+	        left: this.props.position.x,
+	        top: this.props.position.y,
+	        width: this.props.size.x,
+	        height: this.props.size.y
+	      }
+	    });
+	  }
+	});
 
 
 /***/ }
