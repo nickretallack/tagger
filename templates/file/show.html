@@ -1,32 +1,14 @@
 % extends 'base.html'
 
-% block content
-
-<div id="react-image-tagger"></div>
+% block variables
 <script>
 IMAGE_URL = {{url_for('static',filename='files/'+file.filename)|tojson|safe}};
+ENTRY_POINT = 'tag-file'
 </script>
+% endblock
 
-<script type="text/jsx">
-
-var cortex = new Cortex({
-	appearances:{},
-	selected_appearance: null
-});
-
-var component = React.render(
-	<TaggingActivity
-	image_url={IMAGE_URL}
-	cortex={cortex}
-	/>,
-	document.getElementById("react-image-tagger")
-)
-
-cortex.on("update", function(data) {
-	component.setProps({cortex:data});
-});
-</script>
-
+% block content
+<div id="react-image-tagger"></div>
 
 <form method="post" action="{{url_for('file.delete', file_id=file.id)}}" style="float:right; margin-top:15px">
 	<div class="form-group">
