@@ -1,4 +1,5 @@
 V = require '../lib/vector'
+{Link} = ReactRouter
 
 vector_prop_shape =
 	x: React.PropTypes.number
@@ -13,7 +14,7 @@ AppearanceOverlay = React.createClass
 		@props.selectAppearance @props.id
 
 	render: ->
-		<div
+		<Link to="appearance" params={{appearance_id:@props.id}}
 		className="tagger-overlay"
 		onClick={@onClick}
 		style={{

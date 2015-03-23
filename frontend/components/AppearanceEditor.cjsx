@@ -10,6 +10,10 @@ module.exports = React.createClass
 			$.get "/api/thing/#{name}/tag", (response) =>
 				@props.cortex.thing_tags.add name, response.items
 
+	unSelectThing: ->
+		@props.thing_name.set null
+		@props.negative_tags.set []
+
 	thingTags: ->
 		collection = @props.cortex.thing_tags
 		key = @props.thing_name.val()
@@ -29,7 +33,7 @@ module.exports = React.createClass
 			[]
 
 	addTag: (name) ->
-		index = @props.negative_tags.findIndex (item) -> item is name
+		index = @props.negative_tags.findIndex (item) -> item.val() is name
 
 		# remove negative tag
 		if index isnt -1
@@ -41,7 +45,7 @@ module.exports = React.createClass
 
 
 	removeTag: (name) ->
-		index = @props.tags.findIndex (item) -> item is name
+		index = @props.tags.findIndex (item) -> item.val() is name
 
 		# remove positive tag
 		if index isnt -1
@@ -61,7 +65,7 @@ module.exports = React.createClass
 					tags={@thingNameTags()}
 					possible_tags={THING_NAMES}
 					onTagAdd={@selectThing}
-					onTagRemove={@}
+					onTagRemove={@unSelectThing}
 				/>
 			</div>
 

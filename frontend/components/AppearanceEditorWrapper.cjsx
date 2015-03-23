@@ -1,5 +1,6 @@
 {State, Navigation} = ReactRouter
 AppearanceEditor = require './AppearanceEditor'
+FileDetailEditor = require './FileDetailEditor'
 module.exports = React.createClass
 	mixins: [State, Navigation]
 	currentAppearance: ->
@@ -10,4 +11,4 @@ module.exports = React.createClass
 		if current_appearance
 			<AppearanceEditor {...current_appearance} cortex={@props.cortex}/>
 		else
-			<div>oops</div>
+			<FileDetailEditor/>

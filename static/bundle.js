@@ -158,9 +158,11 @@
 /* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var AppearanceOverlay, V, vector_prop_shape;
+	var AppearanceOverlay, Link, V, vector_prop_shape;
 
 	V = __webpack_require__(4);
+
+	Link = ReactRouter.Link;
 
 	vector_prop_shape = {
 	  x: React.PropTypes.number,
@@ -176,7 +178,11 @@
 	    return this.props.selectAppearance(this.props.id);
 	  },
 	  render: function() {
-	    return React.createElement("div", {
+	    return React.createElement(Link, {
+	      "to": "appearance",
+	      "params": {
+	        appearance_id: this.props.id
+	      },
 	      "className": "tagger-overlay",
 	      "onClick": this.onClick,
 	      "style": {
@@ -493,6 +499,10 @@
 	      })(this));
 	    }
 	  },
+	  unSelectThing: function() {
+	    this.props.thing_name.set(null);
+	    return this.props.negative_tags.set([]);
+	  },
 	  thingTags: function() {
 	    var collection, key;
 	    collection = this.props.cortex.thing_tags;
@@ -518,7 +528,7 @@
 	  addTag: function(name) {
 	    var index;
 	    index = this.props.negative_tags.findIndex(function(item) {
-	      return item === name;
+	      return item.val() === name;
 	    });
 	    if (index !== -1) {
 	      return this.props.tags.removeAt(index);
@@ -529,7 +539,7 @@
 	  removeTag: function(name) {
 	    var index;
 	    index = this.props.tags.findIndex(function(item) {
-	      return item === name;
+	      return item.val() === name;
 	    });
 	    if (index !== -1) {
 	      return this.props.tags.removeAt(index);
@@ -544,7 +554,7 @@
 	      "tags": this.thingNameTags(),
 	      "possible_tags": THING_NAMES,
 	      "onTagAdd": this.selectThing,
-	      "onTagRemove": this
+	      "onTagRemove": this.unSelectThing
 	    })), React.createElement("div", {
 	      "className": "form-group"
 	    }, React.createElement("label", null, "Edit this appearance"), React.createElement(Tagger, {
@@ -743,11 +753,13 @@
 /* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var AppearanceEditor, Navigation, State;
+	var AppearanceEditor, FileDetailEditor, Navigation, State;
 
 	State = ReactRouter.State, Navigation = ReactRouter.Navigation;
 
 	AppearanceEditor = __webpack_require__(6);
+
+	FileDetailEditor = __webpack_require__(8);
 
 	module.exports = React.createClass({
 	  mixins: [State, Navigation],
@@ -763,7 +775,7 @@
 	        "cortex": this.props.cortex
 	      }));
 	    } else {
-	      return React.createElement("div", null, "oops");
+	      return React.createElement(FileDetailEditor, null);
 	    }
 	  }
 	});

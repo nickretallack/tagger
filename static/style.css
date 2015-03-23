@@ -25,4 +25,8 @@
 	opacity: 0.5;
 }
 
+.tagger-overlay.active {
+	background: lightgreen;
+}
+
 
