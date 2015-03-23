@@ -13,8 +13,7 @@ if ENTRY_POINT? and ENTRY_POINT is 'tag-file'
 	{Route, DefaultRoute} = ReactRouter
 	routes = (
 		<Route handler={TaggingActivity}>
-			<DefaultRoute name="file details" handler={require './components/FileDetailEditor'}/>
-			<Route name="appearance" path="appearance/:appearance_id" handler={require './components/appearance/AppearanceEditorWrapper'}/>
+			{TaggingActivity.routes}
 		</Route>
 	)
 

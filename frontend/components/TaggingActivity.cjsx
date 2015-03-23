@@ -1,9 +1,16 @@
 AppearanceOverlayManager = require './appearance/AppearanceOverlayManager'
-{RouteHandler, Navigation} = ReactRouter
+{RouteHandler, Route, DefaultRoute} = ReactRouter
 
 module.exports = React.createClass
 	contextTypes:
 		router: React.PropTypes.func.isRequired
+
+	statics:
+		routes: [
+			<DefaultRoute name="file details" handler={require './FileDetailEditor'}/>
+			<Route name="appearance" path="appearance/:appearance_id" handler={require './appearance/AppearanceEditorWrapper'}/>
+		]
+
 
 	render: ->
 		<div className="row">
