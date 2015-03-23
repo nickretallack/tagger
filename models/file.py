@@ -1,6 +1,6 @@
 from tagger.models import db
 
-__all__ = ['File']
+__all__ = ['File','FileTag']
 
 
 class File(db.Model):
@@ -37,3 +37,11 @@ class File(db.Model):
 	@property
 	def thing_names(self):
 		return ",".join([item.name for item in self.things])
+
+class FileTag(db.Model):
+	__tablename__ = 'file_tag'
+	file_id = db.Column('file_id', db.ForeignKey('file.id', ondelete='cascade'), primary_key=True)
+	file = db.relationship('File', backref=db.backref("tag_relationships", passive_deletes='all'))
+
+	tag_id = db.Column('tag_id', db.ForeignKey('tag.id', ondelete='cascade'), primary_key=True)
+	tag = db.relationship('Tag', backref=db.backref("file_relationships", passive_deletes='all'))
