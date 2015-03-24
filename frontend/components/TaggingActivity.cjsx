@@ -16,12 +16,15 @@ module.exports = React.createClass
 			dataType: 'json'
 			url: @props.sync_url
 			success: (file_data) =>
-				console.log "GOT", file_data
-				@props.file.set(file_data)
-				@setState
-					server_state: $.extend(true, {}, file_data)
+				@gotData file_data
 			error: =>
 				console.log "ERROR", arguments
+
+	gotData: (file_data) ->
+		@props.file.set(file_data)
+		@setState
+			server_state: $.extend(true, {}, file_data)
+			saving: false
 
 	save: ->
 		# todo: diff it
@@ -68,9 +71,8 @@ module.exports = React.createClass
 			url: @props.sync_url
 			data: JSON.stringify message
 			success: (file_data) =>
-				@props.file.set(file_data)
-				@setState
-					saving: false
+				@gotData file_data
+
 			error: =>
 				console.log arguments, "ERROR"
 				@setState

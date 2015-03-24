@@ -9,7 +9,7 @@ module.exports = React.createClass
 		@context.router.transitionTo 'file details'
 
 	fetchThingTags: (name) ->
-		if not @props.cortex.thing_tags.hasKey name
+		if name and not @props.cortex.thing_tags.hasKey name
 			$.ajax
 				type: 'get'
 				url: "/api/thing/#{name}/tag"

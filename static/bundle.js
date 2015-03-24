@@ -106,11 +106,7 @@
 	      url: this.props.sync_url,
 	      success: (function(_this) {
 	        return function(file_data) {
-	          console.log("GOT", file_data);
-	          _this.props.file.set(file_data);
-	          return _this.setState({
-	            server_state: $.extend(true, {}, file_data)
-	          });
+	          return _this.gotData(file_data);
 	        };
 	      })(this),
 	      error: (function(_this) {
@@ -118,6 +114,13 @@
 	          return console.log("ERROR", arguments);
 	        };
 	      })(this)
+	    });
+	  },
+	  gotData: function(file_data) {
+	    this.props.file.set(file_data);
+	    return this.setState({
+	      server_state: $.extend(true, {}, file_data),
+	      saving: false
 	    });
 	  },
 	  save: function() {
@@ -167,10 +170,7 @@
 	      data: JSON.stringify(message),
 	      success: (function(_this) {
 	        return function(file_data) {
-	          _this.props.file.set(file_data);
-	          return _this.setState({
-	            saving: false
-	          });
+	          return _this.gotData(file_data);
 	        };
 	      })(this),
 	      error: (function(_this) {
@@ -513,7 +513,7 @@
 	    return this.context.router.transitionTo('file details');
 	  },
 	  fetchThingTags: function(name) {
-	    if (!this.props.cortex.thing_tags.hasKey(name)) {
+	    if (name && !this.props.cortex.thing_tags.hasKey(name)) {
 	      return $.ajax({
 	        type: 'get',
 	        url: "/api/thing/" + name + "/tag",
