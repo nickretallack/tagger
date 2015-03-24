@@ -6,7 +6,10 @@ def parse_tags(string):
 	if not string:
 		return set()
 	else:
-		return set([item.lower() for item in string.split(',')])
+		return normalize_tags(string.split(','))
+
+def normalize_tags(tags):
+	return set([item.lower() for item in tags])
 
 def ensure_tags(wanted_tag_names):
 	existing_tags = db.session.query(Tag).filter(
@@ -26,3 +29,7 @@ def ensure_tags(wanted_tag_names):
 		flash("Created tags: {}".format(", ".join(new_tag_names)))
 
 	return existing_tags, tags_by_name, new_tag_names
+
+def ensure_tags_exist(wanted_tag_names):
+	a, b, c = ensure_tags(wanted_tag_names)
+	return b

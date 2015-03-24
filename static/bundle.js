@@ -46,24 +46,26 @@
 
 	var DefaultRoute, Route, container, cortex, current_component, routes;
 
-	window.TaggingActivity = __webpack_require__(1);
+	window.TaggingActivityWrapper = __webpack_require__(10);
 
 	if ((typeof ENTRY_POINT !== "undefined" && ENTRY_POINT !== null) && ENTRY_POINT === 'tag-file') {
 	  cortex = new Cortex({
-	    appearances: {},
-	    selected_appearance: null,
+	    file_editor: {
+	      appearances: {}
+	    },
 	    thing_tags: {}
 	  });
 	  Route = ReactRouter.Route, DefaultRoute = ReactRouter.DefaultRoute;
 	  routes = React.createElement(Route, {
-	    "handler": TaggingActivity
-	  }, TaggingActivity.routes);
+	    "handler": TaggingActivityWrapper
+	  }, TaggingActivityWrapper.routes);
 	  container = document.getElementById("react-image-tagger");
 	  current_component = null;
 	  ReactRouter.run(routes, function(Handler) {
 	    var element;
 	    element = React.createElement(Handler, {
 	      "image_url": IMAGE_URL,
+	      "sync_url": SYNC_URL,
 	      "cortex": cortex
 	    });
 	    return current_component = React.render(element, container);
@@ -80,35 +82,66 @@
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var AppearanceOverlayManager, DefaultRoute, Route, RouteHandler;
+	var AppearanceOverlayManager, RouteHandler;
 
 	AppearanceOverlayManager = __webpack_require__(2);
 
-	RouteHandler = ReactRouter.RouteHandler, Route = ReactRouter.Route, DefaultRoute = ReactRouter.DefaultRoute;
+	RouteHandler = ReactRouter.RouteHandler;
 
 	module.exports = React.createClass({
 	  contextTypes: {
 	    router: React.PropTypes.func.isRequired
 	  },
-	  statics: {
-	    routes: [
-	      React.createElement(DefaultRoute, {
-	        "name": "file details",
-	        "handler": __webpack_require__(3)
-	      }), React.createElement(Route, {
-	        "name": "appearance",
-	        "path": "appearance/:appearance_id",
-	        "handler": __webpack_require__(4)
-	      })
-	    ]
+	  componentDidMount: function() {
+	    console.log("GETTING");
+	    return $.ajax({
+	      type: 'get',
+	      url: this.props.sync_url,
+	      success: (function(_this) {
+	        return function(data) {
+	          console.log("GOT", data);
+	          return _this.props.file.set(data);
+	        };
+	      })(this),
+	      error: (function(_this) {
+	        return function() {
+	          return console.log("ERROR", arguments);
+	        };
+	      })(this)
+	    });
+	  },
+	  save: function() {
+	    var message, new_appearances;
+	    new_appearances = [];
+	    this.props.file.appearances.forEach(function(key, appearance) {
+	      if (key.slice(0, 4) === 'new-') {
+	        return new_appearances.push(appearance.val());
+	      }
+	    });
+	    message = {
+	      appearances: {
+	        create: new_appearances
+	      }
+	    };
+	    return $.ajax({
+	      type: 'post',
+	      contentType: 'application/json',
+	      dataType: 'application/json',
+	      url: this.props.sync_url,
+	      data: JSON.stringify(message)
+	    });
 	  },
 	  render: function() {
 	    return React.createElement("div", {
 	      "className": "row"
 	    }, React.createElement("div", {
 	      "className": "col-sm-4 col-md-3 col-lg-2"
-	    }, React.createElement(RouteHandler, {
+	    }, React.createElement("button", {
+	      "onClick": this.save,
+	      "className": "btn btn-primary"
+	    }, "Save Changes"), React.createElement(RouteHandler, {
 	      "cortex": this.props.cortex,
+	      "appearances": this.props.file.appearances,
 	      "key": (this.context.router.getCurrentParams().appearance_id),
 	      "removeAppearance": this.removeAppearance
 	    })), React.createElement("div", {
@@ -116,7 +149,7 @@
 	    }, React.createElement(AppearanceOverlayManager, {
 	      "src": IMAGE_URL,
 	      "createAppearance": this.createAppearance,
-	      "appearances": this.props.cortex.appearances
+	      "appearances": this.props.file.appearances
 	    })));
 	  }
 	});
@@ -231,7 +264,7 @@
 	  },
 	  currentAppearance: function() {
 	    var result;
-	    return result = this.props.cortex.appearances[this.context.router.getCurrentParams().appearance_id];
+	    return result = this.props.appearances[this.context.router.getCurrentParams().appearance_id];
 	  },
 	  render: function() {
 	    var current_appearance;
@@ -240,6 +273,7 @@
 	      return React.createElement("div", null, React.createElement(Link, {
 	        "to": "file details"
 	      }, "Back"), React.createElement(AppearanceEditor, React.__spread({}, current_appearance, {
+	        "appearance": current_appearance,
 	        "cortex": this.props.cortex,
 	        "ref": "editor"
 	      })));
@@ -419,11 +453,10 @@
 	    router: React.PropTypes.func.isRequired
 	  },
 	  removeAppearance: function() {
-	    this.props.cortex.appearances[this.props.id.val()].remove();
+	    this.props.appearance.remove();
 	    return this.context.router.transitionTo('file details');
 	  },
-	  selectThing: function(name) {
-	    this.props.thing_name.set(name);
+	  fetchThingTags: function(name) {
 	    if (!this.props.cortex.thing_tags.hasKey(name)) {
 	      return $.ajax({
 	        type: 'get',
@@ -441,6 +474,15 @@
 	        })(this)
 	      });
 	    }
+	  },
+	  selectThing: function(name) {
+	    this.props.thing_name.set(name);
+	    return this.fetchThingTags(name);
+	  },
+	  componentDidMount: function() {
+	    var name;
+	    name = this.props.thing_name.val();
+	    return this.fetchThingTags(name);
 	  },
 	  thingTagsLoading: function() {
 	    try {
@@ -784,6 +826,40 @@
 	      "onKeyDown": this.onKeyDown,
 	      "onChange": this.onChange,
 	      "onBlur": this.onBlur
+	    }));
+	  }
+	});
+
+
+/***/ },
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var DefaultRoute, Route, RouteHandler, TaggingActivity;
+
+	RouteHandler = ReactRouter.RouteHandler, Route = ReactRouter.Route, DefaultRoute = ReactRouter.DefaultRoute;
+
+	TaggingActivity = __webpack_require__(1);
+
+	module.exports = React.createClass({
+	  statics: {
+	    routes: [
+	      React.createElement(DefaultRoute, {
+	        "key": "file details",
+	        "name": "file details",
+	        "handler": __webpack_require__(3)
+	      }), React.createElement(Route, {
+	        "key": "appearance",
+	        "name": "appearance",
+	        "path": "appearance/:appearance_id",
+	        "handler": __webpack_require__(4)
+	      })
+	    ]
+	  },
+	  render: function() {
+	    return React.createElement(TaggingActivity, React.__spread({}, this.props, {
+	      "file": this.props.cortex.file_editor,
+	      "cortex": this.props.cortex
 	    }));
 	  }
 	});

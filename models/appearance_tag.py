@@ -18,4 +18,4 @@ class AppearanceTag(db.Model):
 	tag_id = db.Column('tag_id', db.ForeignKey('tag.id', ondelete='cascade'), primary_key=True)
 	tag = db.relationship('Tag', backref=db.backref("file_thing_relationships", passive_deletes='all'))
 
-	is_anti_tag = db.Column(db.Boolean, nullable=False, server_default='f')
+	negative = db.Column(db.Boolean, nullable=False, server_default='f')

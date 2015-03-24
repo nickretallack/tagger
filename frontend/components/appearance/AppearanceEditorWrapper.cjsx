@@ -6,14 +6,14 @@ module.exports = React.createClass
 		router: React.PropTypes.func.isRequired
 
 	currentAppearance: ->
-		result = @props.cortex.appearances[@context.router.getCurrentParams().appearance_id]
+		result = @props.appearances[@context.router.getCurrentParams().appearance_id]
 
 	render: ->
 		current_appearance = @currentAppearance()
 		if current_appearance
 			<div>
 				<Link to="file details">Back</Link>
-				<AppearanceEditor {...current_appearance} cortex={@props.cortex} ref="editor"/>
+				<AppearanceEditor {...current_appearance}  appearance={current_appearance} cortex={@props.cortex} ref="editor"/>
 			</div>
 		else
 			<FileDetailEditor/>

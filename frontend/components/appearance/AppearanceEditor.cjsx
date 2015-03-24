@@ -5,11 +5,10 @@ module.exports = React.createClass
 		router: React.PropTypes.func.isRequired
 
 	removeAppearance: ->
-		@props.cortex.appearances[@props.id.val()].remove()
+		@props.appearance.remove()
 		@context.router.transitionTo 'file details'
 
-	selectThing: (name) ->
-		@props.thing_name.set name
+	fetchThingTags: (name) ->
 		if not @props.cortex.thing_tags.hasKey name
 			$.ajax
 				type: 'get'
@@ -19,6 +18,15 @@ module.exports = React.createClass
 					@props.cortex.thing_tags.add name, response.items
 				error: =>
 					@props.cortex.thing_tags.add name, null
+
+
+	selectThing: (name) ->
+		@props.thing_name.set name
+		@fetchThingTags name
+
+	componentDidMount: ->
+		name = @props.thing_name.val()
+		@fetchThingTags name
 
 	thingTagsLoading: ->
 		try

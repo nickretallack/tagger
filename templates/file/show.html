@@ -3,6 +3,7 @@
 % block variables
 <script>
 IMAGE_URL = {{url_for('static',filename='files/'+file.filename)|tojson|safe}};
+SYNC_URL = {{url_for('api.file_info_sync', file_id=file.id)|tojson|safe}}
 ENTRY_POINT = 'tag-file'
 </script>
 % endblock
