@@ -1,6 +1,6 @@
 from flask import *
-from tagger.models import db, Thing, File, Appearance
-from tagger.lib.tag.tag import ensure_tags, normalize_tags
+from tagger.models import db, Thing, File, Appearance, AppearanceTag
+from tagger.lib.tag.tag import ensure_tags_exist, normalize_tags
 from tagger.lib.tag.thing import ensure_thing
 
 blueprint = Blueprint('api',__name__)
@@ -31,11 +31,11 @@ def tag_new_appearance(file, item):
 	# tags
 	tags = normalize_tags(item.get('tags',[]))
 	negative_tags = normalize_tags(item.get('negative_tags',[]))
-	tags_by_name = ensure_tags(tags.union(negative_tags))
+	tags_by_name = ensure_tags_exist(tags.union(negative_tags))
 
 	for tag_name in tags:
 		tag = tags_by_name[tag_name]
-		taggin = AppearanceTag(
+		tagging = AppearanceTag(
 			appearance=appearance,
 			tag=tag,
 		)
@@ -46,7 +46,7 @@ def tag_new_appearance(file, item):
 		tagging = AppearanceTag(
 			appearance=appearance,
 			tag=tag,
-			is_anti_tag=True,
+			negative=True,
 		)
 		db.session.add(tagging)
 
