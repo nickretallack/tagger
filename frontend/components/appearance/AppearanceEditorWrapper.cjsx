@@ -12,7 +12,7 @@ module.exports = React.createClass
 		current_appearance = @currentAppearance()
 		if current_appearance
 			<div>
-				<Link to="file details">Back</Link>
+				<Link to="file details">&larr; Edit General Details</Link>
 				<AppearanceEditor {...current_appearance}  appearance={current_appearance} cortex={@props.cortex} ref="editor"/>
 			</div>
 		else

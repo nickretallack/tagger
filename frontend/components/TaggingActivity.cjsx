@@ -85,8 +85,11 @@ module.exports = React.createClass
 
 		<div className="row">
 			<div className="col-sm-4 col-md-3 col-lg-2">
-				<button disabled={@state.saving} onClick={@save} className="btn btn-primary pull-right">Save All Changes and Reload</button>
+				<h3>File Details</h3>
+				<div class="form-group">
+				<button disabled={@state.saving} onClick={@save} className="btn btn-primary" style={{marginBottom:15}}>Save All Changes and Reload</button>
 				{error}
+				</div>
 				<RouteHandler
 				cortex={@props.cortex}
 				appearances={@props.file.appearances}
