@@ -28,11 +28,11 @@ class Appearance(db.Model):
 
 	@property
 	def tag_names(self):
-		return [delta_tag.tag.name for delta_tag in self.delta_tags if not delta_tag.negative]
+		return set([tagging.tag.name for tagging in self.taggings if not tagging.negative])
 
 	@property
 	def negative_tag_names(self):
-		return [delta_tag.tag.name for delta_tag in self.delta_tags if delta_tag.negative]
+		return set([tagging.tag.name for tagging in self.taggings if tagging.negative])
 
 	@property
 	def thing_name(self):

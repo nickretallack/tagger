@@ -55,6 +55,9 @@ def ensure_things(wanted_tag_names):
 	return existing_tags, tags_by_name, new_tag_names
 
 def ensure_thing(name):
+	if not name:
+		return None
+		
 	thing = db.session.query(Thing).filter(
 		Thing.name == name
 	).first()

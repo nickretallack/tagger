@@ -13,7 +13,7 @@ class AppearanceTag(db.Model):
 	__tablename__ = 'appearance_tag'
 
 	appearance_id = db.Column('appearance_id', db.ForeignKey('appearance.id', ondelete='cascade'), primary_key=True)
-	appearance = db.relationship('Appearance', backref=db.backref("delta_tags", passive_deletes='all'))
+	appearance = db.relationship('Appearance', backref=db.backref("taggings", passive_deletes='all'))
 
 	tag_id = db.Column('tag_id', db.ForeignKey('tag.id', ondelete='cascade'), primary_key=True)
 	tag = db.relationship('Tag', backref=db.backref("file_thing_relationships", passive_deletes='all'))

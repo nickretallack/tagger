@@ -92,15 +92,25 @@
 	  contextTypes: {
 	    router: React.PropTypes.func.isRequired
 	  },
+	  getInitialState: function() {
+	    return {
+	      saving: false,
+	      error: false
+	    };
+	  },
 	  componentDidMount: function() {
 	    console.log("GETTING");
 	    return $.ajax({
 	      type: 'get',
+	      dataType: 'json',
 	      url: this.props.sync_url,
 	      success: (function(_this) {
-	        return function(data) {
-	          console.log("GOT", data);
-	          return _this.props.file.set(data);
+	        return function(file_data) {
+	          console.log("GOT", file_data);
+	          _this.props.file.set(file_data);
+	          return _this.setState({
+	            server_state: $.extend(true, {}, file_data)
+	          });
 	        };
 	      })(this),
 	      error: (function(_this) {
@@ -111,35 +121,81 @@
 	    });
 	  },
 	  save: function() {
-	    var message, new_appearances;
+	    var message, new_appearances, removed_appearances, server_state, updated_appearances;
+	    server_state = this.state.server_state;
 	    new_appearances = [];
+	    updated_appearances = {};
 	    this.props.file.appearances.forEach(function(key, appearance) {
+	      var delta, new_thing_name, old_appearance;
+	      appearance = appearance.val();
 	      if (key.slice(0, 4) === 'new-') {
-	        return new_appearances.push(appearance.val());
+	        return new_appearances.push(appearance);
+	      } else {
+	        old_appearance = server_state.appearances[key];
+	        if (_.isEqual(old_appearance, appearance)) {
+	          return;
+	        }
+	        delta = {};
+	        new_thing_name = appearance.thing_name;
+	        if (new_thing_name !== old_appearance.thing_name) {
+	          delta.new_thing_name = new_thing_name;
+	        }
+	        delta.add_tags = _.difference(appearance.tags, old_appearance.tags);
+	        delta.remove_tags = _.difference(old_appearance.tags, appearance.tags);
+	        delta.add_negative_tags = _.difference(appearance.negative_tags, old_appearance.negative_tags);
+	        delta.remove_negative_tags = _.difference(old_appearance.negative_tags, appearance.negative_tags);
+	        return updated_appearances[key] = delta;
 	      }
 	    });
+	    removed_appearances = _.difference(_.keys(server_state.appearances), this.props.file.appearances.keys());
 	    message = {
 	      appearances: {
-	        create: new_appearances
+	        create: new_appearances,
+	        "delete": removed_appearances,
+	        update: updated_appearances
 	      }
 	    };
+	    this.setState({
+	      saving: true,
+	      error: false
+	    });
 	    return $.ajax({
 	      type: 'post',
 	      contentType: 'application/json',
-	      dataType: 'application/json',
+	      dataType: 'json',
 	      url: this.props.sync_url,
-	      data: JSON.stringify(message)
+	      data: JSON.stringify(message),
+	      success: (function(_this) {
+	        return function(file_data) {
+	          _this.props.file.set(file_data);
+	          return _this.setState({
+	            saving: false
+	          });
+	        };
+	      })(this),
+	      error: (function(_this) {
+	        return function() {
+	          console.log(arguments, "ERROR");
+	          return _this.setState({
+	            saving: false,
+	            error: true
+	          });
+	        };
+	      })(this)
 	    });
 	  },
 	  render: function() {
+	    var error;
+	    error = this.state.error ? React.createElement("div", null, "Failed to save.  Try again?") : void 0;
 	    return React.createElement("div", {
 	      "className": "row"
 	    }, React.createElement("div", {
 	      "className": "col-sm-4 col-md-3 col-lg-2"
 	    }, React.createElement("button", {
+	      "disabled": this.state.saving,
 	      "onClick": this.save,
-	      "className": "btn btn-primary"
-	    }, "Save Changes"), React.createElement(RouteHandler, {
+	      "className": "btn btn-primary pull-right"
+	    }, "Save All Changes and Reload"), error, React.createElement(RouteHandler, {
 	      "cortex": this.props.cortex,
 	      "appearances": this.props.file.appearances,
 	      "key": (this.context.router.getCurrentParams().appearance_id),

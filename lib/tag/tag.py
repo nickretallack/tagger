@@ -25,8 +25,8 @@ def ensure_tags(wanted_tag_names):
 		db.session.add(tag)
 		tags_by_name[name] = tag
 
-	if len(new_tag_names):
-		flash("Created tags: {}".format(", ".join(new_tag_names)))
+	# if len(new_tag_names):
+	# 	flash("Created tags: {}".format(", ".join(new_tag_names)))
 
 	return existing_tags, tags_by_name, new_tag_names
 
