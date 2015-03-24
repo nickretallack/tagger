@@ -17,7 +17,7 @@ module.exports = React.createClass
 					console.log 'loaded'
 					@props.cortex.thing_tags.add name, response.items
 				error: =>
-					@props.cortex.thing_tags.add name, null
+					@props.cortex.thing_tags.add name, []
 
 
 	selectThing: (name) ->

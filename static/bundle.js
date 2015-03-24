@@ -409,7 +409,7 @@
 	        })(this),
 	        error: (function(_this) {
 	          return function() {
-	            return _this.props.cortex.thing_tags.add(name, null);
+	            return _this.props.cortex.thing_tags.add(name, []);
 	          };
 	        })(this)
 	      });
