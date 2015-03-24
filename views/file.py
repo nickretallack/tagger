@@ -104,7 +104,7 @@ def post_file():
 		flash("We already have that file.")
 		return redirect(url_for('.list'))
 
-	# tagging.request_tag_file(record)
+	tagging.request_tag_file(record)
 
 	path = os.path.join(current_app.config['FILE_FOLDER'], record.filename)
 	if file:
