@@ -2,6 +2,7 @@ AppearanceOverlayManager = require './appearance/AppearanceOverlayManager'
 {RouteHandler} = ReactRouter
 
 module.exports = React.createClass
+	displayName: 'TaggingActivity'
 	contextTypes:
 		router: React.PropTypes.func.isRequired
 
@@ -74,8 +75,14 @@ module.exports = React.createClass
 			dataType: 'json'
 			url: @props.sync_url
 			data: JSON.stringify message
-			success: (file_data) =>
-				@gotData file_data
+			success: (response) =>
+				{file, appearance_id_map} = response
+				current_id = @context.router.getCurrentParams().appearance_id
+				if current_id of appearance_id_map
+					new_id = appearance_id_map[current_id]
+					@context.router.transitionTo 'appearance',
+						appearance_id: new_id
+				@gotData file
 
 			error: =>
 				console.log arguments, "ERROR"

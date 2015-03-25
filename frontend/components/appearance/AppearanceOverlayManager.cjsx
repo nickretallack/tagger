@@ -24,7 +24,14 @@ module.exports = React.createClass
 		mouse_position = V offsetX, offsetY
 		size = V 150, 150
 		position = mouse_position.subtract size.scale 0.5
-		dimensions = {position, size}
+
+		dimensions =
+			position:
+				x:position.x
+				y:position.y
+			size:
+				x:size.x
+				y:size.y
 
 		id = "new-#{random_integer 0, Math.pow(2,31)}"
 		appearance = {id, dimensions, tags:[], negative_tags:[], thing_name:null}

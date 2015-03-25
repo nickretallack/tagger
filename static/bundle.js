@@ -123,6 +123,7 @@
 	RouteHandler = ReactRouter.RouteHandler;
 
 	module.exports = React.createClass({
+	  displayName: 'TaggingActivity',
 	  contextTypes: {
 	    router: React.PropTypes.func.isRequired
 	  },
@@ -207,8 +208,17 @@
 	      url: this.props.sync_url,
 	      data: JSON.stringify(message),
 	      success: (function(_this) {
-	        return function(file_data) {
-	          return _this.gotData(file_data);
+	        return function(response) {
+	          var appearance_id_map, current_id, file, new_id;
+	          file = response.file, appearance_id_map = response.appearance_id_map;
+	          current_id = _this.context.router.getCurrentParams().appearance_id;
+	          if (current_id in appearance_id_map) {
+	            new_id = appearance_id_map[current_id];
+	            _this.context.router.transitionTo('appearance', {
+	              appearance_id: new_id
+	            });
+	          }
+	          return _this.gotData(file);
 	        };
 	      })(this),
 	      error: (function(_this) {
@@ -468,8 +478,14 @@
 	    size = V(150, 150);
 	    position = mouse_position.subtract(size.scale(0.5));
 	    dimensions = {
-	      position: position,
-	      size: size
+	      position: {
+	        x: position.x,
+	        y: position.y
+	      },
+	      size: {
+	        x: size.x,
+	        y: size.y
+	      }
 	    };
 	    id = "new-" + (random_integer(0, Math.pow(2, 31)));
 	    appearance = {

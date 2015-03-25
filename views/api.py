@@ -87,9 +87,11 @@ def file_info_sync(file_id):
 	data = request.get_json()
 
 	appearances = data.get('appearances',None)
+	id_map = {}
 	if appearances:
 		for item in appearances.get('create',[]):
-			tag_new_appearance(file, item)
+			appearance = tag_new_appearance(file, item)
+			id_map[item['id']] = appearance.id
 
 		updates = appearances.get('update',{})
 		if len(updates):
@@ -106,7 +108,10 @@ def file_info_sync(file_id):
 				db.session.delete(appearance)
 
 	db.session.commit()
-	return jsonify(file_json(file))
+	return jsonify(
+		appearance_id_map=id_map,
+		file=file_json(file),
+	)
 
 def appearance_json(appearance):
 	return dict(
