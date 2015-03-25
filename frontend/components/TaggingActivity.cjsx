@@ -21,6 +21,7 @@ module.exports = React.createClass
 				console.log "ERROR", arguments
 
 	gotData: (file_data) ->
+		console.log "GOT DATA", file_data
 		@props.file.set(file_data)
 		@setState
 			server_state: $.extend(true, {}, file_data)
@@ -42,6 +43,9 @@ module.exports = React.createClass
 					return
 
 				delta = {}
+
+				if not _.isEqual(appearance.dimensions, old_appearance.dimensions)
+					delta.dimensions = appearance.dimensions					
 
 				new_thing_name = appearance.thing_name
 				if new_thing_name != old_appearance.thing_name
@@ -86,7 +90,7 @@ module.exports = React.createClass
 		<div className="row">
 			<div className="col-sm-4 col-md-3 col-lg-2">
 				<h3>File Details</h3>
-				<div class="form-group">
+				<div className="form-group">
 				<button disabled={@state.saving} onClick={@save} className="btn btn-primary" style={{marginBottom:15}}>Save All Changes and Reload</button>
 				{error}
 				</div>
