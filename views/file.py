@@ -25,7 +25,67 @@ def hash_file(file):
 	file.seek(0)
 	return hash
 
-search_query = """
+general_search_query = """
+select file.*
+from
+(
+    select
+    file_id,
+    count(*) as tag_count
+    from (
+        -- thing name --
+        select
+        file.id as file_id,
+        thing.name as tag_name
+        from file
+        join appearance on appearance.file_id = file.id
+        join thing on appearance.thing_id = thing.id
+
+        union
+
+        -- thing tags --
+        select
+        file.id as file_id,
+        tag.name as tag_name
+        from file
+        join appearance on appearance.file_id = file.id
+        join thing on appearance.thing_id = thing.id
+        join thing_tag on thing_tag.thing_id = thing.id
+        join tag on thing_tag.tag_id = tag.id
+
+        union
+
+        -- appearance tags --
+        select
+        file.id as file_id,
+        tag.name as tag_name
+        from file
+        join appearance on appearance.file_id = file.id
+        join appearance_tag on appearance_tag.appearance_id = appearance.id
+        join tag on appearance_tag.tag_id = tag.id
+        where appearance_tag.negative = 'f'
+
+        except
+
+        -- negative appearance tags --
+        select
+        file.id as file_id,
+        tag.name as tag_name
+        from file
+        join appearance on appearance.file_id = file.id
+        join appearance_tag on appearance_tag.appearance_id = appearance.id
+        join tag on appearance_tag.tag_id = tag.id
+        where appearance_tag.negative = 't'
+    ) as calculated_file_tag
+    where tag_name in :tags
+    group by file_id
+) as file_match
+join file
+on file_match.file_id = file.id
+where file_match.tag_count = :tag_count
+"""
+
+appearance_search_query = """
 select file.*
 from file
 join appearance on appearance.file_id = file.id
@@ -91,7 +151,12 @@ def index():
 	if search:
 		terms = set(search.split(','))
 
-		raw_files = db.session.execute(search_query, params=dict(
+		if request.values.get('by_appearance'):
+			query = appearance_search_query
+		else:
+			query = general_search_query
+
+		raw_files = db.session.execute(query, params=dict(
 			tags=tuple(terms),
 			tag_count=len(terms)
 		))
@@ -140,8 +205,8 @@ def post_file():
 		db.session.flush()
 		flash("Uploaded a file.")
 	except IntegrityError, error:
-		import pdb; pdb.set_trace()
 		db.session.rollback()
+		# TODO: try and add a source?
 		flash("We already have that file.")
 		return redirect(url_for('.list'))
 
