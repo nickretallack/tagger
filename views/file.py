@@ -25,44 +25,81 @@ def hash_file(file):
 	file.seek(0)
 	return hash
 
+search_query = """
+select file.*
+from file
+join appearance on appearance.file_id = file.id
+where appearance.id in
+(
+    select appearance_id from
+    (
+        select
+        appearance_id,
+        count(*) as tag_count
+        from (
+            -- thing tags --
+            select
+            appearance.id as appearance_id,
+            tag.name as tag_name
+            from appearance
+            join thing on appearance.thing_id = thing.id
+            join thing_tag on thing_tag.thing_id = thing.id
+            join tag on thing_tag.tag_id = tag.id
+
+            union
+
+            -- thing name --
+            select
+            appearance.id as appearance_id,
+            thing.name as tag_name
+            from appearance
+            join thing on appearance.thing_id = thing.id
+
+            union
+
+            -- appearance tags --
+            select
+            appearance.id as appearance_id,
+            tag.name as tag_name
+            from appearance
+            join appearance_tag on appearance_tag.appearance_id = appearance.id
+            join tag on appearance_tag.tag_id = tag.id
+            where appearance_tag.negative = 'f'
+
+            except
+
+            -- negative appearance tags --
+            select
+            appearance.id as appearance_id,
+            tag.name as tag_name
+            from appearance
+            join appearance_tag on appearance_tag.appearance_id = appearance.id
+            join tag on appearance_tag.tag_id = tag.id
+            where appearance_tag.negative = 't'
+        ) as calculated_appearance_tag
+        where tag_name in :tags
+        group by appearance_id
+    ) as appearance_match
+    where appearance_match.tag_count = :tag_count
+)
+"""
+
 @blueprint.route('/')
 @blueprint.route('/file', endpoint='list')
 def index():
 	search = request.values.get('search','').strip()
-	# if search:
-	# 	terms = set(search.split(','))
+	if search:
+		terms = set(search.split(','))
 
-	# 	# Find all things that match the query
-	# 	thing_ids = firsts(db.session.execute("""
-	# 		select tagged_thing.id
-	# 		from
-	# 		(
-	# 			select 
-	# 			thing.id,
-	# 			count(*) as tag_count
+		raw_files = db.session.execute(search_query, params=dict(
+			tags=tuple(terms),
+			tag_count=len(terms)
+		))
+		files = [File(**raw_file) for raw_file in raw_files]
 
-	# 			from thing
-	# 			join thing_tag on thing_tag.thing_id = thing.id
-	# 			join tag on tag.id = thing_tag.tag_id
-	# 			where tag.name in :tags
-	# 			group by thing.id
-	# 		) as tagged_thing
-	# 		where tagged_thing.tag_count = :tag_count
-	# 	""", dict(
-	# 			tag_count=len(terms),
-	# 			tags=tuple(terms),
-	# 		)
-	# 	))
-
-	# 	# Find all files that have at least one of those things
-	# 	if len(thing_ids):
-	# 		files = db.session.query(File).join(Appearance).filter(
-	# 			FileThing.thing_id.in_(thing_ids)
-	# 		).all()
-	# 	else:
-	# 		files = []
-	# else:
-	files = db.session.query(File).all()
+	else:
+		raw_files = db.session.execute("""select * from file""")
+		files = [File(**raw_file) for raw_file in raw_files]
 		
 	return render_template('file/list.html', files=files, search=search)
 

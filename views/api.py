@@ -33,8 +33,7 @@ def tag_appearance(appearance, add_tags, add_negative_tags):
 def tag_new_appearance(file, item):
 	appearance = Appearance(
 		file=file,
-		position=item['position'],
-		size=item['size'],
+		dimensions=item['dimensions'],
 	)
 	db.session.add(appearance)
 
@@ -50,6 +49,9 @@ def tag_new_appearance(file, item):
 def update_appearance(appearance, data):	
 	if 'new_thing_name' in data:
 		appearance.thing = ensure_thing(data['new_thing_name'])
+
+	if 'dimensions' in data:
+		appearance.dimensions = data['dimensions']
 
 	add_tags = normalize_tags(data.get('add_tags',[]))
 	remove_tags = normalize_tags(data.get('remove_tags',[]))
@@ -110,8 +112,7 @@ def appearance_json(appearance):
 	return dict(
 		id=appearance.id,
 		thing_name=appearance.thing_name,
-		position=appearance.position,
-		size=appearance.size,
+		dimensions=appearance.dimensions,
 		tags=list(appearance.tag_names),
 		negative_tags=list(appearance.negative_tag_names),
 	)
