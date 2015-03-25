@@ -6,3 +6,4 @@ from thing import *
 from tag import *
 from appearance import *
 from appearance_tag import *
+from source import *

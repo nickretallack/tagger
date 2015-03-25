@@ -2,7 +2,7 @@ import os
 import hashlib
 from flask import *
 from werkzeug import secure_filename
-from tagger.models import db, File, Thing, Appearance
+from tagger.models import db, File, Thing, Appearance, Source
 from sqlalchemy.exc import IntegrityError
 from tagger.lib.iterators import firsts
 import requests
@@ -110,6 +110,8 @@ def new_file():
 @blueprint.route('/file', methods=['POST'], endpoint='post')
 def post_file():
 	file = request.files.get('file')
+	record = File()
+	db.session.add(record)
 
 	if file:
 		file = request.files['file']
@@ -125,18 +127,20 @@ def post_file():
 		_, ext = os.path.splitext(url)
 		response = requests.get(url, stream=True)
 		hex_digest = hashlib.sha256(response.content).hexdigest()
+		source = Source(
+			file=record,
+			url=url,
+		)
 		# hex_digest = hash_file(response.raw)
 
-	record = File(
-		ext=ext,
-		sha256=hex_digest,
-	)
-	db.session.add(record)
+	record.ext = ext
+	record.sha256 = hex_digest
 
 	try:
 		db.session.flush()
 		flash("Uploaded a file.")
-	except IntegrityError:
+	except IntegrityError, error:
+		import pdb; pdb.set_trace()
 		db.session.rollback()
 		flash("We already have that file.")
 		return redirect(url_for('.list'))
