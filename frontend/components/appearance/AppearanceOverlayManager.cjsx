@@ -18,6 +18,7 @@ module.exports = React.createClass
 
 	getInitialState: ->
 		creating_overlay: null
+		touch_point: null
 
 	onClickImage: (event) ->
 		{offsetX, offsetY} = event.nativeEvent
@@ -39,14 +40,41 @@ module.exports = React.createClass
 		@context.router.transitionTo 'appearance',
 				appearance_id: id
 
+	startDrag: (position, touch_point) ->
+		@setState
+			dragging: {position, touch_point}
+
+	onMouseMove: (event) ->
+		if @state.dragging
+			{position, touch_point} = @state.dragging
+			event.preventDefault()
+			event.stopPropagation()
+			offset = $(@refs.box.getDOMNode()).offset()
+			position.x.set event.nativeEvent.clientX - touch_point.x - offset.left
+			position.y.set event.nativeEvent.clientY - touch_point.y - offset.top
+
+	componentDidMount: ->
+		handler = =>
+			if @state.dragging
+				@setState dragging: null
+		@setState handler:handler
+		$(window).on 'mouseup', handler
+
+	componentWillUnmount: ->
+		$(window).off 'mouseup', @state.handler
+
 	render: ->
-		console.log @props.appearances.val()
-
 		appearances = []
-		@props.appearances.forEach (id, appearance) ->
-			appearances.push <AppearanceOverlay key={appearance.id.val()} {...appearance}/>
+		@props.appearances.forEach (id, appearance) =>
+			appearances.push <AppearanceOverlay {...appearance}
+				key={appearance.id.val()}
+				startDrag={@startDrag}/>
 
-		<div style={{position:'relative'}}>
+		<div style={{position:'relative'}}
+		onMouseMove={@onMouseMove}
+		onMouseUp={@onMouseUp}
+		ref="box"
+		>
 			<img
 			src={@props.src}
 			style={{position:'absolute', zIndex: 1}}
