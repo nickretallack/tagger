@@ -30,56 +30,56 @@ general_search_query = """
 select file.*
 from
 (
-    select
-    file_id,
-    count(*) as tag_count
-    from (
-        -- thing name --
-        select
-        file.id as file_id,
-        thing.name as tag_name
-        from file
-        join appearance on appearance.file_id = file.id
-        join thing on appearance.thing_id = thing.id
+	select
+	file_id,
+	count(*) as tag_count
+	from (
+		-- thing name --
+		select
+		file.id as file_id,
+		thing.name as tag_name
+		from file
+		join appearance on appearance.file_id = file.id
+		join thing on appearance.thing_id = thing.id
 
-        union
+		union
 
-        -- thing tags --
-        select
-        file.id as file_id,
-        tag.name as tag_name
-        from file
-        join appearance on appearance.file_id = file.id
-        join thing on appearance.thing_id = thing.id
-        join thing_tag on thing_tag.thing_id = thing.id
-        join tag on thing_tag.tag_id = tag.id
+		-- thing tags --
+		select
+		file.id as file_id,
+		tag.name as tag_name
+		from file
+		join appearance on appearance.file_id = file.id
+		join thing on appearance.thing_id = thing.id
+		join thing_tag on thing_tag.thing_id = thing.id
+		join tag on thing_tag.tag_id = tag.id
 
-        union
+		union
 
-        -- appearance tags --
-        select
-        file.id as file_id,
-        tag.name as tag_name
-        from file
-        join appearance on appearance.file_id = file.id
-        join appearance_tag on appearance_tag.appearance_id = appearance.id
-        join tag on appearance_tag.tag_id = tag.id
-        where appearance_tag.negative = 'f'
+		-- appearance tags --
+		select
+		file.id as file_id,
+		tag.name as tag_name
+		from file
+		join appearance on appearance.file_id = file.id
+		join appearance_tag on appearance_tag.appearance_id = appearance.id
+		join tag on appearance_tag.tag_id = tag.id
+		where appearance_tag.negative = 'f'
 
-        except
+		except
 
-        -- negative appearance tags --
-        select
-        file.id as file_id,
-        tag.name as tag_name
-        from file
-        join appearance on appearance.file_id = file.id
-        join appearance_tag on appearance_tag.appearance_id = appearance.id
-        join tag on appearance_tag.tag_id = tag.id
-        where appearance_tag.negative = 't'
-    ) as calculated_file_tag
-    where tag_name in :tags
-    group by file_id
+		-- negative appearance tags --
+		select
+		file.id as file_id,
+		tag.name as tag_name
+		from file
+		join appearance on appearance.file_id = file.id
+		join appearance_tag on appearance_tag.appearance_id = appearance.id
+		join tag on appearance_tag.tag_id = tag.id
+		where appearance_tag.negative = 't'
+	) as calculated_file_tag
+	where tag_name in :tags
+	group by file_id
 ) as file_match
 join file
 on file_match.file_id = file.id
@@ -92,150 +92,171 @@ from file
 join appearance on appearance.file_id = file.id
 where appearance.id in
 (
-    select appearance_id from
-    (
-        select
-        appearance_id,
-        count(*) as tag_count
-        from (
-            -- thing tags --
-            select
-            appearance.id as appearance_id,
-            tag.name as tag_name
-            from appearance
-            join thing on appearance.thing_id = thing.id
-            join thing_tag on thing_tag.thing_id = thing.id
-            join tag on thing_tag.tag_id = tag.id
+	select appearance_id from
+	(
+		select
+		appearance_id,
+		count(*) as tag_count
+		from (
+			-- thing tags --
+			select
+			appearance.id as appearance_id,
+			tag.name as tag_name
+			from appearance
+			join thing on appearance.thing_id = thing.id
+			join thing_tag on thing_tag.thing_id = thing.id
+			join tag on thing_tag.tag_id = tag.id
 
-            union
+			union
 
-            -- thing name --
-            select
-            appearance.id as appearance_id,
-            thing.name as tag_name
-            from appearance
-            join thing on appearance.thing_id = thing.id
+			-- thing name --
+			select
+			appearance.id as appearance_id,
+			thing.name as tag_name
+			from appearance
+			join thing on appearance.thing_id = thing.id
 
-            union
+			union
 
-            -- appearance tags --
-            select
-            appearance.id as appearance_id,
-            tag.name as tag_name
-            from appearance
-            join appearance_tag on appearance_tag.appearance_id = appearance.id
-            join tag on appearance_tag.tag_id = tag.id
-            where appearance_tag.negative = 'f'
+			-- appearance tags --
+			select
+			appearance.id as appearance_id,
+			tag.name as tag_name
+			from appearance
+			join appearance_tag on appearance_tag.appearance_id = appearance.id
+			join tag on appearance_tag.tag_id = tag.id
+			where appearance_tag.negative = 'f'
 
-            except
+			except
 
-            -- negative appearance tags --
-            select
-            appearance.id as appearance_id,
-            tag.name as tag_name
-            from appearance
-            join appearance_tag on appearance_tag.appearance_id = appearance.id
-            join tag on appearance_tag.tag_id = tag.id
-            where appearance_tag.negative = 't'
-        ) as calculated_appearance_tag
-        where tag_name in :tags
-        group by appearance_id
-        having tag_count = :tag_count
-    ) as appearance_match
+			-- negative appearance tags --
+			select
+			appearance.id as appearance_id,
+			tag.name as tag_name
+			from appearance
+			join appearance_tag on appearance_tag.appearance_id = appearance.id
+			join tag on appearance_tag.tag_id = tag.id
+			where appearance_tag.negative = 't'
+		) as calculated_appearance_tag
+		where tag_name in :tags
+		group by appearance_id
+		having tag_count = :tag_count
+	) as appearance_match
 )
 """
 
 multiple_appearance_query = """
 with calculated_appearance_tag as (
-    -- thing tags --
-    select
-    appearance.id as appearance_id,
-    tag.name as tag_name
-    from appearance
-    join thing on appearance.thing_id = thing.id
-    join thing_tag on thing_tag.thing_id = thing.id
-    join tag on thing_tag.tag_id = tag.id
+	-- thing tags --
+	select
+	appearance.id as appearance_id,
+	tag.name as tag_name
+	from appearance
+	join thing on appearance.thing_id = thing.id
+	join thing_tag on thing_tag.thing_id = thing.id
+	join tag on thing_tag.tag_id = tag.id
 
-    union
+	union
 
-    -- thing name --
-    select
-    appearance.id as appearance_id,
-    thing.name as tag_name
-    from appearance
-    join thing on appearance.thing_id = thing.id
+	-- thing name --
+	select
+	appearance.id as appearance_id,
+	thing.name as tag_name
+	from appearance
+	join thing on appearance.thing_id = thing.id
 
-    union
+	union
 
-    -- appearance tags --
-    select
-    appearance.id as appearance_id,
-    tag.name as tag_name
-    from appearance
-    join appearance_tag on appearance_tag.appearance_id = appearance.id
-    join tag on appearance_tag.tag_id = tag.id
-    where appearance_tag.negative = 'f'
+	-- appearance tags --
+	select
+	appearance.id as appearance_id,
+	tag.name as tag_name
+	from appearance
+	join appearance_tag on appearance_tag.appearance_id = appearance.id
+	join tag on appearance_tag.tag_id = tag.id
+	where appearance_tag.negative = 'f'
 
-    except
+	except
 
-    -- negative appearance tags --
-    select
-    appearance.id as appearance_id,
-    tag.name as tag_name
-    from appearance
-    join appearance_tag on appearance_tag.appearance_id = appearance.id
-    join tag on appearance_tag.tag_id = tag.id
-    where appearance_tag.negative = 't'
+	-- negative appearance tags --
+	select
+	appearance.id as appearance_id,
+	tag.name as tag_name
+	from appearance
+	join appearance_tag on appearance_tag.appearance_id = appearance.id
+	join tag on appearance_tag.tag_id = tag.id
+	where appearance_tag.negative = 't'
 )
 select file.*
 from file
 where file.id in
 (
-    select
-    appearance.file_id as file_id
-    from
-    (
-    	{appearance_stanzas}
-    ) as appearance_match
-    join appearance on appearance_match.appearance_id = appearance.id
-    group by appearance.file_id
-    having count(*) = 2
+	select
+	appearance.file_id as file_id
+	from
+	(
+		{appearance_stanzas}
+	) as appearance_match
+	join appearance on appearance_match.appearance_id = appearance.id
+	group by appearance.file_id
+	having count(*) = :appearance_count
 )
 """
 
 appearance_query_stanza = """
-    select
-    appearance_id
-    from calculated_appearance_tag
-    where tag_name in :{tags_param}
-    group by appearance_id
-    having count(*) = :{tag_count_param}
+	select
+	appearance_id
+	from calculated_appearance_tag
+	where tag_name in :{tags_param}
+	group by appearance_id
+	having count(*) = :{tag_count_param}
 """
 
 @blueprint.route('/')
 @blueprint.route('/file', endpoint='list')
 def index():
 	search = request.values.get('search','')
+	one_thing = request.values.get('one_thing')
 	terms = parse_tags(search)
 	if len(terms) == 0:
 		query = """select * from file"""
 		raw_files = db.session.execute(query)
+		files = [File(**raw_file) for raw_file in raw_files]
 	else:
-		query = general_search_query
-		raw_files = db.session.execute(query, params=dict(
-			tags=tuple(terms),
-			tag_count=len(terms)
-		))
+		if not one_thing:
+			query = general_search_query
+			raw_files = db.session.execute(query, params=dict(
+				tags=tuple(terms),
+				tag_count=len(terms)
+			))
+			files = [File(**raw_file) for raw_file in raw_files]
+		else:
+			files = multi_appearance_query([terms])
 
-	files = [File(**raw_file) for raw_file in raw_files]
 	return render_template('file/list.html', files=files, search=search)
 
-def appearance_stanza_from_tags(tags, index, params):
-	appearance_query_stanza.format(
-
+def multi_appearance_query(appearance_tags):
+	params = dict(
+		appearance_count=len(appearance_tags)
 	)
+	appearance_stanzas = []
+	for index, tags in enumerate(appearance_tags):
+		tags_param = "tags_{}".format(index)
+		tag_count_param = "tag_count_{}".format(index)
+		appearance_stanzas.append(appearance_query_stanza.format(
+			tags_param=tags_param,
+			tag_count_param=tag_count_param,
+		))
+		params[tags_param] = tuple(tags)
+		params[tag_count_param] = len(tags)
 
-@blueprint.route('/advanced-search')
+	query = multiple_appearance_query.format(
+		appearance_stanzas = " union ".join(appearance_stanzas)
+	)
+	raw_files = db.session.execute(query, params=params)
+	return [File(**raw_file) for raw_file in raw_files]
+
+@blueprint.route('/advanced-search', endpoint='advanced-search')
 def advanced_search():
 	# search_by_appearance = request.values.get('by_appearance') == 'true'
 	# if search_by_apparance:
@@ -250,24 +271,7 @@ def advanced_search():
 	if len(appearance_tags) == 0:
 		files = []
 	else:
-		params = {}
-		appearance_stanzas = []
-		for index, tags in enumerate(appearance_tags):
-			tags_param = "tags_{}".format(index)
-			tag_count_param = "tag_count_{}".format(index)
-			appearance_stanzas.append(appearance_query_stanza.format(
-				tags_param=tags_param,
-				tag_count_param=tag_count_param,
-			))
-			params[tags_param] = tuple(tags)
-			params[tag_count_param] = len(tags)
-
-		query = multiple_appearance_query.format(
-			appearance_stanzas = " union ".join(appearance_stanzas)
-		)
-		raw_files = db.session.execute(query, params=params)
-		files = [File(**raw_file) for raw_file in raw_files]
-
+		files = multi_appearance_query(appearance_tags)
 	return render_template('file/advanced_search.html', files=files)
 
 @blueprint.route('/file/new', methods=['GET'], endpoint='new')
