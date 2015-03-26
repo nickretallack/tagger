@@ -1,0 +1,69 @@
+% extends 'base.html'
+
+% block content
+
+<form action="{{url_for('file.advanced_search')}}">
+	<h1>Find files containing multiple things</h1>
+	<div class="row">
+	<div class="form-group col-md-3 col-sm-6">
+		<div class="input-group">
+			<label>First Thing</label>
+			<input
+			class="tag-thing-field search wide"
+			type="text"
+			name="appearance_1"
+			value="{{request.values.get('appearance_1','')}}"
+			>
+		</div>
+	</div>
+
+	<div class="form-group col-md-3 col-sm-6">
+		<div class="input-group">
+			<label>Second Thing</label>
+			<input
+			class="tag-thing-field search wide"
+			type="text"
+			name="appearance_2"
+			value="{{request.values.get('appearance_2','')}}"
+			>
+		</div>
+	</div>
+
+	<div class="form-group col-md-3 col-sm-6">
+		<div class="input-group">
+			<label>Third Thing</label>
+			<input
+			class="tag-thing-field search wide"
+			type="text"
+			name="appearance_3"
+			value="{{request.values.get('appearance_3','')}}"
+			>
+		</div>
+	</div>
+
+	<div class="form-group col-md-3 col-sm-6">
+		<div class="input-group">
+			<label>Fourth Thing</label>
+			<input
+			class="tag-thing-field search wide"
+			type="text"
+			name="appearance_4"
+			value="{{request.values.get('appearance_4','')}}"
+			>
+		</div>
+	</div>
+</div>
+	<button class="btn btn-primary">
+	Search
+	</button>
+
+</form>
+
+<h2 style="margin-top:25px">Results</h2>
+<div class="files">
+% for file in files
+% include 'partial/file_thumbnail.html'
+% endfor
+</div>
+
+% endblock
