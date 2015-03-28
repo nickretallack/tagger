@@ -1,5 +1,5 @@
 from flask import *
-from tagger.models import db, Thing, File, Appearance, AppearanceTag, FileThingRole, ThingRole
+from tagger.models import db, Thing, File, Appearance, AppearanceTag, FileThingRole, ThingRole, FileTag
 from tagger.lib.tag.tag import ensure_tags_exist, normalize_tags
 from tagger.lib.tag.thing import ensure_thing, ensure_things
 
@@ -78,6 +78,25 @@ def update_appearance(appearance, data):
 	# add tags
 	tag_appearance(appearance, add_tags, add_negative_tags)
 
+def diff_tags(file, data):
+	delta = data.get('tags',{})
+	add_tag_names = normalize_tags(delta.get('add',[]))
+	remove_tag_names = normalize_tags(delta.get('remove',[]))
+
+	tags_by_name = ensure_tags_exist(add_tag_names)
+	for tag_name in add_tag_names:
+		tag = tags_by_name[tag_name]
+		tagging = FileTag(
+			file=file,
+			tag=tag,
+		)
+		db.session.add(tagging)
+
+	for tagging in file.tags:
+		if tagging.name in remove_tag_names:
+			db.session.delete(tagging)
+
+
 def diff_roles(file, data):
 	roles_by_name = ThingRole.by_name()
 	all_thing_names = set()
@@ -135,6 +154,7 @@ def file_info_sync(file_id):
 	).one()
 	data = request.get_json()
 
+	diff_tags(file, data)
 	diff_roles(file, data)
 	id_map = diff_appearances(file, data)
 

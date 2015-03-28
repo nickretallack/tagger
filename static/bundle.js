@@ -165,7 +165,7 @@
 	    });
 	  },
 	  save: function() {
-	    var artists_added, artists_removed, message, new_appearances, removed_appearances, role, role_diffs, server_state, updated_appearances, _i, _len, _ref;
+	    var message, new_appearances, removed_appearances, role, role_diffs, server_state, updated_appearances, _i, _len, _ref;
 	    server_state = this.state.server_state;
 	    new_appearances = [];
 	    updated_appearances = {};
@@ -193,7 +193,7 @@
 	      }
 	    });
 	    removed_appearances = _.difference(_.keys(server_state.appearances), this.props.file.appearances.keys());
-	    artists_removed = artists_added = role_diffs = {};
+	    role_diffs = {};
 	    _ref = ['artist', 'recipient'];
 	    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
 	      role = _ref[_i];
@@ -205,7 +205,8 @@
 	        "delete": removed_appearances,
 	        update: updated_appearances
 	      },
-	      roles: role_diffs
+	      roles: role_diffs,
+	      tags: tag_diff(this.props.file.tags.val(), server_state.tags)
 	    };
 	    this.setState({
 	      saving: true,

@@ -62,9 +62,6 @@ module.exports = React.createClass
 
 		removed_appearances = _.difference(_.keys(server_state.appearances), @props.file.appearances.keys())
 
-		artists_removed = 
-		artists_added = 
-
 		role_diffs = {}
 		for role in ['artist','recipient']
 			role_diffs[role] = tag_diff(@props.file.roles[role].val(), server_state.roles[role])
@@ -75,6 +72,7 @@ module.exports = React.createClass
 				delete: removed_appearances
 				update: updated_appearances
 			roles: role_diffs
+			tags: tag_diff(@props.file.tags.val(), server_state.tags)
 
 		@setState
 			saving: true
