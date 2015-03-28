@@ -224,7 +224,7 @@
 	          var appearance_id_map, current_id, file, new_id;
 	          file = response.file, appearance_id_map = response.appearance_id_map;
 	          current_id = _this.context.router.getCurrentParams().appearance_id;
-	          if (current_id in appearance_id_map) {
+	          if (current_id && current_id in appearance_id_map) {
 	            new_id = appearance_id_map[current_id];
 	            _this.context.router.transitionTo('appearance', {
 	              appearance_id: new_id

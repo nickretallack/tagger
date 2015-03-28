@@ -90,7 +90,7 @@ module.exports = React.createClass
 			success: (response) =>
 				{file, appearance_id_map} = response
 				current_id = @context.router.getCurrentParams().appearance_id
-				if current_id of appearance_id_map
+				if current_id and current_id of appearance_id_map
 					new_id = appearance_id_map[current_id]
 					@context.router.transitionTo 'appearance',
 						appearance_id: new_id
