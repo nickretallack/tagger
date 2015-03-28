@@ -1,31 +1,26 @@
 #window.TagDelta = require './components/TagDelta'
-window.TaggingActivityWrapper = require './components/TaggingActivityWrapper'
+#window.TaggingActivityWrapper = require './components/TaggingActivityWrapper'
 #window.Test = require './components/Test'
 #window.AutoCompleteTagger = require './components/AutoCompleteTagger'
 #AppearanceEditor = require './components/AppearanceEditor'
 
 
-
 if ENTRY_POINT? and ENTRY_POINT is 'tag-file'
 	cortex = new Cortex
-		file_editor: undefined
 		thing_tags: {}
+		file_details: {}
+		search_results: SEARCH_RESULTS
 
 	{Route, DefaultRoute} = ReactRouter
-	routes = (
-		<Route handler={TaggingActivityWrapper}>
-			{TaggingActivityWrapper.routes}
-		</Route>
-	)
+	routes = [
+		<DefaultRoute name="file list" handler={require './components/routing/list'}/>
+		<Route name="file show" path='file/:file_id' handler={require './components/routing/show'}/>
+	]
 
 	container = document.getElementById("react-image-tagger")
 	current_component = null
 	ReactRouter.run routes, (Handler) ->
-		element = <Handler
-			image_url={IMAGE_URL}
-			sync_url={SYNC_URL}
-			cortex={cortex}
-			/>
+		element = <Handler cortex={cortex}/>
 
 		current_component = React.render element, container
 

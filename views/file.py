@@ -233,7 +233,16 @@ def index():
 		else:
 			files = multi_appearance_query([terms])
 
-	return render_template('file/list.html', files=files, search=search)
+	return render_template('file/list.html', files=files, search=search, search_results=json_summary(files))
+
+def json_summary(files):
+	return [
+		dict(
+			id=file.id,
+			image_url=url_for('static',filename='files/'+file.filename),
+		)
+		for file in files
+	]
 
 def multi_appearance_query(appearance_tags):
 	params = dict(

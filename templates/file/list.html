@@ -1,12 +1,13 @@
 % extends 'base.html'
 
+% block variables
+<script>
+SEARCH_RESULTS = {{search_results|tojson|safe}}
+ENTRY_POINT = 'tag-file'
+</script>
+% endblock
+
+
 % block content
-
-<div class="files">
-% for file in files
-% include 'partial/file_thumbnail.html'
-% endfor
-</div>
-
-
+<div id="react-image-tagger"></div>
 % endblock
