@@ -187,10 +187,8 @@
 	        if (new_thing_name !== old_appearance.thing_name) {
 	          delta.new_thing_name = new_thing_name;
 	        }
-	        delta.add_tags = _.difference(appearance.tags, old_appearance.tags);
-	        delta.remove_tags = _.difference(old_appearance.tags, appearance.tags);
-	        delta.add_negative_tags = _.difference(appearance.negative_tags, old_appearance.negative_tags);
-	        delta.remove_negative_tags = _.difference(old_appearance.negative_tags, appearance.negative_tags);
+	        delta.tags = tag_diff(appearance.tags, old_appearance.tags);
+	        delta.negative_tags = tag_diff(appearance.negative_tags, old_appearance.negative_tags);
 	        return updated_appearances[key] = delta;
 	      }
 	    });

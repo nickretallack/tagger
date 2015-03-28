@@ -53,10 +53,10 @@ def update_appearance(appearance, data):
 	if 'dimensions' in data:
 		appearance.dimensions = data['dimensions']
 
-	add_tags = normalize_tags(data.get('add_tags',[]))
-	remove_tags = normalize_tags(data.get('remove_tags',[]))
-	add_negative_tags = normalize_tags(data.get('add_negative_tags',[]))
-	remove_negative_tags = normalize_tags(data.get('remove_negative_tags',[]))
+	add_tags = normalize_tags(data.get('tags',{}).get('add',[]))
+	remove_tags = normalize_tags(data.get('tags',{}).get('remove',[]))
+	add_negative_tags = normalize_tags(data.get('negative_tags',{}).get('add',[]))
+	remove_negative_tags = normalize_tags(data.get('remove_negative_tags',{}).get('remove',[]))
 
 	tag_names = set(appearance.tag_names)
 	negative_tag_names = set(appearance.negative_tag_names)
@@ -122,6 +122,7 @@ def diff_appearances(file, data):
 		for appearance in file.appearances:
 			if appearance.id in deletes:
 				db.session.delete(appearance)
+	return id_map
 
 @blueprint.route('/file/<file_id>/info', methods=['POST'], endpoint='file_info_sync')
 def file_info_sync(file_id):
