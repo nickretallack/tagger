@@ -1,7 +1,7 @@
 from flask import *
-from tagger.models import db, Thing, File, Appearance, AppearanceTag
+from tagger.models import db, Thing, File, Appearance, AppearanceTag, FileThingRole, ThingRole
 from tagger.lib.tag.tag import ensure_tags_exist, normalize_tags
-from tagger.lib.tag.thing import ensure_thing
+from tagger.lib.tag.thing import ensure_thing, ensure_things
 
 blueprint = Blueprint('api',__name__)
 
@@ -78,15 +78,30 @@ def update_appearance(appearance, data):
 	# add tags
 	tag_appearance(appearance, add_tags, add_negative_tags)
 
+def diff_roles(file, data):
+	roles_by_name = ThingRole.by_name()
+	all_thing_names = set()
+	for role, tag_diff in data.get('roles',{}).iteritems():
+		all_thing_names.update(set(tag_diff.get('add',[])))
 
-@blueprint.route('/file/<file_id>/info', methods=['POST'], endpoint='file_info_sync')
-def file_info_sync(file_id):
-	file = db.session.query(File).filter_by(id=file_id).options(
-		db.subqueryload('appearances').subqueryload('taggings').joinedload('tag'),
-		db.subqueryload('thing_roles').joinedload('role').joinedload('thing'),
-	).one()
-	data = request.get_json()
+	things_by_name = ensure_things(all_thing_names)
 
+	file_roles_to_delete = set()
+	for role_name, tag_diff in data.get('roles',{}).iteritems():
+		for thing_name in tag_diff.get('add',[]):
+			record = FileThingRole(
+				file=file,
+				thing=things_by_name[thing_name],
+				role=roles_by_name[role_name],
+			)
+		for thing_name in tag_diff.get('remove',[]):
+			file_roles_to_delete.add((role_name,thing_name))
+
+	for thing_role in file.thing_roles:
+		if (thing_role.role.name, thing_role.thing.name) in file_roles_to_delete:
+			db.session.delete(thing_role)
+
+def diff_appearances(file, data):
 	appearances = data.get('appearances',None)
 	id_map = {}
 	if appearances:
@@ -108,6 +123,20 @@ def file_info_sync(file_id):
 			if appearance.id in deletes:
 				db.session.delete(appearance)
 
+@blueprint.route('/file/<file_id>/info', methods=['POST'], endpoint='file_info_sync')
+def file_info_sync(file_id):
+	thing_roles_option = db.subqueryload('thing_roles')
+
+	file = db.session.query(File).filter_by(id=file_id).options(
+		db.subqueryload('appearances').subqueryload('taggings').joinedload('tag'),
+		thing_roles_option.joinedload('role'),
+		thing_roles_option.joinedload('thing'),
+	).one()
+	data = request.get_json()
+
+	diff_roles(file, data)
+	id_map = diff_appearances(file, data)
+
 	db.session.commit()
 	return jsonify(
 		appearance_id_map=id_map,
@@ -127,8 +156,10 @@ def file_json(file):
 	return dict(
 		appearances={appearance.id: appearance_json(appearance) for appearance in file.appearances},
 		tags=file.tag_names,
-		artists=file.artist_names,
-		recipients=file.recipient_names,
+		roles=dict(
+			artist=file.artist_names,
+			recipient=file.recipient_names,
+		)
 	)
 
 

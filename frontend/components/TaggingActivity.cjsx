@@ -1,6 +1,10 @@
 AppearanceOverlayManager = require './appearance/AppearanceOverlayManager'
 {RouteHandler} = ReactRouter
 
+tag_diff = (new_tags, old_tags) ->
+	add: _.difference(new_tags, old_tags)
+	remove: _.difference(old_tags, new_tags)
+
 module.exports = React.createClass
 	displayName: 'TaggingActivity'
 	contextTypes:
@@ -60,11 +64,19 @@ module.exports = React.createClass
 
 		removed_appearances = _.difference(_.keys(server_state.appearances), @props.file.appearances.keys())
 
+		artists_removed = 
+		artists_added = 
+
+		role_diffs = {}
+		for role in ['artist','recipient']
+			role_diffs[role] = tag_diff(@props.file.roles[role].val(), server_state.roles[role])
+
 		message =
 			appearances:
 				create: new_appearances
 				delete: removed_appearances
 				update: updated_appearances
+			roles: role_diffs
 
 		@setState
 			saving: true
@@ -91,6 +103,9 @@ module.exports = React.createClass
 					error: true
 
 	render: ->
+		if not @props.file.val()
+			return <div>Loading...</div>
+
 		error = if @state.error
 			<div>Failed to save.  Try again?</div>
 
@@ -103,6 +118,7 @@ module.exports = React.createClass
 				</div>
 				<RouteHandler
 				cortex={@props.cortex}
+				file={@props.file}
 				appearances={@props.file.appearances}
 				key={@context.router.getCurrentParams().appearance_id}
 				removeAppearance={@removeAppearance}

@@ -8,8 +8,7 @@ window.TaggingActivityWrapper = require './components/TaggingActivityWrapper'
 
 if ENTRY_POINT? and ENTRY_POINT is 'tag-file'
 	cortex = new Cortex
-		file_editor:
-			appearances: {}
+		file_editor: undefined
 		thing_tags: {}
 
 	{Route, DefaultRoute} = ReactRouter

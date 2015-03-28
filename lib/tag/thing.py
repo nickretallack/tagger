@@ -1,6 +1,7 @@
 from tagger.models import db, Thing, ThingTag
 from flask import request, flash
 from tag import ensure_tags, parse_tags
+from tagger.lib.iterators import index_by_attribute
 
 def request_tag_thing(thing):
 	if 'tags' in request.form:
@@ -52,7 +53,7 @@ def ensure_things(wanted_tag_names):
 		db.session.add(tag)
 		tags_by_name[name] = tag
 
-	return existing_tags, tags_by_name, new_tag_names
+	return tags_by_name
 
 def ensure_thing(name):
 	if not name:

@@ -50,9 +50,7 @@
 
 	if ((typeof ENTRY_POINT !== "undefined" && ENTRY_POINT !== null) && ENTRY_POINT === 'tag-file') {
 	  cortex = new Cortex({
-	    file_editor: {
-	      appearances: {}
-	    },
+	    file_editor: void 0,
 	    thing_tags: {}
 	  });
 	  Route = ReactRouter.Route, DefaultRoute = ReactRouter.DefaultRoute;
@@ -116,11 +114,18 @@
 /* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var AppearanceOverlayManager, RouteHandler;
+	var AppearanceOverlayManager, RouteHandler, tag_diff;
 
 	AppearanceOverlayManager = __webpack_require__(5);
 
 	RouteHandler = ReactRouter.RouteHandler;
+
+	tag_diff = function(new_tags, old_tags) {
+	  return {
+	    add: _.difference(new_tags, old_tags),
+	    remove: _.difference(old_tags, new_tags)
+	  };
+	};
 
 	module.exports = React.createClass({
 	  displayName: 'TaggingActivity',
@@ -160,7 +165,7 @@
 	    });
 	  },
 	  save: function() {
-	    var message, new_appearances, removed_appearances, server_state, updated_appearances;
+	    var artists_added, artists_removed, message, new_appearances, removed_appearances, role, role_diffs, server_state, updated_appearances, _i, _len, _ref;
 	    server_state = this.state.server_state;
 	    new_appearances = [];
 	    updated_appearances = {};
@@ -190,12 +195,19 @@
 	      }
 	    });
 	    removed_appearances = _.difference(_.keys(server_state.appearances), this.props.file.appearances.keys());
+	    artists_removed = artists_added = role_diffs = {};
+	    _ref = ['artist', 'recipient'];
+	    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+	      role = _ref[_i];
+	      role_diffs[role] = tag_diff(this.props.file.roles[role].val(), server_state.roles[role]);
+	    }
 	    message = {
 	      appearances: {
 	        create: new_appearances,
 	        "delete": removed_appearances,
 	        update: updated_appearances
-	      }
+	      },
+	      roles: role_diffs
 	    };
 	    this.setState({
 	      saving: true,
@@ -234,6 +246,9 @@
 	  },
 	  render: function() {
 	    var error;
+	    if (!this.props.file.val()) {
+	      return React.createElement("div", null, "Loading...");
+	    }
 	    error = this.state.error ? React.createElement("div", null, "Failed to save.  Try again?") : void 0;
 	    return React.createElement("div", {
 	      "className": "row"
@@ -250,6 +265,7 @@
 	      }
 	    }, "Save All Changes and Reload"), error), React.createElement(RouteHandler, {
 	      "cortex": this.props.cortex,
+	      "file": this.props.file,
 	      "appearances": this.props.file.appearances,
 	      "key": (this.context.router.getCurrentParams().appearance_id),
 	      "removeAppearance": this.removeAppearance
@@ -268,9 +284,31 @@
 /* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var CortexTagger;
+
+	CortexTagger = __webpack_require__(12);
+
 	module.exports = React.createClass({
 	  render: function() {
-	    return React.createElement("div", null, "TODO: scene tags, artists, commissioners, etc");
+	    return React.createElement("div", null, React.createElement("div", {
+	      "className": "form-group"
+	    }, React.createElement("label", null, "Scene Tags"), React.createElement(CortexTagger, {
+	      "ref": "tags",
+	      "tags": this.props.file.tags,
+	      "possible_tags": TAG_NAMES
+	    })), React.createElement("div", {
+	      "className": "form-group"
+	    }, React.createElement("label", null, "Artist"), React.createElement(CortexTagger, {
+	      "ref": "artists",
+	      "tags": this.props.file.roles.artist,
+	      "possible_tags": THING_NAMES
+	    })), React.createElement("div", {
+	      "className": "form-group"
+	    }, React.createElement("label", null, "Recipients"), React.createElement(CortexTagger, {
+	      "ref": "recipients",
+	      "tags": this.props.file.roles.recipient,
+	      "possible_tags": THING_NAMES
+	    })));
 	  }
 	});
 
@@ -1001,6 +1039,42 @@
 	      "onChange": this.onChange,
 	      "onBlur": this.onBlur
 	    }));
+	  }
+	});
+
+
+/***/ },
+/* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Tagger;
+
+	Tagger = __webpack_require__(9);
+
+	module.exports = React.createClass({
+	  addTag: function(name) {
+	    var item;
+	    item = this.props.tags.find(function(item) {
+	      return item.val() === name;
+	    });
+	    if (!item) {
+	      return this.props.tags.push(name);
+	    }
+	  },
+	  removeTag: function(name) {
+	    var item;
+	    item = this.props.tags.find(function(item) {
+	      return item.val() === name;
+	    });
+	    return item.remove();
+	  },
+	  render: function() {
+	    return React.createElement(Tagger, {
+	      "tags": this.props.tags.val(),
+	      "possible_tags": this.props.possible_tags,
+	      "onTagAdd": this.addTag,
+	      "onTagRemove": this.removeTag
+	    });
 	  }
 	});
 

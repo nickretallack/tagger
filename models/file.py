@@ -28,11 +28,11 @@ class File(db.Model):
 
 	@property
 	def artist_names(self):
-		return [item.name for item in self.thing_roles if item.role.name == 'artist']
+		return [item.thing.name for item in self.thing_roles if item.role.name == 'artist']
 
 	@property
 	def recipient_names(self):
-		return [item.name for item in self.thing_roles if item.role.name == 'recipient']
+		return [item.thing.name for item in self.thing_roles if item.role.name == 'recipient']
 
 class FileTag(db.Model):
 	__tablename__ = 'file_tag'
@@ -57,3 +57,7 @@ class ThingRole(db.Model):
 	__tablename__ = 'thing_role'
 	id = db.Column(db.Integer, primary_key=True)
 	name = db.Column(db.String, nullable=False, unique=True)
+
+	@classmethod
+	def by_name(cls):
+		return {item.name: item for item in db.session.query(cls).all()}
