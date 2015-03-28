@@ -10,15 +10,17 @@ module.exports = React.createClass
 					tags={@props.file.tags}
 					possible_tags={TAG_NAMES}
 				/>
+				<p className="help-block">What is happening in this picture?</p>
 			</div>
 
 			<div className="form-group">
-				<label>Artist</label>
+				<label>Artists</label>
 				<CortexTagger
 					ref="artists"
 					tags={@props.file.roles.artist}
 					possible_tags={THING_NAMES}
 				/>
+				<p className="help-block">Who made this?</p>
 			</div>
 
 			<div className="form-group">
@@ -28,5 +30,6 @@ module.exports = React.createClass
 					tags={@props.file.roles.recipient}
 					possible_tags={THING_NAMES}
 				/>
+				<p className="help-block">Who was this made for?</p>
 			</div>
 		</div>

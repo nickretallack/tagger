@@ -295,19 +295,25 @@
 	      "ref": "tags",
 	      "tags": this.props.file.tags,
 	      "possible_tags": TAG_NAMES
-	    })), React.createElement("div", {
+	    }), React.createElement("p", {
+	      "className": "help-block"
+	    }, "What is happening in this picture?")), React.createElement("div", {
 	      "className": "form-group"
-	    }, React.createElement("label", null, "Artist"), React.createElement(CortexTagger, {
+	    }, React.createElement("label", null, "Artists"), React.createElement(CortexTagger, {
 	      "ref": "artists",
 	      "tags": this.props.file.roles.artist,
 	      "possible_tags": THING_NAMES
-	    })), React.createElement("div", {
+	    }), React.createElement("p", {
+	      "className": "help-block"
+	    }, "Who made this?")), React.createElement("div", {
 	      "className": "form-group"
 	    }, React.createElement("label", null, "Recipients"), React.createElement(CortexTagger, {
 	      "ref": "recipients",
 	      "tags": this.props.file.roles.recipient,
 	      "possible_tags": THING_NAMES
-	    })));
+	    }), React.createElement("p", {
+	      "className": "help-block"
+	    }, "Who was this made for?")));
 	  }
 	});
 
