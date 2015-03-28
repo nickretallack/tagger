@@ -82,7 +82,8 @@ def update_appearance(appearance, data):
 @blueprint.route('/file/<file_id>/info', methods=['POST'], endpoint='file_info_sync')
 def file_info_sync(file_id):
 	file = db.session.query(File).filter_by(id=file_id).options(
-		db.subqueryload('appearances').subqueryload('taggings').joinedload('tag')
+		db.subqueryload('appearances').subqueryload('taggings').joinedload('tag'),
+		db.subqueryload('thing_roles').joinedload('role').joinedload('thing'),
 	).one()
 	data = request.get_json()
 
@@ -125,6 +126,9 @@ def appearance_json(appearance):
 def file_json(file):
 	return dict(
 		appearances={appearance.id: appearance_json(appearance) for appearance in file.appearances},
+		tags=file.tag_names,
+		artists=file.artist_names,
+		recipients=file.recipient_names,
 	)
 
 
