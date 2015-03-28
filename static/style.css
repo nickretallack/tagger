@@ -36,3 +36,16 @@ h1,h2,h3 {
 .search {
 	width: 250px !important;
 }
+
+.next-prev-links {
+	height: 1em;
+	position: relative;
+}
+.next-link {
+	position: absolute;
+	right: 0;
+}
+.main-image {
+	margin: auto;
+	display: block;
+}

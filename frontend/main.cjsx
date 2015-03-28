@@ -13,8 +13,10 @@ if ENTRY_POINT? and ENTRY_POINT is 'tag-file'
 
 	{Route, DefaultRoute} = ReactRouter
 	routes = [
-		<DefaultRoute name="file list" handler={require './components/routing/list'}/>
-		<Route name="file show" path='file/:file_id' handler={require './components/routing/show'}/>
+		<DefaultRoute name="file list" handler={require './components/routing/file/list'}/>
+		<Route name="file show" path='file/:file_id' handler={require './components/routing/file/show'}>
+			<DefaultRoute name="file show basic" handler={require './components/file/FileView'}/>
+		</Route>
 	]
 
 	container = document.getElementById("react-image-tagger")

@@ -1,5 +1,5 @@
 {RouteHandler, Route, DefaultRoute} = ReactRouter
-ThumbnailList = require '../ThumbnailList'
+ThumbnailList = require '../../ThumbnailList'
 
 module.exports = React.createClass
 	render: ->
