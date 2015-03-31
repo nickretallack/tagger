@@ -36,8 +36,14 @@ def list_things():
 	return render_template('thing/list.html', things=things)
 
 @blueprint.route('/thing/<int:thing_id>', endpoint="show")
-def show_thing(thing_id):
-	thing = db.session.query(Thing).filter_by(id=thing_id).one()
+@blueprint.route('/thing/<thing_name>', endpoint="show")
+def show_thing(thing_id=None, thing_name=None):
+	query = db.session.query(Thing)
+	if thing_id:
+		query = query.filter_by(id=thing_id)
+	else:
+		query = query.filter_by(name=thing_name)
+	thing = query.one()
 	return render_template('thing/show.html', thing=thing)
 
 @blueprint.route('/thing/new', endpoint='new')

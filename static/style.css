@@ -44,7 +44,14 @@ h1,h2,h3 {
 .next-link {
 	position: absolute;
 	right: 0;
+	z-index: 3;
 }
+.previous-link {
+	z-index: 3;
+	position: absolute;
+	left: 0;
+}
+
 .main-image {
 	margin: auto;
 	display: block;
