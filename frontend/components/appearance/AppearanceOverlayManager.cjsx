@@ -37,8 +37,9 @@ module.exports = React.createClass
 		id = "new-#{random_integer 0, Math.pow(2,31)}"
 		appearance = {id, dimensions, tags:[], negative_tags:[], thing_name:null}
 		@props.appearances.add appearance.id, appearance
-		@context.router.transitionTo 'appearance',
+		@context.router.transitionTo 'file appearance',
 				appearance_id: id
+				file_id: @context.router.getCurrentParams().file_id
 
 	startDrag: (position, touch_point) ->
 		@setState
@@ -65,22 +66,22 @@ module.exports = React.createClass
 
 	render: ->
 		appearances = []
-		@props.appearances.forEach (id, appearance) =>
+		@props.appearances?.forEach (id, appearance) =>
 			appearances.push <AppearanceOverlay {...appearance}
 				key={appearance.id.val()}
 				startDrag={@startDrag}/>
 
 		<div style={{position:'relative'}}
+		className="main-image"
 		onMouseMove={@onMouseMove}
 		onMouseUp={@onMouseUp}
 		ref="box"
 		>
 			<img
 			src={@props.src}
-			style={{position:'absolute', zIndex: 1}}
 			onClick={@onClickImage}
 			/>
-			<div style={{position:'absolute', zIndex: 2}}>
+			<div style={{position:'absolute', zIndex: 2, top:0, left:0}}>
 				{appearances}
 			</div>
 		</div>

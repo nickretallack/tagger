@@ -4,6 +4,9 @@
 #window.AutoCompleteTagger = require './components/AutoCompleteTagger'
 #AppearanceEditor = require './components/AppearanceEditor'
 
+todo = React.createClass
+	render: ->
+		<div>todo</div>
 
 if ENTRY_POINT? and ENTRY_POINT is 'tag-file'
 	cortex = new Cortex
@@ -15,7 +18,14 @@ if ENTRY_POINT? and ENTRY_POINT is 'tag-file'
 	routes = [
 		<DefaultRoute name="file list" handler={require './components/routing/file/list'}/>
 		<Route name="file show" path='file/:file_id' handler={require './components/routing/file/show'}>
-			<DefaultRoute name="file show basic" handler={require './components/file/FileView'}/>
+			<DefaultRoute name="file overview" handler={require './components/file/FileView'}/>
+			<Route name="file appearances" path='appearances' handler={require './components/appearance/AppearanceBase'}>
+				<DefaultRoute name="file appearance overview" handler={require './components/appearance/AppearanceList'}/>
+				<Route name="file appearance" path=':appearance_id' handler={require './components/appearance/AppearanceEdit'}/>
+			</Route>
+			<Route name="file comments" path='comments' handler={require './components/file/FileView'}/>
+			<Route name="file details" path='details' handler={require './components/file/FileView'}/>
+			<Route name="file tags" path='tags' handler={require './components/file/FileView'}/>
 		</Route>
 	]
 

@@ -3,6 +3,8 @@ vector_prop_shape = require '../../lib/vector_shape'
 
 module.exports = React.createClass
 	displayName: 'AppearanceOverlay'
+	contextTypes:
+		router: React.PropTypes.func.isRequired
 #	propTypes:
 #		id: React.PropTypes.string.isRequired
 #		dimensions: React.PropTypes.shape
@@ -19,7 +21,7 @@ module.exports = React.createClass
 		@props.startDrag @props.dimensions.position, touch_point
 
 	render: ->
-		<Link to="appearance" params={{appearance_id:@props.id.val()}}
+		<Link to="file appearance" params={{appearance_id:@props.id.val(), file_id:@context.router.getCurrentParams().file_id}}
 		className="tagger-overlay"
 		draggable="true"
 		onMouseDown={@onMouseDown}

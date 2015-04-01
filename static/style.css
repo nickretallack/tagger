@@ -52,7 +52,31 @@ h1,h2,h3 {
 	left: 0;
 }
 
+.main-image-container {
+	text-align: center;
+}
 .main-image {
 	margin: auto;
-	display: block;
+	display: inline-block;
+	text-align: left;
+}
+.sidebar {
+	text-align: left;
+}
+
+.file-navigation {
+	text-align: center;
+	position: absolute;
+	left:0;
+	top:0;
+	right:0;
+}
+
+a.active {
+	color: black;
+}
+
+.tool-panel {
+	position: absolute;
+	left: 0;
 }

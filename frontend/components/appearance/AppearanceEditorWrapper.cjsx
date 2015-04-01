@@ -6,7 +6,7 @@ module.exports = React.createClass
 		router: React.PropTypes.func.isRequired
 
 	currentAppearance: ->
-		result = @props.appearances[@context.router.getCurrentParams().appearance_id]
+		result = @props.file_details.appearances[@context.router.getCurrentParams().appearance_id]
 
 	render: ->
 		current_appearance = @currentAppearance()

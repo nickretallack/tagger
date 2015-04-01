@@ -3,7 +3,5 @@
 module.exports = React.createClass
 	render: ->
 		<div>
-			<img
-			src={@props.file_summary.image_url}
-			/>
+			<img className="main-image" src={@props.file_summary.image_url.val()}/>
 		</div>
