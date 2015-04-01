@@ -7,7 +7,7 @@ module.exports = React.createClass
 				<label>Scene Tags</label>
 				<CortexTagger
 					ref="tags"
-					tags={@props.file.tags}
+					tags={@props.file_details.tags}
 					possible_tags={TAG_NAMES}
 				/>
 				<p className="help-block">What is happening in this picture?</p>
@@ -17,7 +17,7 @@ module.exports = React.createClass
 				<label>Artists</label>
 				<CortexTagger
 					ref="artists"
-					tags={@props.file.roles.artist}
+					tags={@props.file_details.roles.artist}
 					possible_tags={THING_NAMES}
 				/>
 				<p className="help-block">Who made this?</p>
@@ -27,7 +27,7 @@ module.exports = React.createClass
 				<label>Recipients</label>
 				<CortexTagger
 					ref="recipients"
-					tags={@props.file.roles.recipient}
+					tags={@props.file_details.roles.recipient}
 					possible_tags={THING_NAMES}
 				/>
 				<p className="help-block">Who was this made for?</p>

@@ -88,7 +88,7 @@
 	    }), React.createElement(Route, {
 	      "name": "file details",
 	      "path": 'details',
-	      "handler": __webpack_require__(1)
+	      "handler": __webpack_require__(16)
 	    }), React.createElement(Route, {
 	      "name": "file tags",
 	      "path": 'tags',
@@ -1165,6 +1165,117 @@
 	  x: React.PropTypes.number,
 	  y: React.PropTypes.number
 	};
+
+
+/***/ },
+/* 16 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var FileDetailEditor;
+
+	FileDetailEditor = __webpack_require__(17);
+
+	module.exports = React.createClass({
+	  contextTypes: {
+	    router: React.PropTypes.func.isRequired
+	  },
+	  render: function() {
+	    var image, src;
+	    src = this.props.file_summary.image_url.val();
+	    image = React.createElement("img", {
+	      "className": "main-image",
+	      "src": src
+	    });
+	    if (this.props.file_details) {
+	      return React.createElement("div", {
+	        "className": "row"
+	      }, React.createElement("div", {
+	        "className": "col-sm-4 col-md-3 col-lg-2 sidebar"
+	      }, React.createElement(FileDetailEditor, {
+	        "file_details": this.props.file_details
+	      })), React.createElement("div", {
+	        "className": "col-sm-8 col-md-9 col-lg-10"
+	      }, image));
+	    } else {
+	      return image;
+	    }
+	  }
+	});
+
+
+/***/ },
+/* 17 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var CortexTagger;
+
+	CortexTagger = __webpack_require__(18);
+
+	module.exports = React.createClass({
+	  render: function() {
+	    return React.createElement("div", null, React.createElement("div", {
+	      "className": "form-group"
+	    }, React.createElement("label", null, "Scene Tags"), React.createElement(CortexTagger, {
+	      "ref": "tags",
+	      "tags": this.props.file_details.tags,
+	      "possible_tags": TAG_NAMES
+	    }), React.createElement("p", {
+	      "className": "help-block"
+	    }, "What is happening in this picture?")), React.createElement("div", {
+	      "className": "form-group"
+	    }, React.createElement("label", null, "Artists"), React.createElement(CortexTagger, {
+	      "ref": "artists",
+	      "tags": this.props.file_details.roles.artist,
+	      "possible_tags": THING_NAMES
+	    }), React.createElement("p", {
+	      "className": "help-block"
+	    }, "Who made this?")), React.createElement("div", {
+	      "className": "form-group"
+	    }, React.createElement("label", null, "Recipients"), React.createElement(CortexTagger, {
+	      "ref": "recipients",
+	      "tags": this.props.file_details.roles.recipient,
+	      "possible_tags": THING_NAMES
+	    }), React.createElement("p", {
+	      "className": "help-block"
+	    }, "Who was this made for?")));
+	  }
+	});
+
+
+/***/ },
+/* 18 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Tagger;
+
+	Tagger = __webpack_require__(10);
+
+	module.exports = React.createClass({
+	  addTag: function(name) {
+	    var item;
+	    item = this.props.tags.find(function(item) {
+	      return item.val() === name;
+	    });
+	    if (!item) {
+	      return this.props.tags.push(name);
+	    }
+	  },
+	  removeTag: function(name) {
+	    var item;
+	    item = this.props.tags.find(function(item) {
+	      return item.val() === name;
+	    });
+	    return item.remove();
+	  },
+	  render: function() {
+	    return React.createElement(Tagger, {
+	      "tags": this.props.tags.val(),
+	      "possible_tags": this.props.possible_tags,
+	      "onTagAdd": this.addTag,
+	      "onTagRemove": this.removeTag
+	    });
+	  }
+	});
 
 
 /***/ }
