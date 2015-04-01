@@ -98,17 +98,18 @@ module.exports = React.createClass
 		next_summary = @props.cortex.search_results[index+1]
 		previous_summary = @props.cortex.search_results[index-1]
 
+		route = @context.router.getCurrentRoutes()[1].name
 		next_link = if next_summary
 			<Link
 			className="next-link"
-			to="file overview"
+			to={route}
 			params={{file_id: next_summary.id.val()}}
 			>Next &rarr;</Link>
 
 		previous_link = if previous_summary
 			<Link
 			className="previous-link"
-			to="file overview"
+			to={route}
 			params={{file_id: previous_summary.id.val()}}
 			>&larr; Previous</Link>
 

@@ -347,7 +347,7 @@
 	    });
 	  },
 	  render: function() {
-	    var details, id, index, navigation, next_link, next_summary, previous_link, previous_summary, summary;
+	    var details, id, index, navigation, next_link, next_summary, previous_link, previous_summary, route, summary;
 	    id = parseInt(this.getId());
 	    index = this.props.cortex.search_results.findIndex((function(_this) {
 	      return function(item) {
@@ -357,16 +357,17 @@
 	    summary = this.props.cortex.search_results[index];
 	    next_summary = this.props.cortex.search_results[index + 1];
 	    previous_summary = this.props.cortex.search_results[index - 1];
+	    route = this.context.router.getCurrentRoutes()[1].name;
 	    next_link = next_summary ? React.createElement(Link, {
 	      "className": "next-link",
-	      "to": "file overview",
+	      "to": route,
 	      "params": {
 	        file_id: next_summary.id.val()
 	      }
 	    }, "Next \u2192") : void 0;
 	    previous_link = previous_summary ? React.createElement(Link, {
 	      "className": "previous-link",
-	      "to": "file overview",
+	      "to": route,
 	      "params": {
 	        file_id: previous_summary.id.val()
 	      }
