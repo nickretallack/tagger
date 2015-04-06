@@ -85,7 +85,7 @@
 	    })), React.createElement(Route, {
 	      "name": "file comments",
 	      "path": 'comments',
-	      "handler": __webpack_require__(1)
+	      "handler": __webpack_require__(20)
 	    }), React.createElement(Route, {
 	      "name": "file details",
 	      "path": 'details',
@@ -1364,6 +1364,36 @@
 	  };
 	  return message;
 	};
+
+
+/***/ },
+/* 20 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var FileDetailEditor;
+
+	FileDetailEditor = __webpack_require__(12);
+
+	module.exports = React.createClass({
+	  contextTypes: {
+	    router: React.PropTypes.func.isRequired
+	  },
+	  render: function() {
+	    var image, src;
+	    src = this.props.file_summary.image_url.val();
+	    image = React.createElement("img", {
+	      "className": "main-image",
+	      "src": src
+	    });
+	    return React.createElement("div", {
+	      "className": "row"
+	    }, React.createElement("div", {
+	      "className": "col-sm-4 col-md-3 col-lg-2 sidebar"
+	    }, "\t\t\t\tTODO..."), React.createElement("div", {
+	      "className": "col-sm-8 col-md-9 col-lg-10"
+	    }, image));
+	  }
+	});
 
 
 /***/ }

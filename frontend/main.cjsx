@@ -27,7 +27,7 @@ if ENTRY_POINT? and ENTRY_POINT is 'tag-file'
 				<DefaultRoute name="file appearance overview" handler={require './components/appearance/AppearanceList'}/>
 				<Route name="file appearance" path=':appearance_id' handler={require './components/appearance/AppearanceEdit'}/>
 			</Route>
-			<Route name="file comments" path='comments' handler={require './components/file/FileView'}/>
+			<Route name="file comments" path='comments' handler={require './components/routing/file/comments'}/>
 			<Route name="file details" path='details' handler={require './components/routing/file/details'}/>
 			<Route name="file tags" path='tags' handler={require './components/file/FileView'}/>
 		</Route>
