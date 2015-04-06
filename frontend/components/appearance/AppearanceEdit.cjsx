@@ -23,8 +23,7 @@ module.exports = React.createClass
 		if current_appearance
 			<div className="row">
 				<div className="col-sm-4 col-md-3 col-lg-2 sidebar">
-					<AppearanceEditor {...current_appearance}  appearance={current_appearance} cortex={@props.cortex} ref="editor"/>
-					{@props.save_button}
+					<AppearanceEditor {...current_appearance}  appearance={current_appearance} cortex={@props.cortex} save={@props.save} ref="editor"/>
 				</div>
 
 				<div className="col-sm-8 col-md-9 col-lg-10">

@@ -55,6 +55,7 @@
 	if ((typeof ENTRY_POINT !== "undefined" && ENTRY_POINT !== null) && ENTRY_POINT === 'tag-file') {
 	  cortex = new Cortex({
 	    thing_tags: {},
+	    server_file_details: {},
 	    file_details: {},
 	    search_results: SEARCH_RESULTS
 	  });
@@ -203,8 +204,9 @@
 	      }, React.createElement(AppearanceEditor, React.__spread({}, current_appearance, {
 	        "appearance": current_appearance,
 	        "cortex": this.props.cortex,
+	        "save": this.props.save,
 	        "ref": "editor"
-	      })), this.props.save_button), React.createElement("div", {
+	      }))), React.createElement("div", {
 	        "className": "col-sm-8 col-md-9 col-lg-10"
 	      }, image));
 	    } else {
@@ -302,22 +304,25 @@
 	    return "/api/file/" + (this.getFileId()) + "/info";
 	  },
 	  gotData: function(file_details) {
-	    var id;
+	    var file_details_clone, id;
 	    id = this.getId();
 	    console.log("GOT DATA", file_details);
+	    file_details_clone = $.extend(true, {}, file_details);
 	    if (id in this.props.cortex.file_details) {
 	      this.props.cortex.file_details[id].set(file_details);
+	      this.props.cortex.server_file_details[id].set(file_details_clone);
 	    } else {
 	      this.props.cortex.file_details.add(id, file_details);
+	      this.props.cortex.server_file_details.add(id, file_details_clone);
 	    }
 	    return this.setState({
-	      server_state: $.extend(true, {}, file_details),
 	      saving: false
 	    });
 	  },
 	  save: function() {
-	    var message, server_state;
-	    server_state = this.state.server_state;
+	    var id, message, server_state;
+	    id = this.getId();
+	    server_state = this.props.cortex.server_file_details[id].val();
 	    message = file_details_diff(this.getDetails(), server_state);
 	    this.setState({
 	      saving: true,
@@ -356,7 +361,7 @@
 	    });
 	  },
 	  render: function() {
-	    var details, id, index, navigation, next_link, next_summary, previous_link, previous_summary, route, save_button, summary;
+	    var details, id, index, navigation, next_link, next_summary, previous_link, previous_summary, route, summary;
 	    id = parseInt(this.getId());
 	    index = this.props.cortex.search_results.findIndex((function(_this) {
 	      return function(item) {
@@ -410,10 +415,6 @@
 	      }, "comments")
 	    ];
 	    navigation = intersperse(navigation, ' | ');
-	    save_button = React.createElement("button", {
-	      "className": "btn btn-primary",
-	      "onClick": this.save
-	    }, "Save");
 	    return React.createElement("div", null, React.createElement("div", {
 	      "className": "next-prev-links"
 	    }, previous_link, next_link, React.createElement("div", {
@@ -428,7 +429,7 @@
 	      "file_summary": summary,
 	      "file_details": details,
 	      "cortex": this.props.cortex,
-	      "save_button": save_button
+	      "save": this.save
 	    })));
 	  }
 	});
@@ -460,7 +461,10 @@
 	      "className": "row"
 	    }, React.createElement("div", {
 	      "className": "col-sm-4 col-md-3 col-lg-2 sidebar"
-	    }, details, this.props.save_button), React.createElement("div", {
+	    }, details, React.createElement("button", {
+	      "className": "btn btn-primary",
+	      "onClick": this.props.save
+	    }, "Save")), React.createElement("div", {
 	      "className": "col-sm-8 col-md-9 col-lg-10"
 	    }, image));
 	  }
@@ -613,7 +617,14 @@
 	  },
 	  removeAppearance: function() {
 	    this.props.appearance.remove();
-	    return this.context.router.transitionTo('file details');
+	    this.context.router.transitionTo('file appearances', {
+	      file_id: this.context.router.getCurrentParams().file_id
+	    });
+	    return setTimeout((function(_this) {
+	      return function() {
+	        return _this.props.save();
+	      };
+	    })(this));
 	  },
 	  fetchThingTags: function(name) {
 	    if (name && !this.props.cortex.thing_tags.hasKey(name)) {
@@ -722,10 +733,15 @@
 	      "className": "form-group"
 	    }, React.createElement("label", null, "Edit this appearance"), tagger, React.createElement("p", {
 	      "className": "help-block"
-	    }, "Does this thing appear differently in this picture from how it usually does?  Edit the tags for this particular appearance here.")), React.createElement("button", {
+	    }, "Does this thing appear differently in this picture from how it usually does?  Edit the tags for this particular appearance here.")), React.createElement("div", {
+	      "className": "btn-toolbar"
+	    }, React.createElement("button", {
+	      "className": "btn btn-primary",
+	      "onClick": this.props.save
+	    }, "Save"), React.createElement("button", {
 	      "className": "btn btn-danger",
 	      "onClick": this.removeAppearance
-	    }, "Remove Appearance"));
+	    }, "Remove Appearance")));
 	  }
 	});
 

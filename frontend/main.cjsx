@@ -10,7 +10,11 @@ todo = React.createClass
 
 if ENTRY_POINT? and ENTRY_POINT is 'tag-file'
 	cortex = new Cortex
+		# caches
 		thing_tags: {}
+		server_file_details: {}
+
+		# current state
 		file_details: {}
 		search_results: SEARCH_RESULTS
 

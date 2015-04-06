@@ -47,17 +47,20 @@ module.exports = React.createClass
 	gotData: (file_details) ->
 		id = @getId()
 		console.log "GOT DATA", file_details
+		file_details_clone = $.extend true, {}, file_details
 		if id of @props.cortex.file_details
 			@props.cortex.file_details[id].set file_details
+			@props.cortex.server_file_details[id].set file_details_clone
 		else
 			@props.cortex.file_details.add id, file_details
+			@props.cortex.server_file_details.add id, file_details_clone
 
 		@setState
-			server_state: $.extend(true, {}, file_details)
 			saving: false
 
 	save: ->
-		server_state = @state.server_state
+		id = @getId()
+		server_state = @props.cortex.server_file_details[id].val()
 		message = file_details_diff @getDetails(), server_state
 
 		@setState
@@ -148,9 +151,6 @@ module.exports = React.createClass
 			<Link key="comments" to="file comments" params={{file_id:id}}>comments</Link>
 		]
 		navigation = intersperse(navigation, ' | ')
-		save_button = (
-			<button className="btn btn-primary" onClick={@save}>Save</button>
-		)
 
 		<div>
 			<div className="next-prev-links">
@@ -162,7 +162,7 @@ module.exports = React.createClass
 			</div>
 
 			<div className="main-image-container" style={{position:'relative', marginTop:10}}>
-				<RouteHandler file_summary={summary} file_details={details} cortex={@props.cortex} save_button={save_button}/>
+				<RouteHandler file_summary={summary} file_details={details} cortex={@props.cortex} save={@save}/>
 			</div>
 		</div>
 

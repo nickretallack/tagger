@@ -6,7 +6,9 @@ module.exports = React.createClass
 
 	removeAppearance: ->
 		@props.appearance.remove()
-		@context.router.transitionTo 'file details'
+		@context.router.transitionTo 'file appearances',
+			file_id: @context.router.getCurrentParams().file_id
+		setTimeout => @props.save()
 
 	fetchThingTags: (name) ->
 		if name and not @props.cortex.thing_tags.hasKey name
@@ -114,5 +116,8 @@ module.exports = React.createClass
 				<p className="help-block">Does this thing appear differently in this picture from how it usually does?  Edit the tags for this particular appearance here.</p>
 			</div>
 
-			<button className="btn btn-danger" onClick={@removeAppearance}>Remove Appearance</button>
+			<div className="btn-toolbar">
+				<button className="btn btn-primary" onClick={@props.save}>Save</button>
+				<button className="btn btn-danger" onClick={@removeAppearance}>Remove Appearance</button>
+			</div>
 		</div>
