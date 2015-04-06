@@ -88,7 +88,7 @@
 	    }), React.createElement(Route, {
 	      "name": "file details",
 	      "path": 'details',
-	      "handler": __webpack_require__(16)
+	      "handler": __webpack_require__(7)
 	    }), React.createElement(Route, {
 	      "name": "file tags",
 	      "path": 'tags',
@@ -151,7 +151,7 @@
 
 	var AppearanceOverlayManager;
 
-	AppearanceOverlayManager = __webpack_require__(12);
+	AppearanceOverlayManager = __webpack_require__(8);
 
 	module.exports = React.createClass({
 	  render: function() {
@@ -172,9 +172,9 @@
 
 	Link = ReactRouter.Link;
 
-	AppearanceEditor = __webpack_require__(7);
+	AppearanceEditor = __webpack_require__(9);
 
-	AppearanceOverlayManager = __webpack_require__(12);
+	AppearanceOverlayManager = __webpack_require__(8);
 
 	module.exports = React.createClass({
 	  contextTypes: {
@@ -204,7 +204,7 @@
 	        "appearance": current_appearance,
 	        "cortex": this.props.cortex,
 	        "ref": "editor"
-	      }))), React.createElement("div", {
+	      })), this.props.save_button), React.createElement("div", {
 	        "className": "col-sm-8 col-md-9 col-lg-10"
 	      }, image));
 	    } else {
@@ -222,7 +222,7 @@
 
 	RouteHandler = ReactRouter.RouteHandler, Route = ReactRouter.Route, DefaultRoute = ReactRouter.DefaultRoute;
 
-	ThumbnailList = __webpack_require__(9);
+	ThumbnailList = __webpack_require__(11);
 
 	module.exports = React.createClass({
 	  render: function() {
@@ -237,7 +237,7 @@
 /* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var DefaultRoute, Link, Route, RouteHandler, ThingLink, intersperse;
+	var DefaultRoute, Link, Route, RouteHandler, ThingLink, file_details_diff, intersperse;
 
 	Link = ReactRouter.Link, RouteHandler = ReactRouter.RouteHandler, Route = ReactRouter.Route, DefaultRoute = ReactRouter.DefaultRoute;
 
@@ -249,7 +249,9 @@
 	  }
 	});
 
-	intersperse = __webpack_require__(8);
+	intersperse = __webpack_require__(10);
+
+	file_details_diff = __webpack_require__(19);
 
 	module.exports = React.createClass({
 	  displayName: 'file-show',
@@ -277,8 +279,8 @@
 	    details = this.props.cortex.file_details[id];
 	    if (!details) {
 	      $.get(this.getSyncUrl(), (function(_this) {
-	        return function(result) {
-	          return _this.props.cortex.file_details.add(id, result);
+	        return function(file_details) {
+	          return _this.gotData(file_details);
 	        };
 	      })(this));
 	    }
@@ -299,17 +301,24 @@
 	  getSyncUrl: function() {
 	    return "/api/file/" + (this.getFileId()) + "/info";
 	  },
-	  gotData: function(file_data) {
-	    console.log("GOT DATA", file_data);
-	    this.props.file_details.set(file_data);
+	  gotData: function(file_details) {
+	    var id;
+	    id = this.getId();
+	    console.log("GOT DATA", file_details);
+	    if (id in this.props.cortex.file_details) {
+	      this.props.cortex.file_details[id].set(file_details);
+	    } else {
+	      this.props.cortex.file_details.add(id, file_details);
+	    }
 	    return this.setState({
-	      server_state: $.extend(true, {}, file_data),
+	      server_state: $.extend(true, {}, file_details),
 	      saving: false
 	    });
 	  },
 	  save: function() {
-	    var server_state;
+	    var message, server_state;
 	    server_state = this.state.server_state;
+	    message = file_details_diff(this.getDetails(), server_state);
 	    this.setState({
 	      saving: true,
 	      error: false
@@ -347,7 +356,7 @@
 	    });
 	  },
 	  render: function() {
-	    var details, id, index, navigation, next_link, next_summary, previous_link, previous_summary, route, summary;
+	    var details, id, index, navigation, next_link, next_summary, previous_link, previous_summary, route, save_button, summary;
 	    id = parseInt(this.getId());
 	    index = this.props.cortex.search_results.findIndex((function(_this) {
 	      return function(item) {
@@ -401,6 +410,10 @@
 	      }, "comments")
 	    ];
 	    navigation = intersperse(navigation, ' | ');
+	    save_button = React.createElement("button", {
+	      "className": "btn btn-primary",
+	      "onClick": this.save
+	    }, "Save");
 	    return React.createElement("div", null, React.createElement("div", {
 	      "className": "next-prev-links"
 	    }, previous_link, next_link, React.createElement("div", {
@@ -414,7 +427,8 @@
 	    }, React.createElement(RouteHandler, {
 	      "file_summary": summary,
 	      "file_details": details,
-	      "cortex": this.props.cortex
+	      "cortex": this.props.cortex,
+	      "save_button": save_button
 	    })));
 	  }
 	});
@@ -424,10 +438,174 @@
 /* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var FileDetailEditor;
+
+	FileDetailEditor = __webpack_require__(12);
+
+	module.exports = React.createClass({
+	  contextTypes: {
+	    router: React.PropTypes.func.isRequired
+	  },
+	  render: function() {
+	    var details, image, src;
+	    src = this.props.file_summary.image_url.val();
+	    image = React.createElement("img", {
+	      "className": "main-image",
+	      "src": src
+	    });
+	    details = this.props.file_details ? React.createElement(FileDetailEditor, {
+	      "file_details": this.props.file_details
+	    }) : React.createElement("div", null, "Loading...");
+	    return React.createElement("div", {
+	      "className": "row"
+	    }, React.createElement("div", {
+	      "className": "col-sm-4 col-md-3 col-lg-2 sidebar"
+	    }, details, this.props.save_button), React.createElement("div", {
+	      "className": "col-sm-8 col-md-9 col-lg-10"
+	    }, image));
+	  }
+	});
+
+
+/***/ },
+/* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppearanceOverlay, Navigation, V, random_integer;
+
+	V = __webpack_require__(13);
+
+	Navigation = ReactRouter.Navigation;
+
+	AppearanceOverlay = __webpack_require__(14);
+
+	random_integer = function(min, max) {
+	  return Math.floor(Math.random() * (max - min)) + min;
+	};
+
+	module.exports = React.createClass({
+	  displayName: 'AppearanceOverlayManager',
+	  contextTypes: {
+	    router: React.PropTypes.func.isRequired
+	  },
+	  getInitialState: function() {
+	    return {
+	      creating_overlay: null,
+	      touch_point: null
+	    };
+	  },
+	  onClickImage: function(event) {
+	    var appearance, dimensions, id, mouse_position, offsetX, offsetY, position, size, _ref;
+	    _ref = event.nativeEvent, offsetX = _ref.offsetX, offsetY = _ref.offsetY;
+	    mouse_position = V(offsetX, offsetY);
+	    size = V(150, 150);
+	    position = mouse_position.subtract(size.scale(0.5));
+	    dimensions = {
+	      position: {
+	        x: position.x,
+	        y: position.y
+	      },
+	      size: {
+	        x: size.x,
+	        y: size.y
+	      }
+	    };
+	    id = "new-" + (random_integer(0, Math.pow(2, 31)));
+	    appearance = {
+	      id: id,
+	      dimensions: dimensions,
+	      tags: [],
+	      negative_tags: [],
+	      thing_name: null
+	    };
+	    this.props.appearances.add(appearance.id, appearance);
+	    return this.context.router.transitionTo('file appearance', {
+	      appearance_id: id,
+	      file_id: this.context.router.getCurrentParams().file_id
+	    });
+	  },
+	  startDrag: function(position, touch_point) {
+	    return this.setState({
+	      dragging: {
+	        position: position,
+	        touch_point: touch_point
+	      }
+	    });
+	  },
+	  onMouseMove: function(event) {
+	    var offset, position, touch_point, _ref;
+	    if (this.state.dragging) {
+	      _ref = this.state.dragging, position = _ref.position, touch_point = _ref.touch_point;
+	      event.preventDefault();
+	      event.stopPropagation();
+	      offset = $(this.refs.box.getDOMNode()).offset();
+	      position.x.set(event.nativeEvent.clientX - touch_point.x - offset.left);
+	      return position.y.set(event.nativeEvent.clientY - touch_point.y - offset.top);
+	    }
+	  },
+	  componentDidMount: function() {
+	    var handler;
+	    handler = (function(_this) {
+	      return function() {
+	        if (_this.state.dragging) {
+	          return _this.setState({
+	            dragging: null
+	          });
+	        }
+	      };
+	    })(this);
+	    this.setState({
+	      handler: handler
+	    });
+	    return $(window).on('mouseup', handler);
+	  },
+	  componentWillUnmount: function() {
+	    return $(window).off('mouseup', this.state.handler);
+	  },
+	  render: function() {
+	    var appearances, _ref;
+	    appearances = [];
+	    if ((_ref = this.props.appearances) != null) {
+	      _ref.forEach((function(_this) {
+	        return function(id, appearance) {
+	          return appearances.push(React.createElement(AppearanceOverlay, React.__spread({}, appearance, {
+	            "key": appearance.id.val(),
+	            "startDrag": _this.startDrag
+	          })));
+	        };
+	      })(this));
+	    }
+	    return React.createElement("div", {
+	      "style": {
+	        position: 'relative'
+	      },
+	      "className": "main-image",
+	      "onMouseMove": this.onMouseMove,
+	      "onMouseUp": this.onMouseUp,
+	      "ref": "box"
+	    }, React.createElement("img", {
+	      "src": this.props.src,
+	      "onClick": this.onClickImage
+	    }), React.createElement("div", {
+	      "style": {
+	        position: 'absolute',
+	        zIndex: 2,
+	        top: 0,
+	        left: 0
+	      }
+	    }, appearances));
+	  }
+	});
+
+
+/***/ },
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
 	var Tagger,
 	  __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
-	Tagger = __webpack_require__(10);
+	Tagger = __webpack_require__(15);
 
 	module.exports = React.createClass({
 	  contextTypes: {
@@ -553,7 +731,7 @@
 
 
 /***/ },
-/* 8 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* intersperse: Return an array with the separator interspersed between
@@ -575,7 +753,7 @@
 	module.exports = intersperse
 
 /***/ },
-/* 9 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Link;
@@ -603,12 +781,216 @@
 
 
 /***/ },
-/* 10 */
+/* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var CortexTagger;
+
+	CortexTagger = __webpack_require__(16);
+
+	module.exports = React.createClass({
+	  render: function() {
+	    return React.createElement("div", null, React.createElement("div", {
+	      "className": "form-group"
+	    }, React.createElement("label", null, "Scene Tags"), React.createElement(CortexTagger, {
+	      "ref": "tags",
+	      "tags": this.props.file_details.tags,
+	      "possible_tags": TAG_NAMES
+	    }), React.createElement("p", {
+	      "className": "help-block"
+	    }, "What is happening in this picture?")), React.createElement("div", {
+	      "className": "form-group"
+	    }, React.createElement("label", null, "Artists"), React.createElement(CortexTagger, {
+	      "ref": "artists",
+	      "tags": this.props.file_details.roles.artist,
+	      "possible_tags": THING_NAMES
+	    }), React.createElement("p", {
+	      "className": "help-block"
+	    }, "Who made this?")), React.createElement("div", {
+	      "className": "form-group"
+	    }, React.createElement("label", null, "Recipients"), React.createElement(CortexTagger, {
+	      "ref": "recipients",
+	      "tags": this.props.file_details.roles.recipient,
+	      "possible_tags": THING_NAMES
+	    }), React.createElement("p", {
+	      "className": "help-block"
+	    }, "Who was this made for?")));
+	  }
+	});
+
+
+/***/ },
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Vector, css_properties;
+
+	css_properties = ['top', 'left'];
+
+	Vector = (function() {
+	  function Vector() {
+	    var object;
+	    if (typeof arguments[0] === 'object') {
+	      object = arguments[0];
+	      if ((object.x != null) && (object.y != null)) {
+	        this.x = object.x, this.y = object.y;
+	      } else if ((object.left != null) && (object.top != null)) {
+	        this.x = object.left, this.y = object.top;
+	      }
+	    } else {
+	      this.x = arguments[0], this.y = arguments[1];
+	    }
+	  }
+
+	  Vector.prototype.components = function() {
+	    return [this.x, this.y];
+	  };
+
+	  Vector.prototype.reduce = function(initial, action) {
+	    return _.reduce(this.components(), action, initial);
+	  };
+
+	  Vector.prototype.fmap = function(action) {
+	    return (function(func, args, ctor) {
+	      ctor.prototype = func.prototype;
+	      var child = new ctor, result = func.apply(child, args);
+	      return Object(result) === result ? result : child;
+	    })(Vector, _.map(this.components(), action), function(){});
+	  };
+
+	  Vector.prototype.vmap = function(vector, action) {
+	    return (function(func, args, ctor) {
+	      ctor.prototype = func.prototype;
+	      var child = new ctor, result = func.apply(child, args);
+	      return Object(result) === result ? result : child;
+	    })(Vector, _.map(_.zip(this.components(), vector.components()), function(components) {
+	      return action.apply(null, components);
+	    }), function(){});
+	  };
+
+	  Vector.prototype.magnitude = function() {
+	    return Math.sqrt(this.reduce(0, function(accumulator, component) {
+	      return accumulator + component * component;
+	    }));
+	  };
+
+	  Vector.prototype.scale = function(factor) {
+	    return this.fmap(function(component) {
+	      return component * factor;
+	    });
+	  };
+
+	  Vector.prototype.invert = function() {
+	    return this.scale(-1);
+	  };
+
+	  Vector.prototype.add = function(vector) {
+	    return this.vmap(vector, function(c1, c2) {
+	      return c1 + c2;
+	    });
+	  };
+
+	  Vector.prototype.subtract = function(vector) {
+	    return this.add(vector.invert());
+	  };
+
+	  Vector.prototype.as_css = function() {
+	    return {
+	      left: this.x,
+	      top: this.y
+	    };
+	  };
+
+	  Vector.prototype.equals = function(vector) {
+	    return _.all(_.zip(this.components(), vector.components()), function(item) {
+	      return item[0] === item[1];
+	    });
+	  };
+
+	  Vector.prototype.distance = function(vector) {
+	    return this.minus(vector).magnitude();
+	  };
+
+	  Vector.prototype.unit = function() {
+	    return this.scale(1 / this.magnitude());
+	  };
+
+	  Vector.prototype.angle = function() {
+	    return Math.atan2(this.y, this.x);
+	  };
+
+	  return Vector;
+
+	})();
+
+	Vector.prototype.plus = Vector.prototype.add;
+
+	Vector.prototype.minus = Vector.prototype.subtract;
+
+	module.exports = function() {
+	  return (function(func, args, ctor) {
+	    ctor.prototype = func.prototype;
+	    var child = new ctor, result = func.apply(child, args);
+	    return Object(result) === result ? result : child;
+	  })(Vector, arguments, function(){});
+	};
+
+
+/***/ },
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Link, Navigation, vector_prop_shape;
+
+	Link = ReactRouter.Link, Navigation = ReactRouter.Navigation;
+
+	vector_prop_shape = __webpack_require__(18);
+
+	module.exports = React.createClass({
+	  displayName: 'AppearanceOverlay',
+	  contextTypes: {
+	    router: React.PropTypes.func.isRequired
+	  },
+	  onMouseDown: function(event) {
+	    var touch_point;
+	    event.preventDefault();
+	    event.stopPropagation();
+	    touch_point = {
+	      x: event.nativeEvent.offsetX,
+	      y: event.nativeEvent.offsetY
+	    };
+	    return this.props.startDrag(this.props.dimensions.position, touch_point);
+	  },
+	  render: function() {
+	    return React.createElement(Link, {
+	      "to": "file appearance",
+	      "params": {
+	        appearance_id: this.props.id.val(),
+	        file_id: this.context.router.getCurrentParams().file_id
+	      },
+	      "className": "tagger-overlay",
+	      "draggable": "true",
+	      "onMouseDown": this.onMouseDown,
+	      "style": {
+	        position: 'absolute',
+	        left: this.props.dimensions.position.x.val(),
+	        top: this.props.dimensions.position.y.val(),
+	        width: this.props.dimensions.size.x.val(),
+	        height: this.props.dimensions.size.y.val(),
+	        cursor: 'move'
+	      }
+	    });
+	  }
+	});
+
+
+/***/ },
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var ReactTagsInput;
 
-	ReactTagsInput = __webpack_require__(11);
+	ReactTagsInput = __webpack_require__(17);
 
 	module.exports = React.createClass({
 	  displayName: 'AutoCompleteTagger',
@@ -691,7 +1073,43 @@
 
 
 /***/ },
-/* 11 */
+/* 16 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Tagger;
+
+	Tagger = __webpack_require__(15);
+
+	module.exports = React.createClass({
+	  addTag: function(name) {
+	    var item;
+	    item = this.props.tags.find(function(item) {
+	      return item.val() === name;
+	    });
+	    if (!item) {
+	      return this.props.tags.push(name);
+	    }
+	  },
+	  removeTag: function(name) {
+	    var item;
+	    item = this.props.tags.find(function(item) {
+	      return item.val() === name;
+	    });
+	    return item.remove();
+	  },
+	  render: function() {
+	    return React.createElement(Tagger, {
+	      "tags": this.props.tags.val(),
+	      "possible_tags": this.props.possible_tags,
+	      "onTagAdd": this.addTag,
+	      "onTagRemove": this.removeTag
+	    });
+	  }
+	});
+
+
+/***/ },
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -863,303 +1281,7 @@
 
 
 /***/ },
-/* 12 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var AppearanceOverlay, Navigation, V, random_integer;
-
-	V = __webpack_require__(14);
-
-	Navigation = ReactRouter.Navigation;
-
-	AppearanceOverlay = __webpack_require__(13);
-
-	random_integer = function(min, max) {
-	  return Math.floor(Math.random() * (max - min)) + min;
-	};
-
-	module.exports = React.createClass({
-	  displayName: 'AppearanceOverlayManager',
-	  contextTypes: {
-	    router: React.PropTypes.func.isRequired
-	  },
-	  getInitialState: function() {
-	    return {
-	      creating_overlay: null,
-	      touch_point: null
-	    };
-	  },
-	  onClickImage: function(event) {
-	    var appearance, dimensions, id, mouse_position, offsetX, offsetY, position, size, _ref;
-	    _ref = event.nativeEvent, offsetX = _ref.offsetX, offsetY = _ref.offsetY;
-	    mouse_position = V(offsetX, offsetY);
-	    size = V(150, 150);
-	    position = mouse_position.subtract(size.scale(0.5));
-	    dimensions = {
-	      position: {
-	        x: position.x,
-	        y: position.y
-	      },
-	      size: {
-	        x: size.x,
-	        y: size.y
-	      }
-	    };
-	    id = "new-" + (random_integer(0, Math.pow(2, 31)));
-	    appearance = {
-	      id: id,
-	      dimensions: dimensions,
-	      tags: [],
-	      negative_tags: [],
-	      thing_name: null
-	    };
-	    this.props.appearances.add(appearance.id, appearance);
-	    return this.context.router.transitionTo('file appearance', {
-	      appearance_id: id,
-	      file_id: this.context.router.getCurrentParams().file_id
-	    });
-	  },
-	  startDrag: function(position, touch_point) {
-	    return this.setState({
-	      dragging: {
-	        position: position,
-	        touch_point: touch_point
-	      }
-	    });
-	  },
-	  onMouseMove: function(event) {
-	    var offset, position, touch_point, _ref;
-	    if (this.state.dragging) {
-	      _ref = this.state.dragging, position = _ref.position, touch_point = _ref.touch_point;
-	      event.preventDefault();
-	      event.stopPropagation();
-	      offset = $(this.refs.box.getDOMNode()).offset();
-	      position.x.set(event.nativeEvent.clientX - touch_point.x - offset.left);
-	      return position.y.set(event.nativeEvent.clientY - touch_point.y - offset.top);
-	    }
-	  },
-	  componentDidMount: function() {
-	    var handler;
-	    handler = (function(_this) {
-	      return function() {
-	        if (_this.state.dragging) {
-	          return _this.setState({
-	            dragging: null
-	          });
-	        }
-	      };
-	    })(this);
-	    this.setState({
-	      handler: handler
-	    });
-	    return $(window).on('mouseup', handler);
-	  },
-	  componentWillUnmount: function() {
-	    return $(window).off('mouseup', this.state.handler);
-	  },
-	  render: function() {
-	    var appearances, _ref;
-	    appearances = [];
-	    if ((_ref = this.props.appearances) != null) {
-	      _ref.forEach((function(_this) {
-	        return function(id, appearance) {
-	          return appearances.push(React.createElement(AppearanceOverlay, React.__spread({}, appearance, {
-	            "key": appearance.id.val(),
-	            "startDrag": _this.startDrag
-	          })));
-	        };
-	      })(this));
-	    }
-	    return React.createElement("div", {
-	      "style": {
-	        position: 'relative'
-	      },
-	      "className": "main-image",
-	      "onMouseMove": this.onMouseMove,
-	      "onMouseUp": this.onMouseUp,
-	      "ref": "box"
-	    }, React.createElement("img", {
-	      "src": this.props.src,
-	      "onClick": this.onClickImage
-	    }), React.createElement("div", {
-	      "style": {
-	        position: 'absolute',
-	        zIndex: 2,
-	        top: 0,
-	        left: 0
-	      }
-	    }, appearances));
-	  }
-	});
-
-
-/***/ },
-/* 13 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Link, Navigation, vector_prop_shape;
-
-	Link = ReactRouter.Link, Navigation = ReactRouter.Navigation;
-
-	vector_prop_shape = __webpack_require__(15);
-
-	module.exports = React.createClass({
-	  displayName: 'AppearanceOverlay',
-	  contextTypes: {
-	    router: React.PropTypes.func.isRequired
-	  },
-	  onMouseDown: function(event) {
-	    var touch_point;
-	    event.preventDefault();
-	    event.stopPropagation();
-	    touch_point = {
-	      x: event.nativeEvent.offsetX,
-	      y: event.nativeEvent.offsetY
-	    };
-	    return this.props.startDrag(this.props.dimensions.position, touch_point);
-	  },
-	  render: function() {
-	    return React.createElement(Link, {
-	      "to": "file appearance",
-	      "params": {
-	        appearance_id: this.props.id.val(),
-	        file_id: this.context.router.getCurrentParams().file_id
-	      },
-	      "className": "tagger-overlay",
-	      "draggable": "true",
-	      "onMouseDown": this.onMouseDown,
-	      "style": {
-	        position: 'absolute',
-	        left: this.props.dimensions.position.x.val(),
-	        top: this.props.dimensions.position.y.val(),
-	        width: this.props.dimensions.size.x.val(),
-	        height: this.props.dimensions.size.y.val(),
-	        cursor: 'move'
-	      }
-	    });
-	  }
-	});
-
-
-/***/ },
-/* 14 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Vector, css_properties;
-
-	css_properties = ['top', 'left'];
-
-	Vector = (function() {
-	  function Vector() {
-	    var object;
-	    if (typeof arguments[0] === 'object') {
-	      object = arguments[0];
-	      if ((object.x != null) && (object.y != null)) {
-	        this.x = object.x, this.y = object.y;
-	      } else if ((object.left != null) && (object.top != null)) {
-	        this.x = object.left, this.y = object.top;
-	      }
-	    } else {
-	      this.x = arguments[0], this.y = arguments[1];
-	    }
-	  }
-
-	  Vector.prototype.components = function() {
-	    return [this.x, this.y];
-	  };
-
-	  Vector.prototype.reduce = function(initial, action) {
-	    return _.reduce(this.components(), action, initial);
-	  };
-
-	  Vector.prototype.fmap = function(action) {
-	    return (function(func, args, ctor) {
-	      ctor.prototype = func.prototype;
-	      var child = new ctor, result = func.apply(child, args);
-	      return Object(result) === result ? result : child;
-	    })(Vector, _.map(this.components(), action), function(){});
-	  };
-
-	  Vector.prototype.vmap = function(vector, action) {
-	    return (function(func, args, ctor) {
-	      ctor.prototype = func.prototype;
-	      var child = new ctor, result = func.apply(child, args);
-	      return Object(result) === result ? result : child;
-	    })(Vector, _.map(_.zip(this.components(), vector.components()), function(components) {
-	      return action.apply(null, components);
-	    }), function(){});
-	  };
-
-	  Vector.prototype.magnitude = function() {
-	    return Math.sqrt(this.reduce(0, function(accumulator, component) {
-	      return accumulator + component * component;
-	    }));
-	  };
-
-	  Vector.prototype.scale = function(factor) {
-	    return this.fmap(function(component) {
-	      return component * factor;
-	    });
-	  };
-
-	  Vector.prototype.invert = function() {
-	    return this.scale(-1);
-	  };
-
-	  Vector.prototype.add = function(vector) {
-	    return this.vmap(vector, function(c1, c2) {
-	      return c1 + c2;
-	    });
-	  };
-
-	  Vector.prototype.subtract = function(vector) {
-	    return this.add(vector.invert());
-	  };
-
-	  Vector.prototype.as_css = function() {
-	    return {
-	      left: this.x,
-	      top: this.y
-	    };
-	  };
-
-	  Vector.prototype.equals = function(vector) {
-	    return _.all(_.zip(this.components(), vector.components()), function(item) {
-	      return item[0] === item[1];
-	    });
-	  };
-
-	  Vector.prototype.distance = function(vector) {
-	    return this.minus(vector).magnitude();
-	  };
-
-	  Vector.prototype.unit = function() {
-	    return this.scale(1 / this.magnitude());
-	  };
-
-	  Vector.prototype.angle = function() {
-	    return Math.atan2(this.y, this.x);
-	  };
-
-	  return Vector;
-
-	})();
-
-	Vector.prototype.plus = Vector.prototype.add;
-
-	Vector.prototype.minus = Vector.prototype.subtract;
-
-	module.exports = function() {
-	  return (function(func, args, ctor) {
-	    ctor.prototype = func.prototype;
-	    var child = new ctor, result = func.apply(child, args);
-	    return Object(result) === result ? result : child;
-	  })(Vector, arguments, function(){});
-	};
-
-
-/***/ },
-/* 15 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = {
@@ -1169,114 +1291,63 @@
 
 
 /***/ },
-/* 16 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var FileDetailEditor;
+	var tag_diff;
 
-	FileDetailEditor = __webpack_require__(17);
+	tag_diff = function(new_tags, old_tags) {
+	  return {
+	    add: _.difference(new_tags, old_tags),
+	    remove: _.difference(old_tags, new_tags)
+	  };
+	};
 
-	module.exports = React.createClass({
-	  contextTypes: {
-	    router: React.PropTypes.func.isRequired
-	  },
-	  render: function() {
-	    var image, src;
-	    src = this.props.file_summary.image_url.val();
-	    image = React.createElement("img", {
-	      "className": "main-image",
-	      "src": src
-	    });
-	    if (this.props.file_details) {
-	      return React.createElement("div", {
-	        "className": "row"
-	      }, React.createElement("div", {
-	        "className": "col-sm-4 col-md-3 col-lg-2 sidebar"
-	      }, React.createElement(FileDetailEditor, {
-	        "file_details": this.props.file_details
-	      })), React.createElement("div", {
-	        "className": "col-sm-8 col-md-9 col-lg-10"
-	      }, image));
+	module.exports = function(details, server_state) {
+	  var message, new_appearances, removed_appearances, role, role_diffs, updated_appearances, _i, _len, _ref;
+	  new_appearances = [];
+	  updated_appearances = {};
+	  details.appearances.forEach(function(key, appearance) {
+	    var delta, new_thing_name, old_appearance;
+	    appearance = appearance.val();
+	    if (key.slice(0, 4) === 'new-') {
+	      return new_appearances.push(appearance);
 	    } else {
-	      return image;
+	      old_appearance = server_state.appearances[key];
+	      if (_.isEqual(old_appearance, appearance)) {
+	        return;
+	      }
+	      delta = {};
+	      if (!_.isEqual(appearance.dimensions, old_appearance.dimensions)) {
+	        delta.dimensions = appearance.dimensions;
+	      }
+	      new_thing_name = appearance.thing_name;
+	      if (new_thing_name !== old_appearance.thing_name) {
+	        delta.new_thing_name = new_thing_name;
+	      }
+	      delta.tags = tag_diff(appearance.tags, old_appearance.tags);
+	      delta.negative_tags = tag_diff(appearance.negative_tags, old_appearance.negative_tags);
+	      return updated_appearances[key] = delta;
 	    }
+	  });
+	  removed_appearances = _.difference(_.keys(server_state.appearances), details.appearances.keys());
+	  role_diffs = {};
+	  _ref = ['artist', 'recipient'];
+	  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+	    role = _ref[_i];
+	    role_diffs[role] = tag_diff(details.roles[role].val(), server_state.roles[role]);
 	  }
-	});
-
-
-/***/ },
-/* 17 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var CortexTagger;
-
-	CortexTagger = __webpack_require__(18);
-
-	module.exports = React.createClass({
-	  render: function() {
-	    return React.createElement("div", null, React.createElement("div", {
-	      "className": "form-group"
-	    }, React.createElement("label", null, "Scene Tags"), React.createElement(CortexTagger, {
-	      "ref": "tags",
-	      "tags": this.props.file_details.tags,
-	      "possible_tags": TAG_NAMES
-	    }), React.createElement("p", {
-	      "className": "help-block"
-	    }, "What is happening in this picture?")), React.createElement("div", {
-	      "className": "form-group"
-	    }, React.createElement("label", null, "Artists"), React.createElement(CortexTagger, {
-	      "ref": "artists",
-	      "tags": this.props.file_details.roles.artist,
-	      "possible_tags": THING_NAMES
-	    }), React.createElement("p", {
-	      "className": "help-block"
-	    }, "Who made this?")), React.createElement("div", {
-	      "className": "form-group"
-	    }, React.createElement("label", null, "Recipients"), React.createElement(CortexTagger, {
-	      "ref": "recipients",
-	      "tags": this.props.file_details.roles.recipient,
-	      "possible_tags": THING_NAMES
-	    }), React.createElement("p", {
-	      "className": "help-block"
-	    }, "Who was this made for?")));
-	  }
-	});
-
-
-/***/ },
-/* 18 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Tagger;
-
-	Tagger = __webpack_require__(10);
-
-	module.exports = React.createClass({
-	  addTag: function(name) {
-	    var item;
-	    item = this.props.tags.find(function(item) {
-	      return item.val() === name;
-	    });
-	    if (!item) {
-	      return this.props.tags.push(name);
-	    }
-	  },
-	  removeTag: function(name) {
-	    var item;
-	    item = this.props.tags.find(function(item) {
-	      return item.val() === name;
-	    });
-	    return item.remove();
-	  },
-	  render: function() {
-	    return React.createElement(Tagger, {
-	      "tags": this.props.tags.val(),
-	      "possible_tags": this.props.possible_tags,
-	      "onTagAdd": this.addTag,
-	      "onTagRemove": this.removeTag
-	    });
-	  }
-	});
+	  message = {
+	    appearances: {
+	      create: new_appearances,
+	      "delete": removed_appearances,
+	      update: updated_appearances
+	    },
+	    roles: role_diffs,
+	    tags: tag_diff(details.tags.val(), server_state.tags)
+	  };
+	  return message;
+	};
 
 
 /***/ }

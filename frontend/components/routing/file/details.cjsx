@@ -6,16 +6,19 @@ module.exports = React.createClass
 		src = @props.file_summary.image_url.val()
 		image = <img className="main-image" src={src}/>
 
-		if @props.file_details
-			<div className="row">
-				<div className="col-sm-4 col-md-3 col-lg-2 sidebar">
-					<FileDetailEditor file_details={@props.file_details}/>
-				</div>
-
-				<div className="col-sm-8 col-md-9 col-lg-10">
-					{image}
-				</div>
-			</div>
+		details = if @props.file_details
+			<FileDetailEditor file_details={@props.file_details}/>
 		else
-			image
+			<div>Loading...</div>
+
+		<div className="row">
+			<div className="col-sm-4 col-md-3 col-lg-2 sidebar">
+				{details}
+				{@props.save_button}
+			</div>
+
+			<div className="col-sm-8 col-md-9 col-lg-10">
+				{image}
+			</div>
+		</div>
 

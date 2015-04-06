@@ -5,6 +5,7 @@ ThingLink = React.createClass
 		<a href={"/thing/#{@props.name}"}>{@props.name}</a>
 
 intersperse = require '../../../lib/intersperse'
+file_details_diff = require '../../../lib/file_details_diff'
 
 module.exports = React.createClass
 	displayName: 'file-show'
@@ -25,8 +26,8 @@ module.exports = React.createClass
 		id = @getId()
 		details = @props.cortex.file_details[id]
 		if not details
-			$.get @getSyncUrl(), (result) =>
-				@props.cortex.file_details.add id, result
+			$.get @getSyncUrl(), (file_details) =>
+				@gotData file_details
 		details
 
 	contextTypes:
@@ -43,27 +44,21 @@ module.exports = React.createClass
 	getSyncUrl: ->
 		"/api/file/#{@getFileId()}/info"
 
-#	componentDidMount: ->
-#		$.ajax
-#			type: 'get'
-#			dataType: 'json'
-#			url: @getSyncUrl()
-#			success: (file_data) =>
-#				@gotData file_data
-#			error: =>
-#				console.log "ERROR", arguments
+	gotData: (file_details) ->
+		id = @getId()
+		console.log "GOT DATA", file_details
+		if id of @props.cortex.file_details
+			@props.cortex.file_details[id].set file_details
+		else
+			@props.cortex.file_details.add id, file_details
 
-	gotData: (file_data) ->
-		console.log "GOT DATA", file_data
-		@props.file_details.set(file_data)
 		@setState
-			server_state: $.extend(true, {}, file_data)
+			server_state: $.extend(true, {}, file_details)
 			saving: false
 
 	save: ->
-		# todo: diff it
 		server_state = @state.server_state
-
+		message = file_details_diff @getDetails(), server_state
 
 		@setState
 			saving: true
@@ -153,6 +148,9 @@ module.exports = React.createClass
 			<Link key="comments" to="file comments" params={{file_id:id}}>comments</Link>
 		]
 		navigation = intersperse(navigation, ' | ')
+		save_button = (
+			<button className="btn btn-primary" onClick={@save}>Save</button>
+		)
 
 		<div>
 			<div className="next-prev-links">
@@ -164,7 +162,7 @@ module.exports = React.createClass
 			</div>
 
 			<div className="main-image-container" style={{position:'relative', marginTop:10}}>
-				<RouteHandler file_summary={summary} file_details={details} cortex={@props.cortex}/>
+				<RouteHandler file_summary={summary} file_details={details} cortex={@props.cortex} save_button={save_button}/>
 			</div>
 		</div>
 

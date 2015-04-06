@@ -24,6 +24,7 @@ module.exports = React.createClass
 			<div className="row">
 				<div className="col-sm-4 col-md-3 col-lg-2 sidebar">
 					<AppearanceEditor {...current_appearance}  appearance={current_appearance} cortex={@props.cortex} ref="editor"/>
+					{@props.save_button}
 				</div>
 
 				<div className="col-sm-8 col-md-9 col-lg-10">
