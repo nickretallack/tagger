@@ -1,16 +1,9 @@
-from flask import *
+from blueprint import blueprint
+
+from flask import jsonify
 from tagger.models import db, Thing, File, Appearance, AppearanceTag, FileThingRole, ThingRole, FileTag
 from tagger.lib.tag.tag import ensure_tags_exist, normalize_tags
 from tagger.lib.tag.thing import ensure_thing, ensure_things
-
-blueprint = Blueprint('api',__name__)
-
-@blueprint.route('/thing/<thing_name>/tag', methods=['GET'])
-def get_thing_tags(thing_name):
-	thing = db.session.query(Thing).filter_by(name=thing_name).options(
-		db.subqueryload('tag_relationships').joinedload('tag')
-	).one()
-	return jsonify(items=thing.tag_name_list)
 
 def tag_appearance(appearance, add_tags, add_negative_tags):
 	tags_by_name = ensure_tags_exist(add_tags.union(add_negative_tags))
