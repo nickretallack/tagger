@@ -1,17 +1,12 @@
-file_id_mixin = require './file_id_mixin'
 cortex_set_key = require './cortex_set_key'
 file_details_diff = require './file_details_diff'
 
 module.exports =
-	mixins: [file_id_mixin]
 	contextTypes:
 		router: React.PropTypes.func.isRequired
 
-	getId: ->
-		@getFileId()
-
 	getSummary: ->
-		id = @getId()
+		id = @getFileId()
 		@props.cortex.search_results.find (item) => item.id.val() is id
 
 	detailsLoaded: ->
@@ -40,7 +35,7 @@ module.exports =
 		"/api/file/#{@getFileId()}/info"
 
 	gotData: (file_details) ->
-		id = @getId()
+		id = @getFileId()
 		console.log "GOT DATA", file_details
 		file_details_clone = $.extend true, {}, file_details
 		if id of @props.cortex.file_details
@@ -51,7 +46,7 @@ module.exports =
 			@props.cortex.server_file_details.add id, file_details_clone
 
 	saveDetails: ->
-		id = @getId()
+		id = @getFileId()
 		server_state = @props.cortex.server_file_details[id].val()
 		message = file_details_diff @getDetails(), server_state
 
@@ -71,7 +66,7 @@ module.exports =
 					new_id = appearance_id_map[current_id]
 					@context.router.transitionTo 'file appearance show',
 						appearance_id: new_id
-						file_id: @getId()
+						file_id: @getFileId()
 				@gotData file
 				@setState
 					saving: false

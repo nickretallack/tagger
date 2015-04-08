@@ -1,8 +1,9 @@
 CortexTagger = require './tag_input/CortexTagger'
 file_details_loader = require '../lib/file_details_loader'
+file_id_mixin = require '../lib/file_id_mixin'
 
 module.exports = React.createClass
-	mixins: [file_details_loader]
+	mixins: [file_details_loader, file_id_mixin]
 
 	render: ->
 		if not @detailsLoaded()

@@ -1,8 +1,6 @@
 cortex_set_key = require './cortex_set_key'
-file_id_mixin = require './file_id_mixin'
 
 module.exports =
-	mixins: [file_id_mixin]
 	commentsLoaded: ->
 		@props.cortex.file_comments.hasKey @getFileId()
 

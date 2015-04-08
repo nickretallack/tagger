@@ -157,16 +157,18 @@
 /* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var AppearanceOverlayManager, FileView, file_details_loader;
+	var AppearanceOverlayManager, FileView, file_details_loader, file_id_mixin;
 
 	AppearanceOverlayManager = __webpack_require__(11);
 
-	file_details_loader = __webpack_require__(12);
+	file_details_loader = __webpack_require__(13);
+
+	file_id_mixin = __webpack_require__(12);
 
 	FileView = __webpack_require__(1);
 
 	module.exports = React.createClass({
-	  mixins: [file_details_loader],
+	  mixins: [file_details_loader, file_id_mixin],
 	  render: function() {
 	    var _ref;
 	    if (!this.detailsLoaded()) {
@@ -186,7 +188,7 @@
 /* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var AppearanceEditor, AppearanceOverlayManager, FileView, Link, file_details_loader;
+	var AppearanceEditor, AppearanceOverlayManager, FileView, Link, file_details_loader, file_id_mixin;
 
 	Link = ReactRouter.Link;
 
@@ -194,12 +196,14 @@
 
 	AppearanceOverlayManager = __webpack_require__(11);
 
-	file_details_loader = __webpack_require__(12);
+	file_details_loader = __webpack_require__(13);
+
+	file_id_mixin = __webpack_require__(12);
 
 	FileView = __webpack_require__(1);
 
 	module.exports = React.createClass({
-	  mixins: [file_details_loader],
+	  mixins: [file_details_loader, file_id_mixin],
 	  currentAppearance: function() {
 	    var result, _ref;
 	    return result = (_ref = this.getDetails()) != null ? _ref.appearances[this.context.router.getCurrentParams().appearance_id] : void 0;
@@ -248,7 +252,7 @@
 
 	RouteHandler = ReactRouter.RouteHandler, Route = ReactRouter.Route, DefaultRoute = ReactRouter.DefaultRoute;
 
-	ThumbnailList = __webpack_require__(14);
+	ThumbnailList = __webpack_require__(15);
 
 	module.exports = React.createClass({
 	  render: function() {
@@ -263,21 +267,13 @@
 /* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var DefaultRoute, Link, Route, RouteHandler, ThingLink, file_id_mixin, intersperse;
+	var DefaultRoute, Link, Route, RouteHandler, file_id_mixin, intersperse;
 
 	Link = ReactRouter.Link, RouteHandler = ReactRouter.RouteHandler, Route = ReactRouter.Route, DefaultRoute = ReactRouter.DefaultRoute;
 
-	intersperse = __webpack_require__(13);
+	intersperse = __webpack_require__(14);
 
-	file_id_mixin = __webpack_require__(15);
-
-	ThingLink = React.createClass({
-	  render: function() {
-	    return React.createElement("a", {
-	      "href": "/thing/" + this.props.name
-	    }, this.props.name);
-	  }
-	});
+	file_id_mixin = __webpack_require__(12);
 
 	module.exports = React.createClass({
 	  mixins: [file_id_mixin],
@@ -363,16 +359,24 @@
 /* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var ClassicComments, comment_loader;
+	var ClassicComments, ThingLink, comment_loader, file_details_loader, file_id_mixin, intersperse;
 
 	ClassicComments = __webpack_require__(16);
 
 	comment_loader = __webpack_require__(17);
 
+	file_details_loader = __webpack_require__(13);
+
+	file_id_mixin = __webpack_require__(12);
+
+	ThingLink = __webpack_require__(29);
+
+	intersperse = __webpack_require__(14);
+
 	module.exports = React.createClass({
-	  mixins: [comment_loader],
+	  mixins: [comment_loader, file_details_loader, file_id_mixin],
 	  render: function() {
-	    var comments, image, src;
+	    var appearances, artists, comments, details, details_node, image, recipients, role_nodes, src;
 	    src = this.props.file_summary.image_url.val();
 	    image = React.createElement("div", {
 	      "className": "main-image-container"
@@ -381,7 +385,43 @@
 	      "src": src
 	    }));
 	    comments = this.getComments();
-	    return React.createElement("div", null, image, React.createElement(ClassicComments, {
+	    details = this.getDetails();
+	    details_node = details ? (artists = details.roles.artist.map((function(_this) {
+	      return function(thing) {
+	        return React.createElement(ThingLink, {
+	          "name": thing.val()
+	        });
+	      };
+	    })(this)), artists = intersperse(artists, ', '), recipients = details.roles.recipient.map((function(_this) {
+	      return function(thing) {
+	        return React.createElement(ThingLink, {
+	          "name": thing.val()
+	        });
+	      };
+	    })(this)), recipients = intersperse(recipients, ', '), appearances = [], details.appearances.forEach((function(_this) {
+	      return function(id, appearance) {
+	        var name;
+	        name = appearance.thing_name.val();
+	        if (name) {
+	          return appearances.push(React.createElement(ThingLink, {
+	            "name": name
+	          }));
+	        }
+	      };
+	    })(this)), appearances = intersperse(appearances, ', '), role_nodes = [], artists.length ? role_nodes.push(React.createElement("div", {
+	      "style": {
+	        display: 'inline'
+	      }
+	    }, "by ", artists)) : void 0, recipients.length ? role_nodes.push(React.createElement("div", {
+	      "style": {
+	        display: 'inline'
+	      }
+	    }, "for ", recipients)) : void 0, appearances.length ? role_nodes.push(React.createElement("div", {
+	      "style": {
+	        display: 'inline'
+	      }
+	    }, "featuring ", appearances)) : void 0, role_nodes = intersperse(role_nodes, ', '), React.createElement("div", null, role_nodes)) : void 0;
+	    return React.createElement("div", null, image, React.createElement("p", null, details_node), React.createElement("h2", null, "Comments"), React.createElement(ClassicComments, {
 	      "comments": comments
 	    }));
 	  }
@@ -392,14 +432,16 @@
 /* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var CommentSidebar, comment_loader;
+	var CommentSidebar, comment_loader, file_id_mixin;
 
 	CommentSidebar = __webpack_require__(16);
 
 	comment_loader = __webpack_require__(17);
 
+	file_id_mixin = __webpack_require__(12);
+
 	module.exports = React.createClass({
-	  mixins: [comment_loader],
+	  mixins: [comment_loader, file_id_mixin],
 	  render: function() {
 	    var comments, image, src;
 	    src = this.props.file_summary.image_url.val();
@@ -738,25 +780,33 @@
 /* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var cortex_set_key, file_details_diff, file_id_mixin;
+	module.exports = {
+	  contextTypes: {
+	    router: React.PropTypes.func.isRequired
+	  },
+	  getFileId: function() {
+	    return this.context.router.getCurrentParams().file_id;
+	  }
+	};
 
-	file_id_mixin = __webpack_require__(15);
+
+/***/ },
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var cortex_set_key, file_details_diff;
 
 	cortex_set_key = __webpack_require__(22);
 
 	file_details_diff = __webpack_require__(23);
 
 	module.exports = {
-	  mixins: [file_id_mixin],
 	  contextTypes: {
 	    router: React.PropTypes.func.isRequired
 	  },
-	  getId: function() {
-	    return this.getFileId();
-	  },
 	  getSummary: function() {
 	    var id;
-	    id = this.getId();
+	    id = this.getFileId();
 	    return this.props.cortex.search_results.find((function(_this) {
 	      return function(item) {
 	        return item.id.val() === id;
@@ -797,7 +847,7 @@
 	  },
 	  gotData: function(file_details) {
 	    var file_details_clone, id;
-	    id = this.getId();
+	    id = this.getFileId();
 	    console.log("GOT DATA", file_details);
 	    file_details_clone = $.extend(true, {}, file_details);
 	    if (id in this.props.cortex.file_details) {
@@ -810,7 +860,7 @@
 	  },
 	  saveDetails: function() {
 	    var id, message, server_state;
-	    id = this.getId();
+	    id = this.getFileId();
 	    server_state = this.props.cortex.server_file_details[id].val();
 	    message = file_details_diff(this.getDetails(), server_state);
 	    this.setState({
@@ -832,7 +882,7 @@
 	            new_id = appearance_id_map[current_id];
 	            _this.context.router.transitionTo('file appearance show', {
 	              appearance_id: new_id,
-	              file_id: _this.getId()
+	              file_id: _this.getFileId()
 	            });
 	          }
 	          _this.gotData(file);
@@ -856,7 +906,7 @@
 
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* intersperse: Return an array with the separator interspersed between
@@ -878,7 +928,7 @@
 	module.exports = intersperse
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Link;
@@ -906,28 +956,14 @@
 
 
 /***/ },
-/* 15 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = {
-	  contextTypes: {
-	    router: React.PropTypes.func.isRequired
-	  },
-	  getFileId: function() {
-	    return this.context.router.getCurrentParams().file_id;
-	  }
-	};
-
-
-/***/ },
 /* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var NewComment, SidebarComment;
 
-	SidebarComment = __webpack_require__(24);
+	SidebarComment = __webpack_require__(25);
 
-	NewComment = __webpack_require__(25);
+	NewComment = __webpack_require__(26);
 
 	module.exports = React.createClass({
 	  render: function() {
@@ -948,14 +984,11 @@
 /* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var cortex_set_key, file_id_mixin;
+	var cortex_set_key;
 
 	cortex_set_key = __webpack_require__(22);
 
-	file_id_mixin = __webpack_require__(15);
-
 	module.exports = {
-	  mixins: [file_id_mixin],
 	  commentsLoaded: function() {
 	    return this.props.cortex.file_comments.hasKey(this.getFileId());
 	  },
@@ -992,14 +1025,16 @@
 /* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var CortexTagger, file_details_loader;
+	var CortexTagger, file_details_loader, file_id_mixin;
 
-	CortexTagger = __webpack_require__(26);
+	CortexTagger = __webpack_require__(24);
 
-	file_details_loader = __webpack_require__(12);
+	file_details_loader = __webpack_require__(13);
+
+	file_id_mixin = __webpack_require__(12);
 
 	module.exports = React.createClass({
-	  mixins: [file_details_loader],
+	  mixins: [file_details_loader, file_id_mixin],
 	  render: function() {
 	    if (!this.detailsLoaded()) {
 	      return React.createElement("div", null, "Loading...");
@@ -1366,6 +1401,42 @@
 /* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var Tagger;
+
+	Tagger = __webpack_require__(19);
+
+	module.exports = React.createClass({
+	  addTag: function(name) {
+	    var item;
+	    item = this.props.tags.find(function(item) {
+	      return item.val() === name;
+	    });
+	    if (!item) {
+	      return this.props.tags.push(name);
+	    }
+	  },
+	  removeTag: function(name) {
+	    var item;
+	    item = this.props.tags.find(function(item) {
+	      return item.val() === name;
+	    });
+	    return item.remove();
+	  },
+	  render: function() {
+	    return React.createElement(Tagger, {
+	      "tags": this.props.tags.val(),
+	      "possible_tags": this.props.possible_tags,
+	      "onTagAdd": this.addTag,
+	      "onTagRemove": this.removeTag
+	    });
+	  }
+	});
+
+
+/***/ },
+/* 25 */
+/***/ function(module, exports, __webpack_require__) {
+
 	module.exports = React.createClass({
 	  render: function() {
 	    return React.createElement("div", {
@@ -1385,7 +1456,7 @@
 
 
 /***/ },
-/* 25 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = React.createClass({
@@ -1454,42 +1525,6 @@
 	        marginTop: 10
 	      }
 	    }, "Post Comment"), this.state.error)));
-	  }
-	});
-
-
-/***/ },
-/* 26 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Tagger;
-
-	Tagger = __webpack_require__(19);
-
-	module.exports = React.createClass({
-	  addTag: function(name) {
-	    var item;
-	    item = this.props.tags.find(function(item) {
-	      return item.val() === name;
-	    });
-	    if (!item) {
-	      return this.props.tags.push(name);
-	    }
-	  },
-	  removeTag: function(name) {
-	    var item;
-	    item = this.props.tags.find(function(item) {
-	      return item.val() === name;
-	    });
-	    return item.remove();
-	  },
-	  render: function() {
-	    return React.createElement(Tagger, {
-	      "tags": this.props.tags.val(),
-	      "possible_tags": this.props.possible_tags,
-	      "onTagAdd": this.addTag,
-	      "onTagRemove": this.removeTag
-	    });
 	  }
 	});
 
@@ -1672,6 +1707,19 @@
 	      "onChange": this.onChange,
 	      "onBlur": this.onBlur
 	    }));
+	  }
+	});
+
+
+/***/ },
+/* 29 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = React.createClass({
+	  render: function() {
+	    return React.createElement("a", {
+	      "href": "/thing/" + this.props.name
+	    }, this.props.name);
 	  }
 	});
 

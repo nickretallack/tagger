@@ -1,7 +1,8 @@
 CommentSidebar = require '../../comment/CommentSidebar'
 comment_loader = require '../../../lib/comment_loader'
+file_id_mixin = require '../../../lib/file_id_mixin'
 module.exports = React.createClass
-	mixins: [comment_loader]
+	mixins: [comment_loader, file_id_mixin]
 
 	render: ->
 		src = @props.file_summary.image_url.val()

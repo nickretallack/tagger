@@ -2,11 +2,6 @@
 intersperse = require '../../../lib/intersperse'
 file_id_mixin = require '../../../lib/file_id_mixin'
 
-ThingLink = React.createClass
-	render: ->
-		<a href={"/thing/#{@props.name}"}>{@props.name}</a>
-
-
 module.exports = React.createClass
 	mixins: [file_id_mixin]
 	displayName: 'file-show'
