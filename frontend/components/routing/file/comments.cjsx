@@ -1,38 +1,16 @@
 CommentSidebar = require '../../comment/CommentSidebar'
+comment_loader = require '../../../lib/comment_loader'
 module.exports = React.createClass
-	contextTypes:
-		router: React.PropTypes.func.isRequired
-
-	getFileId: ->
-		@context.router.getCurrentParams().file_id
-
-	commentsLoaded: ->
-		@props.cortex.file_comments.hasKey @getFileId()
-
-	componentDidMount: ->
-		file_id = @context.router.getCurrentParams().file_id
-		if not @commentsLoaded()
-			$.ajax
-				type: 'get'
-				url:"/api/file/#{file_id}/comments"
-				success: (response) =>
-#					if not @commentsLoaded
-					@props.cortex.file_comments.add file_id, response.items
-#					else
-#						if @props.cortex.file_comments[file_id].set comments
+	mixins: [comment_loader]
 
 	render: ->
 		src = @props.file_summary.image_url.val()
 		image = <img className="main-image" src={src}/>
-
-		comments = if @commentsLoaded()
-			@props.cortex.file_comments[@getFileId()]
-		else
-			null
+		comments = @getComments()
 
 		<div className="row">
 			<div className="col-sm-4 col-md-3 col-lg-2 sidebar">
-				<CommentSidebar comments={comments}/>
+				<CommentSidebar comments={comments} />
 			</div>
 
 			<div className="col-sm-8 col-md-9 col-lg-10">

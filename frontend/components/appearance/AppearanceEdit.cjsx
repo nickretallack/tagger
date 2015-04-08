@@ -18,7 +18,9 @@ module.exports = React.createClass
 				appearances={@props.file_details?.appearances}
 			/>
 		else
-			<img className="main-image" src={src}/>
+			<div className="main-image-container">
+				<img className="main-image" src={src}/>
+			</div>
 
 		if current_appearance
 			<div className="row">

@@ -84,6 +84,10 @@
 	      "path": ':appearance_id',
 	      "handler": __webpack_require__(2)
 	    })), React.createElement(Route, {
+	      "name": "file classic",
+	      "path": 'classic',
+	      "handler": __webpack_require__(26)
+	    }), React.createElement(Route, {
 	      "name": "file comments",
 	      "path": 'comments',
 	      "handler": __webpack_require__(7)
@@ -125,10 +129,12 @@
 	module.exports = React.createClass({
 	  render: function() {
 	    var _ref;
-	    return React.createElement(AppearanceOverlayManager, {
+	    return React.createElement("div", {
+	      "className": "main-image-container"
+	    }, React.createElement(AppearanceOverlayManager, {
 	      "src": this.props.file_summary.image_url.val(),
 	      "appearances": ((_ref = this.props.file_details) != null ? _ref.appearances : void 0)
-	    });
+	    }));
 	  }
 	});
 
@@ -160,10 +166,12 @@
 	    image = this.props.file_details ? React.createElement(AppearanceOverlayManager, {
 	      "src": src,
 	      "appearances": ((_ref = this.props.file_details) != null ? _ref.appearances : void 0)
-	    }) : React.createElement("img", {
+	    }) : React.createElement("div", {
+	      "className": "main-image-container"
+	    }, React.createElement("img", {
 	      "className": "main-image",
 	      "src": src
-	    });
+	    }));
 	    if (current_appearance) {
 	      return React.createElement("div", {
 	        "className": "row"
@@ -209,7 +217,9 @@
 
 	module.exports = React.createClass({
 	  render: function() {
-	    return React.createElement("div", null, React.createElement("img", {
+	    return React.createElement("div", {
+	      "className": "main-image-container"
+	    }, React.createElement("img", {
 	      "className": "main-image",
 	      "src": this.props.file_summary.image_url.val()
 	    }));
@@ -390,12 +400,18 @@
 	    details = this.getDetails();
 	    navigation = [
 	      React.createElement(Link, {
+	        "key": "classic",
+	        "to": "file classic",
+	        "params": {
+	          file_id: id
+	        }
+	      }, "classic"), React.createElement(Link, {
 	        "key": "overview",
 	        "to": "file overview",
 	        "params": {
 	          file_id: id
 	        }
-	      }, "overview"), React.createElement(Link, {
+	      }, "image"), React.createElement(Link, {
 	        "key": "details",
 	        "to": "file details",
 	        "params": {
@@ -421,7 +437,6 @@
 	    }, previous_link, next_link, React.createElement("div", {
 	      "className": "file-navigation"
 	    }, navigation)), React.createElement("div", {
-	      "className": "main-image-container",
 	      "style": {
 	        position: 'relative',
 	        marginTop: 10
@@ -440,35 +455,14 @@
 /* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var CommentSidebar;
+	var CommentSidebar, comment_loader;
 
 	CommentSidebar = __webpack_require__(14);
 
+	comment_loader = __webpack_require__(25);
+
 	module.exports = React.createClass({
-	  contextTypes: {
-	    router: React.PropTypes.func.isRequired
-	  },
-	  getFileId: function() {
-	    return this.context.router.getCurrentParams().file_id;
-	  },
-	  commentsLoaded: function() {
-	    return this.props.cortex.file_comments.hasKey(this.getFileId());
-	  },
-	  componentDidMount: function() {
-	    var file_id;
-	    file_id = this.context.router.getCurrentParams().file_id;
-	    if (!this.commentsLoaded()) {
-	      return $.ajax({
-	        type: 'get',
-	        url: "/api/file/" + file_id + "/comments",
-	        success: (function(_this) {
-	          return function(response) {
-	            return _this.props.cortex.file_comments.add(file_id, response.items);
-	          };
-	        })(this)
-	      });
-	    }
-	  },
+	  mixins: [comment_loader],
 	  render: function() {
 	    var comments, image, src;
 	    src = this.props.file_summary.image_url.val();
@@ -476,7 +470,7 @@
 	      "className": "main-image",
 	      "src": src
 	    });
-	    comments = this.commentsLoaded() ? this.props.cortex.file_comments[this.getFileId()] : null;
+	    comments = this.getComments();
 	    return React.createElement("div", {
 	      "className": "row"
 	    }, React.createElement("div", {
@@ -1537,6 +1531,94 @@
 	      "onKeyDown": this.onKeyDown,
 	      "onChange": this.onChange,
 	      "onBlur": this.onBlur
+	    }));
+	  }
+	});
+
+
+/***/ },
+/* 24 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = function(object, key, value) {
+	  if (object.hasKey(key)) {
+	    return object[key].set(value);
+	  } else {
+	    return object.add(key, value);
+	  }
+	};
+
+
+/***/ },
+/* 25 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var cortex_set_key;
+
+	cortex_set_key = __webpack_require__(24);
+
+	module.exports = {
+	  contextTypes: {
+	    router: React.PropTypes.func.isRequired
+	  },
+	  getFileId: function() {
+	    return this.context.router.getCurrentParams().file_id;
+	  },
+	  commentsLoaded: function() {
+	    return this.props.cortex.file_comments.hasKey(this.getFileId());
+	  },
+	  componentDidMount: function() {
+	    return this.loadComments();
+	  },
+	  componentWillReceiveProps: function() {
+	    return this.loadComments();
+	  },
+	  getComments: function() {
+	    var comments;
+	    return comments = this.commentsLoaded() ? this.props.cortex.file_comments[this.getFileId()] : null;
+	  },
+	  loadComments: function() {
+	    var file_id;
+	    file_id = this.getFileId();
+	    if (!this.commentsLoaded()) {
+	      return $.ajax({
+	        type: 'get',
+	        url: "/api/file/" + file_id + "/comments",
+	        success: (function(_this) {
+	          return function(response) {
+	            return cortex_set_key(_this.props.cortex.file_comments, file_id, response.items);
+	          };
+	        })(this)
+	      });
+	    }
+	  }
+	};
+
+
+/***/ },
+/* 26 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var ClassicComments, comment_loader;
+
+	ClassicComments = __webpack_require__(14);
+
+	comment_loader = __webpack_require__(25);
+
+	module.exports = React.createClass({
+	  mixins: [comment_loader],
+	  render: function() {
+	    var comments, image, src;
+	    src = this.props.file_summary.image_url.val();
+	    image = React.createElement("div", {
+	      "className": "main-image-container"
+	    }, React.createElement("img", {
+	      "className": "main-image",
+	      "src": src
+	    }));
+	    comments = this.getComments();
+	    return React.createElement("div", null, image, React.createElement(ClassicComments, {
+	      "comments": comments
 	    }));
 	  }
 	});

@@ -145,7 +145,8 @@ module.exports = React.createClass
 		#	</div>
 
 		navigation = [
-			<Link key="overview" to="file overview" params={{file_id:id}}>overview</Link>
+			<Link key="classic" to="file classic" params={{file_id:id}}>classic</Link>
+			<Link key="overview" to="file overview" params={{file_id:id}}>image</Link>
 			<Link key="details" to="file details" params={{file_id:id}}>details</Link>
 			<Link key="appearances" to="file appearances" params={{file_id:id}}>appearances</Link>
 			<Link key="comments" to="file comments" params={{file_id:id}}>comments</Link>
@@ -161,7 +162,7 @@ module.exports = React.createClass
 				</div>
 			</div>
 
-			<div className="main-image-container" style={{position:'relative', marginTop:10}}>
+			<div style={{position:'relative', marginTop:10}}>
 				<RouteHandler file_summary={summary} file_details={details} cortex={@props.cortex} save={@save}/>
 			</div>
 		</div>
