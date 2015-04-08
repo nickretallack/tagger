@@ -6,7 +6,8 @@ from sqlalchemy.exc import IntegrityError
 
 @blueprint.route('/file/<int:file_id>/comments')
 def get_comments(file_id):
-	file = db.session.query(File).filter_by(id=file_id).options(db.subqueryload('comments')).one()
+	file = db.session.query(File).filter_by(id=file_id)\
+	.options(db.subqueryload('comments')).one()
 	return jsonify(comment_list_json(file.comments))
 
 def comment_list_json(comments):

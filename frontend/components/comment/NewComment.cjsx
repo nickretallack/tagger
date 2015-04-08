@@ -40,8 +40,10 @@ module.exports = React.createClass
 				<div className="media-body">
 					<a className="media-heading">Anonymous</a>
 					<textarea className="form-control" ref="text"></textarea>
+					<button className="btn btn-primary"
+					onClick={@onPost} disabled={@state.saving}
+					style={{marginTop: 10}}>Post Comment</button>
+					{@state.error}
 				</div>
-				<button className="btn btn-primary" onClick={@onPost} disabled={@state.saving}>Post Comment</button>
-				{@state.error}
 			</div>
 		</div>

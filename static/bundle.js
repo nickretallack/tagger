@@ -1312,11 +1312,14 @@
 	    }, "Anonymous"), React.createElement("textarea", {
 	      "className": "form-control",
 	      "ref": "text"
-	    })), React.createElement("button", {
+	    }), React.createElement("button", {
 	      "className": "btn btn-primary",
 	      "onClick": this.onPost,
-	      "disabled": this.state.saving
-	    }, "Post Comment"), this.state.error));
+	      "disabled": this.state.saving,
+	      "style": {
+	        marginTop: 10
+	      }
+	    }, "Post Comment"), this.state.error)));
 	  }
 	});
 

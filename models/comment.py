@@ -1,4 +1,5 @@
 from tagger.models import db
+from sqlalchemy_utils.types.arrow import ArrowType
 
 __all__ = ['Comment']
 
@@ -13,4 +14,7 @@ class Comment(db.Model):
 
 	# what it's related to.  Only one may be populated
 	file_id = db.Column(db.ForeignKey('file.id', ondelete='cascade'), nullable=False) # nullability will change
-	file = db.relationship('File', backref=db.backref('comments', passive_deletes='all'))
+
+	created_at = db.Column(ArrowType, nullable=False, server_default=db.text("timezone('utc',now())"))
+
+	file = db.relationship('File', backref=db.backref('comments', passive_deletes='all', order_by=created_at.desc()))
