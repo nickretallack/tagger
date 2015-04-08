@@ -1,12 +1,8 @@
 cortex_set_key = require './cortex_set_key'
+file_id_mixin = require './file_id_mixin'
 
 module.exports =
-	contextTypes:
-		router: React.PropTypes.func.isRequired
-
-	getFileId: ->
-		@context.router.getCurrentParams().file_id
-
+	mixins: [file_id_mixin]
 	commentsLoaded: ->
 		@props.cortex.file_comments.hasKey @getFileId()
 
@@ -17,10 +13,8 @@ module.exports =
 		@loadComments()
 
 	getComments: ->
-		comments = if @commentsLoaded()
+		if @commentsLoaded()
 			@props.cortex.file_comments[@getFileId()]
-		else
-			null
 
 	loadComments: ->
 		file_id = @getFileId()

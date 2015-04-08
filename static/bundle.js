@@ -71,34 +71,34 @@
 	      "handler": __webpack_require__(6)
 	    }, React.createElement(DefaultRoute, {
 	      "name": "file overview",
-	      "handler": __webpack_require__(4)
+	      "handler": __webpack_require__(1)
 	    }), React.createElement(Route, {
 	      "name": "file appearances",
 	      "path": 'appearances',
-	      "handler": __webpack_require__(3)
+	      "handler": __webpack_require__(2)
 	    }, React.createElement(DefaultRoute, {
 	      "name": "file appearance overview",
-	      "handler": __webpack_require__(1)
+	      "handler": __webpack_require__(3)
 	    }), React.createElement(Route, {
 	      "name": "file appearance",
 	      "path": ':appearance_id',
-	      "handler": __webpack_require__(2)
+	      "handler": __webpack_require__(4)
 	    })), React.createElement(Route, {
 	      "name": "file classic",
 	      "path": 'classic',
-	      "handler": __webpack_require__(26)
+	      "handler": __webpack_require__(7)
 	    }), React.createElement(Route, {
 	      "name": "file comments",
 	      "path": 'comments',
-	      "handler": __webpack_require__(7)
+	      "handler": __webpack_require__(8)
 	    }), React.createElement(Route, {
 	      "name": "file details",
 	      "path": 'details',
-	      "handler": __webpack_require__(8)
+	      "handler": __webpack_require__(9)
 	    }), React.createElement(Route, {
 	      "name": "file tags",
 	      "path": 'tags',
-	      "handler": __webpack_require__(4)
+	      "handler": __webpack_require__(1)
 	    }))
 	  ];
 	  container = document.getElementById("react-image-tagger");
@@ -122,95 +122,6 @@
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var AppearanceOverlayManager;
-
-	AppearanceOverlayManager = __webpack_require__(10);
-
-	module.exports = React.createClass({
-	  render: function() {
-	    var _ref;
-	    return React.createElement("div", {
-	      "className": "main-image-container"
-	    }, React.createElement(AppearanceOverlayManager, {
-	      "src": this.props.file_summary.image_url.val(),
-	      "appearances": ((_ref = this.props.file_details) != null ? _ref.appearances : void 0)
-	    }));
-	  }
-	});
-
-
-/***/ },
-/* 2 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var AppearanceEditor, AppearanceOverlayManager, Link;
-
-	Link = ReactRouter.Link;
-
-	AppearanceEditor = __webpack_require__(11);
-
-	AppearanceOverlayManager = __webpack_require__(10);
-
-	module.exports = React.createClass({
-	  contextTypes: {
-	    router: React.PropTypes.func.isRequired
-	  },
-	  currentAppearance: function() {
-	    var result, _ref;
-	    return result = (_ref = this.props.file_details) != null ? _ref.appearances[this.context.router.getCurrentParams().appearance_id] : void 0;
-	  },
-	  render: function() {
-	    var current_appearance, image, src, _ref;
-	    current_appearance = this.currentAppearance();
-	    src = this.props.file_summary.image_url.val();
-	    image = this.props.file_details ? React.createElement(AppearanceOverlayManager, {
-	      "src": src,
-	      "appearances": ((_ref = this.props.file_details) != null ? _ref.appearances : void 0)
-	    }) : React.createElement("div", {
-	      "className": "main-image-container"
-	    }, React.createElement("img", {
-	      "className": "main-image",
-	      "src": src
-	    }));
-	    if (current_appearance) {
-	      return React.createElement("div", {
-	        "className": "row"
-	      }, React.createElement("div", {
-	        "className": "col-sm-4 col-md-3 col-lg-2 sidebar"
-	      }, React.createElement(AppearanceEditor, React.__spread({}, current_appearance, {
-	        "appearance": current_appearance,
-	        "cortex": this.props.cortex,
-	        "save": this.props.save,
-	        "ref": "editor"
-	      }))), React.createElement("div", {
-	        "className": "col-sm-8 col-md-9 col-lg-10"
-	      }, image));
-	    } else {
-	      return image;
-	    }
-	  }
-	});
-
-
-/***/ },
-/* 3 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var RouteHandler;
-
-	RouteHandler = ReactRouter.RouteHandler;
-
-	module.exports = React.createClass({
-	  render: function() {
-	    return React.createElement(RouteHandler, React.__spread({}, this.props));
-	  }
-	});
-
-
-/***/ },
-/* 4 */
-/***/ function(module, exports, __webpack_require__) {
-
 	var Link;
 
 	Link = ReactRouter.Link;
@@ -228,6 +139,108 @@
 
 
 /***/ },
+/* 2 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var RouteHandler;
+
+	RouteHandler = ReactRouter.RouteHandler;
+
+	module.exports = React.createClass({
+	  render: function() {
+	    return React.createElement(RouteHandler, React.__spread({}, this.props));
+	  }
+	});
+
+
+/***/ },
+/* 3 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppearanceOverlayManager, FileView, file_details_loader;
+
+	AppearanceOverlayManager = __webpack_require__(11);
+
+	file_details_loader = __webpack_require__(12);
+
+	FileView = __webpack_require__(1);
+
+	module.exports = React.createClass({
+	  mixins: [file_details_loader],
+	  render: function() {
+	    var _ref;
+	    if (!this.detailsLoaded()) {
+	      return React.createElement(FileView, React.__spread({}, this.props));
+	    }
+	    return React.createElement("div", {
+	      "className": "main-image-container"
+	    }, React.createElement(AppearanceOverlayManager, {
+	      "src": this.props.file_summary.image_url.val(),
+	      "appearances": ((_ref = this.getDetails()) != null ? _ref.appearances : void 0)
+	    }));
+	  }
+	});
+
+
+/***/ },
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppearanceEditor, AppearanceOverlayManager, FileView, Link, file_details_loader;
+
+	Link = ReactRouter.Link;
+
+	AppearanceEditor = __webpack_require__(10);
+
+	AppearanceOverlayManager = __webpack_require__(11);
+
+	file_details_loader = __webpack_require__(12);
+
+	FileView = __webpack_require__(1);
+
+	module.exports = React.createClass({
+	  mixins: [file_details_loader],
+	  currentAppearance: function() {
+	    var result, _ref;
+	    return result = (_ref = this.getDetails()) != null ? _ref.appearances[this.context.router.getCurrentParams().appearance_id] : void 0;
+	  },
+	  render: function() {
+	    var current_appearance, image, src, _ref;
+	    if (!this.detailsLoaded()) {
+	      return React.createElement(FileView, React.__spread({}, this.props));
+	    }
+	    current_appearance = this.currentAppearance();
+	    src = this.props.file_summary.image_url.val();
+	    image = this.detailsLoaded() ? React.createElement(AppearanceOverlayManager, {
+	      "src": src,
+	      "appearances": ((_ref = this.getDetails()) != null ? _ref.appearances : void 0)
+	    }) : React.createElement("div", {
+	      "className": "main-image-container"
+	    }, React.createElement("img", {
+	      "className": "main-image",
+	      "src": src
+	    }));
+	    if (current_appearance) {
+	      return React.createElement("div", {
+	        "className": "row"
+	      }, React.createElement("div", {
+	        "className": "col-sm-4 col-md-3 col-lg-2 sidebar"
+	      }, React.createElement(AppearanceEditor, React.__spread({}, current_appearance, {
+	        "appearance": current_appearance,
+	        "cortex": this.props.cortex,
+	        "save": this.saveDetails,
+	        "ref": "editor"
+	      }))), React.createElement("div", {
+	        "className": "col-sm-8 col-md-9 col-lg-10"
+	      }, image));
+	    } else {
+	      return image;
+	    }
+	  }
+	});
+
+
+/***/ },
 /* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -235,7 +248,7 @@
 
 	RouteHandler = ReactRouter.RouteHandler, Route = ReactRouter.Route, DefaultRoute = ReactRouter.DefaultRoute;
 
-	ThumbnailList = __webpack_require__(12);
+	ThumbnailList = __webpack_require__(14);
 
 	module.exports = React.createClass({
 	  render: function() {
@@ -250,9 +263,13 @@
 /* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var DefaultRoute, Link, Route, RouteHandler, ThingLink, file_details_diff, intersperse;
+	var DefaultRoute, Link, Route, RouteHandler, ThingLink, file_id_mixin, intersperse;
 
 	Link = ReactRouter.Link, RouteHandler = ReactRouter.RouteHandler, Route = ReactRouter.Route, DefaultRoute = ReactRouter.DefaultRoute;
+
+	intersperse = __webpack_require__(13);
+
+	file_id_mixin = __webpack_require__(15);
 
 	ThingLink = React.createClass({
 	  render: function() {
@@ -262,118 +279,12 @@
 	  }
 	});
 
-	intersperse = __webpack_require__(9);
-
-	file_details_diff = __webpack_require__(13);
-
 	module.exports = React.createClass({
+	  mixins: [file_id_mixin],
 	  displayName: 'file-show',
-	  contextTypes: {
-	    router: React.PropTypes.func.isRequired
-	  },
-	  getId: function() {
-	    return this.context.router.getCurrentParams().file_id;
-	  },
-	  ready: function() {
-	    return this.props.cortex.search_results.val() != null;
-	  },
-	  getSummary: function() {
-	    var id;
-	    id = this.getId();
-	    return this.props.cortex.search_results.find((function(_this) {
-	      return function(item) {
-	        return item.id.val() === id;
-	      };
-	    })(this));
-	  },
-	  getDetails: function() {
-	    var details, id;
-	    id = this.getId();
-	    details = this.props.cortex.file_details[id];
-	    if (!details) {
-	      $.get(this.getSyncUrl(), (function(_this) {
-	        return function(file_details) {
-	          return _this.gotData(file_details);
-	        };
-	      })(this));
-	    }
-	    return details;
-	  },
-	  contextTypes: {
-	    router: React.PropTypes.func.isRequired
-	  },
-	  getInitialState: function() {
-	    return {
-	      saving: false,
-	      error: false
-	    };
-	  },
-	  getFileId: function() {
-	    return this.getId();
-	  },
-	  getSyncUrl: function() {
-	    return "/api/file/" + (this.getFileId()) + "/info";
-	  },
-	  gotData: function(file_details) {
-	    var file_details_clone, id;
-	    id = this.getId();
-	    console.log("GOT DATA", file_details);
-	    file_details_clone = $.extend(true, {}, file_details);
-	    if (id in this.props.cortex.file_details) {
-	      this.props.cortex.file_details[id].set(file_details);
-	      this.props.cortex.server_file_details[id].set(file_details_clone);
-	    } else {
-	      this.props.cortex.file_details.add(id, file_details);
-	      this.props.cortex.server_file_details.add(id, file_details_clone);
-	    }
-	    return this.setState({
-	      saving: false
-	    });
-	  },
-	  save: function() {
-	    var id, message, server_state;
-	    id = this.getId();
-	    server_state = this.props.cortex.server_file_details[id].val();
-	    message = file_details_diff(this.getDetails(), server_state);
-	    this.setState({
-	      saving: true,
-	      error: false
-	    });
-	    return $.ajax({
-	      type: 'post',
-	      contentType: 'application/json',
-	      dataType: 'json',
-	      url: this.getSyncUrl(),
-	      data: JSON.stringify(message),
-	      success: (function(_this) {
-	        return function(response) {
-	          var appearance_id_map, current_id, file, new_id;
-	          file = response.file, appearance_id_map = response.appearance_id_map;
-	          current_id = _this.context.router.getCurrentParams().appearance_id;
-	          if (current_id && current_id in appearance_id_map) {
-	            new_id = appearance_id_map[current_id];
-	            _this.context.router.transitionTo('file appearance show', {
-	              appearance_id: new_id,
-	              file_id: _this.getId()
-	            });
-	          }
-	          return _this.gotData(file);
-	        };
-	      })(this),
-	      error: (function(_this) {
-	        return function() {
-	          console.log(arguments, "ERROR");
-	          return _this.setState({
-	            saving: false,
-	            error: true
-	          });
-	        };
-	      })(this)
-	    });
-	  },
 	  render: function() {
-	    var details, id, index, navigation, next_link, next_summary, previous_link, previous_summary, route, summary;
-	    id = parseInt(this.getId());
+	    var id, index, navigation, next_link, next_summary, previous_link, previous_summary, route, summary;
+	    id = parseInt(this.getFileId());
 	    index = this.props.cortex.search_results.findIndex((function(_this) {
 	      return function(item) {
 	        return item.id.val() === id;
@@ -397,7 +308,6 @@
 	        file_id: previous_summary.id.val()
 	      }
 	    }, "\u2190 Previous") : void 0;
-	    details = this.getDetails();
 	    navigation = [
 	      React.createElement(Link, {
 	        "key": "classic",
@@ -443,9 +353,7 @@
 	      }
 	    }, React.createElement(RouteHandler, {
 	      "file_summary": summary,
-	      "file_details": details,
-	      "cortex": this.props.cortex,
-	      "save": this.save
+	      "cortex": this.props.cortex
 	    })));
 	  }
 	});
@@ -455,11 +363,40 @@
 /* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var ClassicComments, comment_loader;
+
+	ClassicComments = __webpack_require__(16);
+
+	comment_loader = __webpack_require__(17);
+
+	module.exports = React.createClass({
+	  mixins: [comment_loader],
+	  render: function() {
+	    var comments, image, src;
+	    src = this.props.file_summary.image_url.val();
+	    image = React.createElement("div", {
+	      "className": "main-image-container"
+	    }, React.createElement("img", {
+	      "className": "main-image",
+	      "src": src
+	    }));
+	    comments = this.getComments();
+	    return React.createElement("div", null, image, React.createElement(ClassicComments, {
+	      "comments": comments
+	    }));
+	  }
+	});
+
+
+/***/ },
+/* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
 	var CommentSidebar, comment_loader;
 
-	CommentSidebar = __webpack_require__(14);
+	CommentSidebar = __webpack_require__(16);
 
-	comment_loader = __webpack_require__(25);
+	comment_loader = __webpack_require__(17);
 
 	module.exports = React.createClass({
 	  mixins: [comment_loader],
@@ -485,35 +422,28 @@
 
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var FileDetailEditor;
 
-	FileDetailEditor = __webpack_require__(15);
+	FileDetailEditor = __webpack_require__(18);
 
 	module.exports = React.createClass({
-	  contextTypes: {
-	    router: React.PropTypes.func.isRequired
-	  },
 	  render: function() {
-	    var details, image, src;
+	    var image, src;
 	    src = this.props.file_summary.image_url.val();
 	    image = React.createElement("img", {
 	      "className": "main-image",
 	      "src": src
 	    });
-	    details = this.props.file_details ? React.createElement(FileDetailEditor, {
-	      "file_details": this.props.file_details
-	    }) : React.createElement("div", null, "Loading...");
 	    return React.createElement("div", {
 	      "className": "row"
 	    }, React.createElement("div", {
 	      "className": "col-sm-4 col-md-3 col-lg-2 sidebar"
-	    }, details, React.createElement("button", {
-	      "className": "btn btn-primary",
-	      "onClick": this.props.save
-	    }, "Save")), React.createElement("div", {
+	    }, React.createElement(FileDetailEditor, {
+	      "cortex": this.props.cortex
+	    })), React.createElement("div", {
 	      "className": "col-sm-8 col-md-9 col-lg-10"
 	    }, image));
 	  }
@@ -521,38 +451,169 @@
 
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* intersperse: Return an array with the separator interspersed between
-	 * each element of the input array.
-	 *
-	 * > _([1,2,3]).intersperse(0)
-	 * [1,0,2,0,3]
-	 */
-	function intersperse(arr, sep) {
-	    if (arr.length === 0) {
-	        return [];
+	var Tagger,
+	  __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+
+	Tagger = __webpack_require__(19);
+
+	module.exports = React.createClass({
+	  displayName: 'AppearanceEditor',
+	  contextTypes: {
+	    router: React.PropTypes.func.isRequired
+	  },
+	  removeAppearance: function() {
+	    this.props.appearance.remove();
+	    this.context.router.transitionTo('file appearances', {
+	      file_id: this.context.router.getCurrentParams().file_id
+	    });
+	    return setTimeout((function(_this) {
+	      return function() {
+	        return _this.props.save();
+	      };
+	    })(this));
+	  },
+	  fetchThingTags: function(name) {
+	    if (name && !this.props.cortex.thing_tags.hasKey(name)) {
+	      return $.ajax({
+	        type: 'get',
+	        url: "/api/thing/" + name + "/tag",
+	        success: (function(_this) {
+	          return function(response) {
+	            console.log('loaded');
+	            return _this.props.cortex.thing_tags.add(name, response.items);
+	          };
+	        })(this),
+	        error: (function(_this) {
+	          return function() {
+	            return _this.props.cortex.thing_tags.add(name, []);
+	          };
+	        })(this)
+	      });
 	    }
+	  },
+	  fetchCurrentThingTags: function() {
+	    var name;
+	    name = this.props.thing_name.val();
+	    return this.fetchThingTags(name);
+	  },
+	  selectThing: function(name) {
+	    this.props.thing_name.set(name);
+	    return this.fetchThingTags(name);
+	  },
+	  componentDidMount: function() {
+	    return this.fetchCurrentThingTags();
+	  },
+	  componentWillReceiveProps: function(props) {
+	    var name;
+	    name = props.thing_name.val();
+	    return this.fetchThingTags(name);
+	  },
+	  thingTagsLoading: function() {
+	    try {
+	      this.thingTags();
+	      return false;
+	    } catch (_error) {
+	      return true;
+	    }
+	  },
+	  unSelectThing: function() {
+	    this.props.thing_name.set(null);
+	    return this.props.negative_tags.set([]);
+	  },
+	  thingTags: function() {
+	    var collection, key;
+	    key = this.props.thing_name.val();
+	    if (!key) {
+	      return [];
+	    }
+	    collection = this.props.cortex.thing_tags;
+	    if (!collection.hasKey(key)) {
+	      throw 'loading';
+	    }
+	    return collection[key].val();
+	  },
+	  mixedTags: function() {
+	    return _.difference(_.union(this.thingTags(), this.props.tags.getValue()), this.props.negative_tags.getValue());
+	  },
+	  thingNameTags: function() {
+	    var name;
+	    name = this.props.thing_name.getValue();
+	    if (name) {
+	      return [name];
+	    } else {
+	      return [];
+	    }
+	  },
+	  addTag: function(name) {
+	    var index;
+	    index = this.props.negative_tags.findIndex(function(item) {
+	      return item.val() === name;
+	    });
+	    if (index !== -1) {
+	      return this.props.tags.removeAt(index);
+	    } else if (__indexOf.call(this.thingTags(), name) < 0) {
+	      return this.props.tags.push(name);
+	    }
+	  },
+	  removeTag: function(name) {
+	    var index;
+	    index = this.props.tags.findIndex(function(item) {
+	      return item.val() === name;
+	    });
+	    if (index !== -1) {
+	      return this.props.tags.removeAt(index);
+	    } else if (__indexOf.call(this.thingTags(), name) >= 0) {
+	      return this.props.negative_tags.push(name);
+	    }
+	  },
+	  render: function() {
+	    var tagger;
+	    tagger = !this.thingTagsLoading() ? React.createElement(Tagger, {
+	      "ref": "tags",
+	      "tags": this.mixedTags(),
+	      "possible_tags": TAG_NAMES,
+	      "onTagAdd": this.addTag,
+	      "onTagRemove": this.removeTag
+	    }) : React.createElement("div", null, "Loading...");
+	    return React.createElement("div", null, React.createElement("h3", null, "Tag This Appearance"), React.createElement("div", {
+	      "className": "form-group"
+	    }, React.createElement("label", null, "Recurring character or object?"), React.createElement(Tagger, {
+	      "ref": "thing",
+	      "tags": this.thingNameTags(),
+	      "possible_tags": THING_NAMES,
+	      "onTagAdd": this.selectThing,
+	      "onTagRemove": this.unSelectThing
+	    })), React.createElement("div", {
+	      "className": "form-group"
+	    }, React.createElement("label", null, "Edit this appearance"), tagger, React.createElement("p", {
+	      "className": "help-block"
+	    }, "Does this thing appear differently in this picture from how it usually does?  Edit the tags for this particular appearance here.")), React.createElement("div", {
+	      "className": "btn-toolbar"
+	    }, React.createElement("button", {
+	      "className": "btn btn-primary",
+	      "onClick": this.props.save
+	    }, "Save"), React.createElement("button", {
+	      "className": "btn btn-danger",
+	      "onClick": this.removeAppearance
+	    }, "Remove Appearance")));
+	  }
+	});
 
-	    return arr.slice(1).reduce(function(xs, x, i) {
-	        return xs.concat([sep, x]);
-	    }, [arr[0]]);
-	}
-
-	module.exports = intersperse
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var AppearanceOverlay, Navigation, V, random_integer;
 
-	V = __webpack_require__(16);
+	V = __webpack_require__(20);
 
 	Navigation = ReactRouter.Navigation;
 
-	AppearanceOverlay = __webpack_require__(17);
+	AppearanceOverlay = __webpack_require__(21);
 
 	random_integer = function(min, max) {
 	  return Math.floor(Math.random() * (max - min)) + min;
@@ -674,151 +735,150 @@
 
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Tagger,
-	  __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+	var cortex_set_key, file_details_diff, file_id_mixin;
 
-	Tagger = __webpack_require__(18);
+	file_id_mixin = __webpack_require__(15);
 
-	module.exports = React.createClass({
+	cortex_set_key = __webpack_require__(22);
+
+	file_details_diff = __webpack_require__(23);
+
+	module.exports = {
+	  mixins: [file_id_mixin],
 	  contextTypes: {
 	    router: React.PropTypes.func.isRequired
 	  },
-	  removeAppearance: function() {
-	    this.props.appearance.remove();
-	    this.context.router.transitionTo('file appearances', {
-	      file_id: this.context.router.getCurrentParams().file_id
-	    });
-	    return setTimeout((function(_this) {
-	      return function() {
-	        return _this.props.save();
+	  getId: function() {
+	    return this.getFileId();
+	  },
+	  getSummary: function() {
+	    var id;
+	    id = this.getId();
+	    return this.props.cortex.search_results.find((function(_this) {
+	      return function(item) {
+	        return item.id.val() === id;
 	      };
 	    })(this));
 	  },
-	  fetchThingTags: function(name) {
-	    if (name && !this.props.cortex.thing_tags.hasKey(name)) {
-	      return $.ajax({
-	        type: 'get',
-	        url: "/api/thing/" + name + "/tag",
-	        success: (function(_this) {
-	          return function(response) {
-	            console.log('loaded');
-	            return _this.props.cortex.thing_tags.add(name, response.items);
-	          };
-	        })(this),
-	        error: (function(_this) {
-	          return function() {
-	            return _this.props.cortex.thing_tags.add(name, []);
-	          };
-	        })(this)
-	      });
-	    }
-	  },
-	  selectThing: function(name) {
-	    this.props.thing_name.set(name);
-	    return this.fetchThingTags(name);
+	  detailsLoaded: function() {
+	    return this.props.cortex.file_details.hasKey(this.getFileId());
 	  },
 	  componentDidMount: function() {
-	    var name;
-	    name = this.props.thing_name.val();
-	    return this.fetchThingTags(name);
+	    return this.loadDetails();
 	  },
-	  thingTagsLoading: function() {
-	    try {
-	      this.thingTags();
-	      return false;
-	    } catch (_error) {
-	      return true;
+	  componentWillReceiveProps: function() {
+	    return this.loadDetails();
+	  },
+	  loadDetails: function() {
+	    if (!this.detailsLoaded()) {
+	      return $.get(this.getSyncUrl(), (function(_this) {
+	        return function(file_details) {
+	          return _this.gotData(file_details);
+	        };
+	      })(this));
 	    }
 	  },
-	  unSelectThing: function() {
-	    this.props.thing_name.set(null);
-	    return this.props.negative_tags.set([]);
-	  },
-	  thingTags: function() {
-	    var collection, key;
-	    key = this.props.thing_name.val();
-	    if (!key) {
-	      return [];
+	  getDetails: function() {
+	    if (this.detailsLoaded()) {
+	      return this.props.cortex.file_details[this.getFileId()];
 	    }
-	    collection = this.props.cortex.thing_tags;
-	    if (!collection.hasKey(key)) {
-	      throw 'loading';
-	    }
-	    return collection[key].val();
 	  },
-	  mixedTags: function() {
-	    return _.difference(_.union(this.thingTags(), this.props.tags.getValue()), this.props.negative_tags.getValue());
+	  getInitialState: function() {
+	    return {
+	      saving: false,
+	      error: false
+	    };
 	  },
-	  thingNameTags: function() {
-	    var name;
-	    name = this.props.thing_name.getValue();
-	    if (name) {
-	      return [name];
+	  getSyncUrl: function() {
+	    return "/api/file/" + (this.getFileId()) + "/info";
+	  },
+	  gotData: function(file_details) {
+	    var file_details_clone, id;
+	    id = this.getId();
+	    console.log("GOT DATA", file_details);
+	    file_details_clone = $.extend(true, {}, file_details);
+	    if (id in this.props.cortex.file_details) {
+	      this.props.cortex.file_details[id].set(file_details);
+	      return this.props.cortex.server_file_details[id].set(file_details_clone);
 	    } else {
-	      return [];
+	      this.props.cortex.file_details.add(id, file_details);
+	      return this.props.cortex.server_file_details.add(id, file_details_clone);
 	    }
 	  },
-	  addTag: function(name) {
-	    var index;
-	    index = this.props.negative_tags.findIndex(function(item) {
-	      return item.val() === name;
+	  saveDetails: function() {
+	    var id, message, server_state;
+	    id = this.getId();
+	    server_state = this.props.cortex.server_file_details[id].val();
+	    message = file_details_diff(this.getDetails(), server_state);
+	    this.setState({
+	      saving: true,
+	      error: false
 	    });
-	    if (index !== -1) {
-	      return this.props.tags.removeAt(index);
-	    } else if (__indexOf.call(this.thingTags(), name) < 0) {
-	      return this.props.tags.push(name);
-	    }
-	  },
-	  removeTag: function(name) {
-	    var index;
-	    index = this.props.tags.findIndex(function(item) {
-	      return item.val() === name;
+	    return $.ajax({
+	      type: 'post',
+	      contentType: 'application/json',
+	      dataType: 'json',
+	      url: this.getSyncUrl(),
+	      data: JSON.stringify(message),
+	      success: (function(_this) {
+	        return function(response) {
+	          var appearance_id_map, current_id, file, new_id;
+	          file = response.file, appearance_id_map = response.appearance_id_map;
+	          current_id = _this.context.router.getCurrentParams().appearance_id;
+	          if (current_id && current_id in appearance_id_map) {
+	            new_id = appearance_id_map[current_id];
+	            _this.context.router.transitionTo('file appearance show', {
+	              appearance_id: new_id,
+	              file_id: _this.getId()
+	            });
+	          }
+	          _this.gotData(file);
+	          return _this.setState({
+	            saving: false
+	          });
+	        };
+	      })(this),
+	      error: (function(_this) {
+	        return function() {
+	          console.log(arguments, "ERROR");
+	          return _this.setState({
+	            saving: false,
+	            error: true
+	          });
+	        };
+	      })(this)
 	    });
-	    if (index !== -1) {
-	      return this.props.tags.removeAt(index);
-	    } else if (__indexOf.call(this.thingTags(), name) >= 0) {
-	      return this.props.negative_tags.push(name);
-	    }
-	  },
-	  render: function() {
-	    var tagger;
-	    tagger = !this.thingTagsLoading() ? React.createElement(Tagger, {
-	      "ref": "tags",
-	      "tags": this.mixedTags(),
-	      "possible_tags": TAG_NAMES,
-	      "onTagAdd": this.addTag,
-	      "onTagRemove": this.removeTag
-	    }) : React.createElement("div", null, "Loading...");
-	    return React.createElement("div", null, React.createElement("h3", null, "Tag This Appearance"), React.createElement("div", {
-	      "className": "form-group"
-	    }, React.createElement("label", null, "Recurring character or object?"), React.createElement(Tagger, {
-	      "ref": "thing",
-	      "tags": this.thingNameTags(),
-	      "possible_tags": THING_NAMES,
-	      "onTagAdd": this.selectThing,
-	      "onTagRemove": this.unSelectThing
-	    })), React.createElement("div", {
-	      "className": "form-group"
-	    }, React.createElement("label", null, "Edit this appearance"), tagger, React.createElement("p", {
-	      "className": "help-block"
-	    }, "Does this thing appear differently in this picture from how it usually does?  Edit the tags for this particular appearance here.")), React.createElement("div", {
-	      "className": "btn-toolbar"
-	    }, React.createElement("button", {
-	      "className": "btn btn-primary",
-	      "onClick": this.props.save
-	    }, "Save"), React.createElement("button", {
-	      "className": "btn btn-danger",
-	      "onClick": this.removeAppearance
-	    }, "Remove Appearance")));
 	  }
-	});
+	};
 
 
 /***/ },
-/* 12 */
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* intersperse: Return an array with the separator interspersed between
+	 * each element of the input array.
+	 *
+	 * > _([1,2,3]).intersperse(0)
+	 * [1,0,2,0,3]
+	 */
+	function intersperse(arr, sep) {
+	    if (arr.length === 0) {
+	        return [];
+	    }
+
+	    return arr.slice(1).reduce(function(xs, x, i) {
+	        return xs.concat([sep, x]);
+	    }, [arr[0]]);
+	}
+
+	module.exports = intersperse
+
+/***/ },
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Link;
@@ -846,74 +906,28 @@
 
 
 /***/ },
-/* 13 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var tag_diff;
-
-	tag_diff = function(new_tags, old_tags) {
-	  return {
-	    add: _.difference(new_tags, old_tags),
-	    remove: _.difference(old_tags, new_tags)
-	  };
-	};
-
-	module.exports = function(details, server_state) {
-	  var message, new_appearances, removed_appearances, role, role_diffs, updated_appearances, _i, _len, _ref;
-	  new_appearances = [];
-	  updated_appearances = {};
-	  details.appearances.forEach(function(key, appearance) {
-	    var delta, new_thing_name, old_appearance;
-	    appearance = appearance.val();
-	    if (key.slice(0, 4) === 'new-') {
-	      return new_appearances.push(appearance);
-	    } else {
-	      old_appearance = server_state.appearances[key];
-	      if (_.isEqual(old_appearance, appearance)) {
-	        return;
-	      }
-	      delta = {};
-	      if (!_.isEqual(appearance.dimensions, old_appearance.dimensions)) {
-	        delta.dimensions = appearance.dimensions;
-	      }
-	      new_thing_name = appearance.thing_name;
-	      if (new_thing_name !== old_appearance.thing_name) {
-	        delta.new_thing_name = new_thing_name;
-	      }
-	      delta.tags = tag_diff(appearance.tags, old_appearance.tags);
-	      delta.negative_tags = tag_diff(appearance.negative_tags, old_appearance.negative_tags);
-	      return updated_appearances[key] = delta;
-	    }
-	  });
-	  removed_appearances = _.difference(_.keys(server_state.appearances), details.appearances.keys());
-	  role_diffs = {};
-	  _ref = ['artist', 'recipient'];
-	  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-	    role = _ref[_i];
-	    role_diffs[role] = tag_diff(details.roles[role].val(), server_state.roles[role]);
+	module.exports = {
+	  contextTypes: {
+	    router: React.PropTypes.func.isRequired
+	  },
+	  getFileId: function() {
+	    return this.context.router.getCurrentParams().file_id;
 	  }
-	  message = {
-	    appearances: {
-	      create: new_appearances,
-	      "delete": removed_appearances,
-	      update: updated_appearances
-	    },
-	    roles: role_diffs,
-	    tags: tag_diff(details.tags.val(), server_state.tags)
-	  };
-	  return message;
 	};
 
 
 /***/ },
-/* 14 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var NewComment, SidebarComment;
 
-	SidebarComment = __webpack_require__(19);
+	SidebarComment = __webpack_require__(24);
 
-	NewComment = __webpack_require__(20);
+	NewComment = __webpack_require__(25);
 
 	module.exports = React.createClass({
 	  render: function() {
@@ -931,20 +945,70 @@
 
 
 /***/ },
-/* 15 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var CortexTagger;
+	var cortex_set_key, file_id_mixin;
 
-	CortexTagger = __webpack_require__(21);
+	cortex_set_key = __webpack_require__(22);
+
+	file_id_mixin = __webpack_require__(15);
+
+	module.exports = {
+	  mixins: [file_id_mixin],
+	  commentsLoaded: function() {
+	    return this.props.cortex.file_comments.hasKey(this.getFileId());
+	  },
+	  componentDidMount: function() {
+	    return this.loadComments();
+	  },
+	  componentWillReceiveProps: function() {
+	    return this.loadComments();
+	  },
+	  getComments: function() {
+	    if (this.commentsLoaded()) {
+	      return this.props.cortex.file_comments[this.getFileId()];
+	    }
+	  },
+	  loadComments: function() {
+	    var file_id;
+	    file_id = this.getFileId();
+	    if (!this.commentsLoaded()) {
+	      return $.ajax({
+	        type: 'get',
+	        url: "/api/file/" + file_id + "/comments",
+	        success: (function(_this) {
+	          return function(response) {
+	            return cortex_set_key(_this.props.cortex.file_comments, file_id, response.items);
+	          };
+	        })(this)
+	      });
+	    }
+	  }
+	};
+
+
+/***/ },
+/* 18 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var CortexTagger, file_details_loader;
+
+	CortexTagger = __webpack_require__(26);
+
+	file_details_loader = __webpack_require__(12);
 
 	module.exports = React.createClass({
+	  mixins: [file_details_loader],
 	  render: function() {
+	    if (!this.detailsLoaded()) {
+	      return React.createElement("div", null, "Loading...");
+	    }
 	    return React.createElement("div", null, React.createElement("div", {
 	      "className": "form-group"
 	    }, React.createElement("label", null, "Scene Tags"), React.createElement(CortexTagger, {
 	      "ref": "tags",
-	      "tags": this.props.file_details.tags,
+	      "tags": (this.getDetails().tags),
 	      "possible_tags": TAG_NAMES
 	    }), React.createElement("p", {
 	      "className": "help-block"
@@ -952,7 +1016,7 @@
 	      "className": "form-group"
 	    }, React.createElement("label", null, "Artists"), React.createElement(CortexTagger, {
 	      "ref": "artists",
-	      "tags": this.props.file_details.roles.artist,
+	      "tags": (this.getDetails().roles.artist),
 	      "possible_tags": THING_NAMES
 	    }), React.createElement("p", {
 	      "className": "help-block"
@@ -960,17 +1024,108 @@
 	      "className": "form-group"
 	    }, React.createElement("label", null, "Recipients"), React.createElement(CortexTagger, {
 	      "ref": "recipients",
-	      "tags": this.props.file_details.roles.recipient,
+	      "tags": (this.getDetails().roles.recipient),
 	      "possible_tags": THING_NAMES
 	    }), React.createElement("p", {
 	      "className": "help-block"
-	    }, "Who was this made for?")));
+	    }, "Who was this made for?")), React.createElement("button", {
+	      "className": "btn btn-primary",
+	      "onClick": this.saveDetails
+	    }, "Save"));
 	  }
 	});
 
 
 /***/ },
-/* 16 */
+/* 19 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var ReactTagsInput;
+
+	ReactTagsInput = __webpack_require__(28);
+
+	module.exports = React.createClass({
+	  displayName: 'AutoCompleteTagger',
+	  propTypes: {
+	    tags: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
+	    possible_tags: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
+	    allow_new_tags: React.PropTypes.bool.isRequired
+	  },
+	  getDefaultProps: function() {
+	    return {
+	      tags: [],
+	      possible_tags: [],
+	      allow_new_tags: true
+	    };
+	  },
+	  getInitialState: function() {
+	    return {
+	      completions: []
+	    };
+	  },
+	  complete: function(value) {
+	    if (value === '') {
+	      return this.setState({
+	        completions: []
+	      });
+	    }
+	    this.setState({
+	      completions: this.props.possible_tags.filter((function(comp) {
+	        return comp.substr(0, value.length) === value && this.refs.tags.getTags().indexOf(comp) === -1;
+	      }).bind(this))
+	    });
+	  },
+	  beforeAdd: function(tag) {
+	    if (this.props.possible_tags.indexOf(tag) !== -1) {
+	      return true;
+	    }
+	    if (this.state.completions.length === 1) {
+	      return this.state.completions[0];
+	    }
+	    return this.props.allow_new_tags;
+	  },
+	  add: function(tag) {
+	    var _base;
+	    this.setState({
+	      completions: []
+	    });
+	    if (typeof (_base = this.props).onTagAdd === "function") {
+	      _base.onTagAdd(tag);
+	    }
+	  },
+	  render: function() {
+	    var completionNodes, tagsInputProps;
+	    completionNodes = this.state.completions.map((function(comp) {
+	      var add;
+	      add = (function(e) {
+	        this.refs.tags.addTag(comp);
+	      }).bind(this);
+	      return React.createElement('span', {}, React.createElement('a', {
+	        className: '',
+	        onClick: add
+	      }, comp), ' ');
+	    }).bind(this));
+	    tagsInputProps = {
+	      ref: 'tags',
+	      tags: this.props.tags,
+	      onChangeInput: this.complete,
+	      onTagAdd: this.add,
+	      onTagRemove: this.props.onTagRemove,
+	      onBeforeTagAdd: this.beforeAdd,
+	      addOnBlur: false,
+	      placeholder: ''
+	    };
+	    return React.createElement('div', null, React.createElement(ReactTagsInput, tagsInputProps), React.createElement('div', {
+	      style: {
+	        marginTop: '10px'
+	      }
+	    }, completionNodes));
+	  }
+	});
+
+
+/***/ },
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Vector, css_properties;
@@ -1087,14 +1242,14 @@
 
 
 /***/ },
-/* 17 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Link, Navigation, vector_prop_shape;
 
 	Link = ReactRouter.Link, Navigation = ReactRouter.Navigation;
 
-	vector_prop_shape = __webpack_require__(22);
+	vector_prop_shape = __webpack_require__(27);
 
 	module.exports = React.createClass({
 	  displayName: 'AppearanceOverlay',
@@ -1135,95 +1290,80 @@
 
 
 /***/ },
-/* 18 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var ReactTagsInput;
-
-	ReactTagsInput = __webpack_require__(23);
-
-	module.exports = React.createClass({
-	  displayName: 'AutoCompleteTagger',
-	  propTypes: {
-	    tags: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-	    possible_tags: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-	    allow_new_tags: React.PropTypes.bool.isRequired
-	  },
-	  getDefaultProps: function() {
-	    return {
-	      tags: [],
-	      possible_tags: [],
-	      allow_new_tags: true
-	    };
-	  },
-	  getInitialState: function() {
-	    return {
-	      completions: []
-	    };
-	  },
-	  complete: function(value) {
-	    if (value === '') {
-	      return this.setState({
-	        completions: []
-	      });
-	    }
-	    this.setState({
-	      completions: this.props.possible_tags.filter((function(comp) {
-	        return comp.substr(0, value.length) === value && this.refs.tags.getTags().indexOf(comp) === -1;
-	      }).bind(this))
-	    });
-	  },
-	  beforeAdd: function(tag) {
-	    if (this.props.possible_tags.indexOf(tag) !== -1) {
-	      return true;
-	    }
-	    if (this.state.completions.length === 1) {
-	      return this.state.completions[0];
-	    }
-	    return this.props.allow_new_tags;
-	  },
-	  add: function(tag) {
-	    var _base;
-	    this.setState({
-	      completions: []
-	    });
-	    if (typeof (_base = this.props).onTagAdd === "function") {
-	      _base.onTagAdd(tag);
-	    }
-	  },
-	  render: function() {
-	    var completionNodes, tagsInputProps;
-	    completionNodes = this.state.completions.map((function(comp) {
-	      var add;
-	      add = (function(e) {
-	        this.refs.tags.addTag(comp);
-	      }).bind(this);
-	      return React.createElement('span', {}, React.createElement('a', {
-	        className: '',
-	        onClick: add
-	      }, comp), ' ');
-	    }).bind(this));
-	    tagsInputProps = {
-	      ref: 'tags',
-	      tags: this.props.tags,
-	      onChangeInput: this.complete,
-	      onTagAdd: this.add,
-	      onTagRemove: this.props.onTagRemove,
-	      onBeforeTagAdd: this.beforeAdd,
-	      addOnBlur: false,
-	      placeholder: ''
-	    };
-	    return React.createElement('div', null, React.createElement(ReactTagsInput, tagsInputProps), React.createElement('div', {
-	      style: {
-	        marginTop: '10px'
-	      }
-	    }, completionNodes));
+	module.exports = function(object, key, value) {
+	  if (object.hasKey(key)) {
+	    return object[key].set(value);
+	  } else {
+	    return object.add(key, value);
 	  }
-	});
+	};
 
 
 /***/ },
-/* 19 */
+/* 23 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var tag_diff;
+
+	tag_diff = function(new_tags, old_tags) {
+	  return {
+	    add: _.difference(new_tags, old_tags),
+	    remove: _.difference(old_tags, new_tags)
+	  };
+	};
+
+	module.exports = function(details, server_state) {
+	  var message, new_appearances, removed_appearances, role, role_diffs, updated_appearances, _i, _len, _ref;
+	  new_appearances = [];
+	  updated_appearances = {};
+	  details.appearances.forEach(function(key, appearance) {
+	    var delta, new_thing_name, old_appearance;
+	    appearance = appearance.val();
+	    if (key.slice(0, 4) === 'new-') {
+	      return new_appearances.push(appearance);
+	    } else {
+	      old_appearance = server_state.appearances[key];
+	      if (_.isEqual(old_appearance, appearance)) {
+	        return;
+	      }
+	      delta = {};
+	      if (!_.isEqual(appearance.dimensions, old_appearance.dimensions)) {
+	        delta.dimensions = appearance.dimensions;
+	      }
+	      new_thing_name = appearance.thing_name;
+	      if (new_thing_name !== old_appearance.thing_name) {
+	        delta.new_thing_name = new_thing_name;
+	      }
+	      delta.tags = tag_diff(appearance.tags, old_appearance.tags);
+	      delta.negative_tags = tag_diff(appearance.negative_tags, old_appearance.negative_tags);
+	      return updated_appearances[key] = delta;
+	    }
+	  });
+	  removed_appearances = _.difference(_.keys(server_state.appearances), details.appearances.keys());
+	  role_diffs = {};
+	  _ref = ['artist', 'recipient'];
+	  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+	    role = _ref[_i];
+	    role_diffs[role] = tag_diff(details.roles[role].val(), server_state.roles[role]);
+	  }
+	  message = {
+	    appearances: {
+	      create: new_appearances,
+	      "delete": removed_appearances,
+	      update: updated_appearances
+	    },
+	    roles: role_diffs,
+	    tags: tag_diff(details.tags.val(), server_state.tags)
+	  };
+	  return message;
+	};
+
+
+/***/ },
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = React.createClass({
@@ -1245,7 +1385,7 @@
 
 
 /***/ },
-/* 20 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = React.createClass({
@@ -1319,12 +1459,12 @@
 
 
 /***/ },
-/* 21 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Tagger;
 
-	Tagger = __webpack_require__(18);
+	Tagger = __webpack_require__(19);
 
 	module.exports = React.createClass({
 	  addTag: function(name) {
@@ -1355,7 +1495,7 @@
 
 
 /***/ },
-/* 22 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = {
@@ -1365,7 +1505,7 @@
 
 
 /***/ },
-/* 23 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1531,94 +1671,6 @@
 	      "onKeyDown": this.onKeyDown,
 	      "onChange": this.onChange,
 	      "onBlur": this.onBlur
-	    }));
-	  }
-	});
-
-
-/***/ },
-/* 24 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = function(object, key, value) {
-	  if (object.hasKey(key)) {
-	    return object[key].set(value);
-	  } else {
-	    return object.add(key, value);
-	  }
-	};
-
-
-/***/ },
-/* 25 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var cortex_set_key;
-
-	cortex_set_key = __webpack_require__(24);
-
-	module.exports = {
-	  contextTypes: {
-	    router: React.PropTypes.func.isRequired
-	  },
-	  getFileId: function() {
-	    return this.context.router.getCurrentParams().file_id;
-	  },
-	  commentsLoaded: function() {
-	    return this.props.cortex.file_comments.hasKey(this.getFileId());
-	  },
-	  componentDidMount: function() {
-	    return this.loadComments();
-	  },
-	  componentWillReceiveProps: function() {
-	    return this.loadComments();
-	  },
-	  getComments: function() {
-	    var comments;
-	    return comments = this.commentsLoaded() ? this.props.cortex.file_comments[this.getFileId()] : null;
-	  },
-	  loadComments: function() {
-	    var file_id;
-	    file_id = this.getFileId();
-	    if (!this.commentsLoaded()) {
-	      return $.ajax({
-	        type: 'get',
-	        url: "/api/file/" + file_id + "/comments",
-	        success: (function(_this) {
-	          return function(response) {
-	            return cortex_set_key(_this.props.cortex.file_comments, file_id, response.items);
-	          };
-	        })(this)
-	      });
-	    }
-	  }
-	};
-
-
-/***/ },
-/* 26 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var ClassicComments, comment_loader;
-
-	ClassicComments = __webpack_require__(14);
-
-	comment_loader = __webpack_require__(25);
-
-	module.exports = React.createClass({
-	  mixins: [comment_loader],
-	  render: function() {
-	    var comments, image, src;
-	    src = this.props.file_summary.image_url.val();
-	    image = React.createElement("div", {
-	      "className": "main-image-container"
-	    }, React.createElement("img", {
-	      "className": "main-image",
-	      "src": src
-	    }));
-	    comments = this.getComments();
-	    return React.createElement("div", null, image, React.createElement(ClassicComments, {
-	      "comments": comments
 	    }));
 	  }
 	});

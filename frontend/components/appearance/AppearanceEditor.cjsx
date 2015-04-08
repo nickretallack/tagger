@@ -1,6 +1,7 @@
 Tagger = require '../tag_input/Tagger'
 
 module.exports = React.createClass
+	displayName: 'AppearanceEditor'
 	contextTypes:
 		router: React.PropTypes.func.isRequired
 
@@ -21,13 +22,19 @@ module.exports = React.createClass
 				error: =>
 					@props.cortex.thing_tags.add name, []
 
+	fetchCurrentThingTags: ->
+		name = @props.thing_name.val()
+		@fetchThingTags name
 
 	selectThing: (name) ->
 		@props.thing_name.set name
 		@fetchThingTags name
 
 	componentDidMount: ->
-		name = @props.thing_name.val()
+		@fetchCurrentThingTags()
+
+	componentWillReceiveProps: (props) ->
+		name = props.thing_name.val()
 		@fetchThingTags name
 
 	thingTagsLoading: ->
