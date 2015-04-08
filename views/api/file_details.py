@@ -1,6 +1,6 @@
 from blueprint import blueprint
 
-from flask import jsonify
+from flask import jsonify, request
 from tagger.models import db, Thing, File, Appearance, AppearanceTag, FileThingRole, ThingRole, FileTag
 from tagger.lib.tag.tag import ensure_tags_exist, normalize_tags
 from tagger.lib.tag.thing import ensure_thing, ensure_things

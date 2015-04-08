@@ -13,6 +13,7 @@ if ENTRY_POINT? and ENTRY_POINT is 'tag-file'
 		# caches
 		thing_tags: {}
 		server_file_details: {}
+		file_comments: {}
 
 		# current state
 		file_details: {}

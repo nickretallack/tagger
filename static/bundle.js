@@ -56,6 +56,7 @@
 	  cortex = new Cortex({
 	    thing_tags: {},
 	    server_file_details: {},
+	    file_comments: {},
 	    file_details: {},
 	    search_results: SEARCH_RESULTS
 	  });
@@ -70,30 +71,30 @@
 	      "handler": __webpack_require__(6)
 	    }, React.createElement(DefaultRoute, {
 	      "name": "file overview",
-	      "handler": __webpack_require__(1)
+	      "handler": __webpack_require__(4)
 	    }), React.createElement(Route, {
 	      "name": "file appearances",
 	      "path": 'appearances',
-	      "handler": __webpack_require__(2)
+	      "handler": __webpack_require__(3)
 	    }, React.createElement(DefaultRoute, {
 	      "name": "file appearance overview",
-	      "handler": __webpack_require__(3)
+	      "handler": __webpack_require__(1)
 	    }), React.createElement(Route, {
 	      "name": "file appearance",
 	      "path": ':appearance_id',
-	      "handler": __webpack_require__(4)
+	      "handler": __webpack_require__(2)
 	    })), React.createElement(Route, {
 	      "name": "file comments",
 	      "path": 'comments',
-	      "handler": __webpack_require__(20)
+	      "handler": __webpack_require__(7)
 	    }), React.createElement(Route, {
 	      "name": "file details",
 	      "path": 'details',
-	      "handler": __webpack_require__(7)
+	      "handler": __webpack_require__(8)
 	    }), React.createElement(Route, {
 	      "name": "file tags",
 	      "path": 'tags',
-	      "handler": __webpack_require__(1)
+	      "handler": __webpack_require__(4)
 	    }))
 	  ];
 	  container = document.getElementById("react-image-tagger");
@@ -117,42 +118,9 @@
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Link;
-
-	Link = ReactRouter.Link;
-
-	module.exports = React.createClass({
-	  render: function() {
-	    return React.createElement("div", null, React.createElement("img", {
-	      "className": "main-image",
-	      "src": this.props.file_summary.image_url.val()
-	    }));
-	  }
-	});
-
-
-/***/ },
-/* 2 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var RouteHandler;
-
-	RouteHandler = ReactRouter.RouteHandler;
-
-	module.exports = React.createClass({
-	  render: function() {
-	    return React.createElement(RouteHandler, React.__spread({}, this.props));
-	  }
-	});
-
-
-/***/ },
-/* 3 */
-/***/ function(module, exports, __webpack_require__) {
-
 	var AppearanceOverlayManager;
 
-	AppearanceOverlayManager = __webpack_require__(8);
+	AppearanceOverlayManager = __webpack_require__(10);
 
 	module.exports = React.createClass({
 	  render: function() {
@@ -166,16 +134,16 @@
 
 
 /***/ },
-/* 4 */
+/* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var AppearanceEditor, AppearanceOverlayManager, Link;
 
 	Link = ReactRouter.Link;
 
-	AppearanceEditor = __webpack_require__(9);
+	AppearanceEditor = __webpack_require__(11);
 
-	AppearanceOverlayManager = __webpack_require__(8);
+	AppearanceOverlayManager = __webpack_require__(10);
 
 	module.exports = React.createClass({
 	  contextTypes: {
@@ -217,6 +185,39 @@
 
 
 /***/ },
+/* 3 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var RouteHandler;
+
+	RouteHandler = ReactRouter.RouteHandler;
+
+	module.exports = React.createClass({
+	  render: function() {
+	    return React.createElement(RouteHandler, React.__spread({}, this.props));
+	  }
+	});
+
+
+/***/ },
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Link;
+
+	Link = ReactRouter.Link;
+
+	module.exports = React.createClass({
+	  render: function() {
+	    return React.createElement("div", null, React.createElement("img", {
+	      "className": "main-image",
+	      "src": this.props.file_summary.image_url.val()
+	    }));
+	  }
+	});
+
+
+/***/ },
 /* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -224,7 +225,7 @@
 
 	RouteHandler = ReactRouter.RouteHandler, Route = ReactRouter.Route, DefaultRoute = ReactRouter.DefaultRoute;
 
-	ThumbnailList = __webpack_require__(11);
+	ThumbnailList = __webpack_require__(12);
 
 	module.exports = React.createClass({
 	  render: function() {
@@ -251,9 +252,9 @@
 	  }
 	});
 
-	intersperse = __webpack_require__(10);
+	intersperse = __webpack_require__(9);
 
-	file_details_diff = __webpack_require__(19);
+	file_details_diff = __webpack_require__(13);
 
 	module.exports = React.createClass({
 	  displayName: 'file-show',
@@ -439,9 +440,63 @@
 /* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var CommentSidebar;
+
+	CommentSidebar = __webpack_require__(14);
+
+	module.exports = React.createClass({
+	  contextTypes: {
+	    router: React.PropTypes.func.isRequired
+	  },
+	  getFileId: function() {
+	    return this.context.router.getCurrentParams().file_id;
+	  },
+	  commentsLoaded: function() {
+	    return this.props.cortex.file_comments.hasKey(this.getFileId());
+	  },
+	  componentDidMount: function() {
+	    var file_id;
+	    file_id = this.context.router.getCurrentParams().file_id;
+	    if (!this.commentsLoaded()) {
+	      return $.ajax({
+	        type: 'get',
+	        url: "/api/file/" + file_id + "/comments",
+	        success: (function(_this) {
+	          return function(response) {
+	            return _this.props.cortex.file_comments.add(file_id, response.items);
+	          };
+	        })(this)
+	      });
+	    }
+	  },
+	  render: function() {
+	    var comments, image, src;
+	    src = this.props.file_summary.image_url.val();
+	    image = React.createElement("img", {
+	      "className": "main-image",
+	      "src": src
+	    });
+	    comments = this.commentsLoaded() ? this.props.cortex.file_comments[this.getFileId()] : null;
+	    return React.createElement("div", {
+	      "className": "row"
+	    }, React.createElement("div", {
+	      "className": "col-sm-4 col-md-3 col-lg-2 sidebar"
+	    }, React.createElement(CommentSidebar, {
+	      "comments": comments
+	    })), React.createElement("div", {
+	      "className": "col-sm-8 col-md-9 col-lg-10"
+	    }, image));
+	  }
+	});
+
+
+/***/ },
+/* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
 	var FileDetailEditor;
 
-	FileDetailEditor = __webpack_require__(12);
+	FileDetailEditor = __webpack_require__(15);
 
 	module.exports = React.createClass({
 	  contextTypes: {
@@ -472,16 +527,38 @@
 
 
 /***/ },
-/* 8 */
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* intersperse: Return an array with the separator interspersed between
+	 * each element of the input array.
+	 *
+	 * > _([1,2,3]).intersperse(0)
+	 * [1,0,2,0,3]
+	 */
+	function intersperse(arr, sep) {
+	    if (arr.length === 0) {
+	        return [];
+	    }
+
+	    return arr.slice(1).reduce(function(xs, x, i) {
+	        return xs.concat([sep, x]);
+	    }, [arr[0]]);
+	}
+
+	module.exports = intersperse
+
+/***/ },
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var AppearanceOverlay, Navigation, V, random_integer;
 
-	V = __webpack_require__(13);
+	V = __webpack_require__(16);
 
 	Navigation = ReactRouter.Navigation;
 
-	AppearanceOverlay = __webpack_require__(14);
+	AppearanceOverlay = __webpack_require__(17);
 
 	random_integer = function(min, max) {
 	  return Math.floor(Math.random() * (max - min)) + min;
@@ -603,13 +680,13 @@
 
 
 /***/ },
-/* 9 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Tagger,
 	  __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
-	Tagger = __webpack_require__(15);
+	Tagger = __webpack_require__(18);
 
 	module.exports = React.createClass({
 	  contextTypes: {
@@ -747,29 +824,7 @@
 
 
 /***/ },
-/* 10 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* intersperse: Return an array with the separator interspersed between
-	 * each element of the input array.
-	 *
-	 * > _([1,2,3]).intersperse(0)
-	 * [1,0,2,0,3]
-	 */
-	function intersperse(arr, sep) {
-	    if (arr.length === 0) {
-	        return [];
-	    }
-
-	    return arr.slice(1).reduce(function(xs, x, i) {
-	        return xs.concat([sep, x]);
-	    }, [arr[0]]);
-	}
-
-	module.exports = intersperse
-
-/***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Link;
@@ -797,12 +852,97 @@
 
 
 /***/ },
-/* 12 */
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var tag_diff;
+
+	tag_diff = function(new_tags, old_tags) {
+	  return {
+	    add: _.difference(new_tags, old_tags),
+	    remove: _.difference(old_tags, new_tags)
+	  };
+	};
+
+	module.exports = function(details, server_state) {
+	  var message, new_appearances, removed_appearances, role, role_diffs, updated_appearances, _i, _len, _ref;
+	  new_appearances = [];
+	  updated_appearances = {};
+	  details.appearances.forEach(function(key, appearance) {
+	    var delta, new_thing_name, old_appearance;
+	    appearance = appearance.val();
+	    if (key.slice(0, 4) === 'new-') {
+	      return new_appearances.push(appearance);
+	    } else {
+	      old_appearance = server_state.appearances[key];
+	      if (_.isEqual(old_appearance, appearance)) {
+	        return;
+	      }
+	      delta = {};
+	      if (!_.isEqual(appearance.dimensions, old_appearance.dimensions)) {
+	        delta.dimensions = appearance.dimensions;
+	      }
+	      new_thing_name = appearance.thing_name;
+	      if (new_thing_name !== old_appearance.thing_name) {
+	        delta.new_thing_name = new_thing_name;
+	      }
+	      delta.tags = tag_diff(appearance.tags, old_appearance.tags);
+	      delta.negative_tags = tag_diff(appearance.negative_tags, old_appearance.negative_tags);
+	      return updated_appearances[key] = delta;
+	    }
+	  });
+	  removed_appearances = _.difference(_.keys(server_state.appearances), details.appearances.keys());
+	  role_diffs = {};
+	  _ref = ['artist', 'recipient'];
+	  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+	    role = _ref[_i];
+	    role_diffs[role] = tag_diff(details.roles[role].val(), server_state.roles[role]);
+	  }
+	  message = {
+	    appearances: {
+	      create: new_appearances,
+	      "delete": removed_appearances,
+	      update: updated_appearances
+	    },
+	    roles: role_diffs,
+	    tags: tag_diff(details.tags.val(), server_state.tags)
+	  };
+	  return message;
+	};
+
+
+/***/ },
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var NewComment, SidebarComment;
+
+	SidebarComment = __webpack_require__(19);
+
+	NewComment = __webpack_require__(20);
+
+	module.exports = React.createClass({
+	  render: function() {
+	    var comments;
+	    comments = this.props.comments ? this.props.comments.map((function(_this) {
+	      return function(comment) {
+	        return React.createElement(SidebarComment, React.__spread({}, comment));
+	      };
+	    })(this)) : React.createElement("div", null, "Loading...");
+	    return React.createElement("div", null, React.createElement(NewComment, {
+	      "comments": this.props.comments
+	    }), comments);
+	  }
+	});
+
+
+/***/ },
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var CortexTagger;
 
-	CortexTagger = __webpack_require__(16);
+	CortexTagger = __webpack_require__(21);
 
 	module.exports = React.createClass({
 	  render: function() {
@@ -836,7 +976,7 @@
 
 
 /***/ },
-/* 13 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Vector, css_properties;
@@ -953,14 +1093,14 @@
 
 
 /***/ },
-/* 14 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Link, Navigation, vector_prop_shape;
 
 	Link = ReactRouter.Link, Navigation = ReactRouter.Navigation;
 
-	vector_prop_shape = __webpack_require__(18);
+	vector_prop_shape = __webpack_require__(22);
 
 	module.exports = React.createClass({
 	  displayName: 'AppearanceOverlay',
@@ -1001,12 +1141,12 @@
 
 
 /***/ },
-/* 15 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var ReactTagsInput;
 
-	ReactTagsInput = __webpack_require__(17);
+	ReactTagsInput = __webpack_require__(23);
 
 	module.exports = React.createClass({
 	  displayName: 'AutoCompleteTagger',
@@ -1089,12 +1229,105 @@
 
 
 /***/ },
-/* 16 */
+/* 19 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = React.createClass({
+	  render: function() {
+	    return React.createElement("div", {
+	      "className": "media"
+	    }, React.createElement("div", {
+	      "className": "media-left"
+	    }, React.createElement("a", null, React.createElement("img", {
+	      "className": "media-object user-icon",
+	      "src": "/static/images/anonymous-icon.png"
+	    }))), React.createElement("div", {
+	      "className": "media-body"
+	    }, React.createElement("a", {
+	      "className": "media-heading"
+	    }, "Anonymous"), ": ", this.props.text.val()));
+	  }
+	});
+
+
+/***/ },
+/* 20 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = React.createClass({
+	  contextTypes: {
+	    router: React.PropTypes.func.isRequired
+	  },
+	  getInitialState: function() {
+	    return {
+	      saving: false,
+	      error: null
+	    };
+	  },
+	  onPost: function() {
+	    var file_id, input, text;
+	    file_id = this.context.router.getCurrentParams().file_id;
+	    input = this.refs.text.getDOMNode();
+	    text = input.value;
+	    this.setState({
+	      saving: true
+	    });
+	    return $.ajax({
+	      type: 'post',
+	      url: "/api/file/" + file_id + "/comments",
+	      data: {
+	        text: text
+	      },
+	      success: (function(_this) {
+	        return function(response) {
+	          input.value = '';
+	          _this.setState({
+	            saving: false
+	          });
+	          return _this.props.comments.set(response.items);
+	        };
+	      })(this),
+	      error: (function(_this) {
+	        return function(error) {
+	          return _this.setState({
+	            saving: false,
+	            error: "failed to comment"
+	          });
+	        };
+	      })(this)
+	    });
+	  },
+	  render: function() {
+	    return React.createElement("div", null, React.createElement("div", {
+	      "className": "media"
+	    }, React.createElement("div", {
+	      "className": "media-left"
+	    }, React.createElement("a", null, React.createElement("img", {
+	      "className": "media-object user-icon",
+	      "src": "/static/images/anonymous-icon.png"
+	    }))), React.createElement("div", {
+	      "className": "media-body"
+	    }, React.createElement("a", {
+	      "className": "media-heading"
+	    }, "Anonymous"), React.createElement("textarea", {
+	      "className": "form-control",
+	      "ref": "text"
+	    })), React.createElement("button", {
+	      "className": "btn btn-primary",
+	      "onClick": this.onPost,
+	      "disabled": this.state.saving
+	    }, "Post Comment"), this.state.error));
+	  }
+	});
+
+
+/***/ },
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Tagger;
 
-	Tagger = __webpack_require__(15);
+	Tagger = __webpack_require__(18);
 
 	module.exports = React.createClass({
 	  addTag: function(name) {
@@ -1125,7 +1358,17 @@
 
 
 /***/ },
-/* 17 */
+/* 22 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = {
+	  x: React.PropTypes.number,
+	  y: React.PropTypes.number
+	};
+
+
+/***/ },
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1292,106 +1535,6 @@
 	      "onChange": this.onChange,
 	      "onBlur": this.onBlur
 	    }));
-	  }
-	});
-
-
-/***/ },
-/* 18 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = {
-	  x: React.PropTypes.number,
-	  y: React.PropTypes.number
-	};
-
-
-/***/ },
-/* 19 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var tag_diff;
-
-	tag_diff = function(new_tags, old_tags) {
-	  return {
-	    add: _.difference(new_tags, old_tags),
-	    remove: _.difference(old_tags, new_tags)
-	  };
-	};
-
-	module.exports = function(details, server_state) {
-	  var message, new_appearances, removed_appearances, role, role_diffs, updated_appearances, _i, _len, _ref;
-	  new_appearances = [];
-	  updated_appearances = {};
-	  details.appearances.forEach(function(key, appearance) {
-	    var delta, new_thing_name, old_appearance;
-	    appearance = appearance.val();
-	    if (key.slice(0, 4) === 'new-') {
-	      return new_appearances.push(appearance);
-	    } else {
-	      old_appearance = server_state.appearances[key];
-	      if (_.isEqual(old_appearance, appearance)) {
-	        return;
-	      }
-	      delta = {};
-	      if (!_.isEqual(appearance.dimensions, old_appearance.dimensions)) {
-	        delta.dimensions = appearance.dimensions;
-	      }
-	      new_thing_name = appearance.thing_name;
-	      if (new_thing_name !== old_appearance.thing_name) {
-	        delta.new_thing_name = new_thing_name;
-	      }
-	      delta.tags = tag_diff(appearance.tags, old_appearance.tags);
-	      delta.negative_tags = tag_diff(appearance.negative_tags, old_appearance.negative_tags);
-	      return updated_appearances[key] = delta;
-	    }
-	  });
-	  removed_appearances = _.difference(_.keys(server_state.appearances), details.appearances.keys());
-	  role_diffs = {};
-	  _ref = ['artist', 'recipient'];
-	  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-	    role = _ref[_i];
-	    role_diffs[role] = tag_diff(details.roles[role].val(), server_state.roles[role]);
-	  }
-	  message = {
-	    appearances: {
-	      create: new_appearances,
-	      "delete": removed_appearances,
-	      update: updated_appearances
-	    },
-	    roles: role_diffs,
-	    tags: tag_diff(details.tags.val(), server_state.tags)
-	  };
-	  return message;
-	};
-
-
-/***/ },
-/* 20 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var FileDetailEditor;
-
-	FileDetailEditor = __webpack_require__(12);
-
-	module.exports = React.createClass({
-	  contextTypes: {
-	    router: React.PropTypes.func.isRequired
-	  },
-	  render: function() {
-	    var image, src;
-	    src = this.props.file_summary.image_url.val();
-	    image = React.createElement("img", {
-	      "className": "main-image",
-	      "src": src
-	    });
-	    return React.createElement("div", {
-	      "className": "row"
-	    }, React.createElement("div", {
-	      "className": "col-sm-4 col-md-3 col-lg-2 sidebar"
-	    }, "\t\t\t\tTODO..."), React.createElement("div", {
-	      "className": "col-sm-8 col-md-9 col-lg-10"
-	    }, image));
 	  }
 	});
 

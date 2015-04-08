@@ -80,3 +80,7 @@ a.active {
 	position: absolute;
 	left: 0;
 }
+
+.user-icon {
+	width: 50px;
+}
