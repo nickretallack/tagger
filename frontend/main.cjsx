@@ -1,9 +1,3 @@
-#window.TagDelta = require './components/TagDelta'
-#window.TaggingActivityWrapper = require './components/TaggingActivityWrapper'
-#window.Test = require './components/Test'
-#window.AutoCompleteTagger = require './components/AutoCompleteTagger'
-#AppearanceEditor = require './components/AppearanceEditor'
-
 todo = React.createClass
 	render: ->
 		<div>todo</div>
