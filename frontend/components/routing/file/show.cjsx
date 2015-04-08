@@ -19,6 +19,8 @@ module.exports = React.createClass
 			to={route}
 			params={{file_id: next_summary.id.val()}}
 			>Next &rarr;</Link>
+		else
+			<span className="disabled-text">Next &rarr;</span>
 
 		previous_link = if previous_summary
 			<Link
@@ -26,6 +28,8 @@ module.exports = React.createClass
 			to={route}
 			params={{file_id: previous_summary.id.val()}}
 			>&larr; Previous</Link>
+		else
+			<span className="disabled-text">&larr; Previous</span>
 
 		navigation = [
 			<Link key="classic" to="file classic" params={{file_id:id}}>classic</Link>
@@ -33,16 +37,14 @@ module.exports = React.createClass
 			<Link key="details" to="file details" params={{file_id:id}}>details</Link>
 			<Link key="appearances" to="file appearances" params={{file_id:id}}>appearances</Link>
 			<Link key="comments" to="file comments" params={{file_id:id}}>comments</Link>
+			{previous_link}
+			{next_link}
 		]
 		navigation = intersperse(navigation, ' | ')
 
 		<div>
-			<div className="next-prev-links">
-				{previous_link}
-				{next_link}
-				<div className="file-navigation">
-					{navigation}
-				</div>
+			<div className="file-navigation">
+				{navigation}
 			</div>
 
 			<div style={{position:'relative', marginTop:10}}>

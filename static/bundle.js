@@ -296,14 +296,18 @@
 	      "params": {
 	        file_id: next_summary.id.val()
 	      }
-	    }, "Next \u2192") : void 0;
+	    }, "Next \u2192") : React.createElement("span", {
+	      "className": "disabled-text"
+	    }, "Next \u2192");
 	    previous_link = previous_summary ? React.createElement(Link, {
 	      "className": "previous-link",
 	      "to": route,
 	      "params": {
 	        file_id: previous_summary.id.val()
 	      }
-	    }, "\u2190 Previous") : void 0;
+	    }, "\u2190 Previous") : React.createElement("span", {
+	      "className": "disabled-text"
+	    }, "\u2190 Previous");
 	    navigation = [
 	      React.createElement(Link, {
 	        "key": "classic",
@@ -335,14 +339,16 @@
 	        "params": {
 	          file_id: id
 	        }
-	      }, "comments")
+	      }, "comments"), {
+	        previous_link: previous_link
+	      }, {
+	        next_link: next_link
+	      }
 	    ];
 	    navigation = intersperse(navigation, ' | ');
 	    return React.createElement("div", null, React.createElement("div", {
-	      "className": "next-prev-links"
-	    }, previous_link, next_link, React.createElement("div", {
 	      "className": "file-navigation"
-	    }, navigation)), React.createElement("div", {
+	    }, navigation), React.createElement("div", {
 	      "style": {
 	        position: 'relative',
 	        marginTop: 10
